@@ -1,0 +1,104 @@
+// Main SCSS entry point
+@import './variables';
+@import './base';
+@import './components';
+@import './layout';
+@import './books';
+@import './footer';
+
+/* App Container */
+#app {
+  min-height: 100vh;
+}
+
+/* App Loading State */
+.app-loading {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  color: $gray-medium;
+
+  .loading-spinner {
+    width: 40px;
+    height: 40px;
+    border: 4px solid $gray-light;
+    border-top: 4px solid $primary-color;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 20px;
+  }
+
+  p {
+    font-family: $font-sans;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 14px;
+  }
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* Print Styles */
+@media print {
+  .header,
+  .footer,
+  .loading-screen,
+  #notification-container {
+    display: none !important;
+  }
+
+  .main-content {
+    margin-top: 0;
+  }
+
+  .latest-book-section,
+  .books-grid-section {
+    page-break-inside: avoid;
+  }
+
+  .book-card {
+    box-shadow: none;
+    border: 1px solid #ddd;
+  }
+}
+
+/* High Contrast Mode Support */
+@media (prefers-contrast: high) {
+  .book-cover {
+    border: 2px solid currentColor;
+  }
+
+  .notification {
+    border: 2px solid currentColor;
+  }
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+
+  .book-cover:hover {
+    transform: none;
+  }
+
+  .book-card:hover {
+    transform: none;
+  }
+}
+
+/* Dark Mode Support (for future implementation) */
+@media (prefers-color-scheme: dark) {
+  // Future dark mode styles can go here
+}

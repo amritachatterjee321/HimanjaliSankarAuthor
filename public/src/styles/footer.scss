@@ -1,0 +1,208 @@
+/* Book Card Styles */
+.book-card {
+  background: $white;
+  border-radius: $border-radius;
+  padding: 20px;
+  box-shadow: $shadow-light;
+  transition: $transition;
+  cursor: pointer;
+  text-align: center;
+  border: 2px solid transparent;
+
+  &:hover {
+    transform: translateY(-10px);
+    box-shadow: $shadow-medium;
+    border-color: $primary-color;
+  }
+}
+
+.book-cover {
+  width: 180px;
+  height: 270px;
+  margin: 0 auto 20px;
+  border-radius: $border-radius;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: $white;
+  text-align: center;
+  padding: 20px;
+  box-shadow: $shadow-medium;
+  transition: $transition;
+  position: relative;
+
+  &:hover {
+    transform: perspective(1000px) rotateY(10deg);
+  }
+
+  // Book Cover Gradients
+  &.adult-1 {
+    background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+  }
+
+  &.adult-2 {
+    background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+  }
+
+  &.adult-3 {
+    background: linear-gradient(135deg, #43e97b 0%, #38f9d7 100%);
+  }
+
+  &.children-1 {
+    background: linear-gradient(135deg, #fa709a 0%, #fee140 100%);
+  }
+
+  &.children-2 {
+    background: linear-gradient(135deg, #a8edea 0%, #fed6e3 100%);
+  }
+
+  &.children-3 {
+    background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+  }
+}
+
+.book-genre {
+  font-family: $font-sans;
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  opacity: 0.8;
+  margin-bottom: 15px;
+}
+
+.book-title {
+  font-size: 1.4em;
+  margin-bottom: 15px;
+  line-height: 1.2;
+  font-weight: 600;
+}
+
+.book-author {
+  font-family: $font-sans;
+  font-size: 0.9em;
+  font-weight: 600;
+  margin-top: auto;
+}
+
+.book-info {
+  h3 {
+    font-size: 1.2em;
+    margin-bottom: 10px;
+    color: $secondary-color;
+  }
+}
+
+.book-year {
+  font-family: $font-sans;
+  font-size: 12px;
+  color: $gray-medium;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 15px;
+}
+
+.book-description-short {
+  color: $gray-medium;
+  font-size: 0.9em;
+  line-height: 1.5;
+  margin-bottom: 15px;
+}
+
+.book-link {
+  color: $primary-color;
+  text-decoration: none;
+  font-family: $font-sans;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-weight: 600;
+  transition: $transition;
+  display: inline-block;
+  padding: 8px 16px;
+  border: 1px solid $primary-color;
+  border-radius: 4px;
+
+  &:hover {
+    background: $primary-color;
+    color: $white;
+    transform: translateY(-2px);
+  }
+}
+
+/* Footer */
+.footer {
+  background: $secondary-color;
+  color: $white;
+  padding: 50px 20px 30px;
+  text-align: center;
+}
+
+.footer-content {
+  max-width: $large;
+  margin: 0 auto;
+}
+
+.footer-links {
+  margin-bottom: 30px;
+
+  @media (max-width: $mobile) {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+}
+
+.footer-link {
+  color: $white;
+  text-decoration: none;
+  margin: 0 20px;
+  font-size: 13px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  font-family: $font-sans;
+  font-weight: 400;
+  transition: $transition;
+
+  &:hover {
+    color: $primary-color;
+  }
+
+  @media (max-width: $mobile) {
+    margin: 0;
+  }
+}
+
+.social-icons {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin: 30px 0;
+}
+
+.social-icon {
+  width: 45px;
+  height: 45px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  color: $white;
+  font-family: $font-sans;
+  font-weight: bold;
+  transition: $transition;
+
+  &:hover {
+    background: $primary-color;
+    transform: translateY(-3px);
+  }
+}
+
+.copyright {
+  font-size: 12px;
+  opacity: 0.7;
+  margin-top: 30px;
+  font-family: $font-sans;
+}

@@ -1,0 +1,32 @@
+[
+  {
+    "id": "1",
+    "title": "Whispers in the Rain",
+    "genre": "Stories",
+    "year": 2023,
+    "description": "A collection of interconnected short stories.",
+    "amazonLink": "https://amazon.com/whispers-rain",
+    "category": "adults",
+    "createdAt": "2023-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "2",
+    "title": "The Magic Garden",
+    "genre": "Children's Book",
+    "year": 2023,
+    "description": "A delightful story about friendship.",
+    "amazonLink": "https://amazon.com/magic-garden",
+    "category": "children",
+    "createdAt": "2023-01-01T00:00:00.000Z"
+  },
+  {
+    "id": "1754207813848",
+    "title": "The Burnings",
+    "genre": "Horror",
+    "year": 2024,
+    "description": "dbfdb",
+    "amazonLink": "https://www.amazon.in/Burnings-Gothic-Stephen-Shirley-Jackson/dp/9395624744/ref=sr_1_1?crid=32DY9A5F8EAL5&dib=eyJ2IjoiMSJ9.Ty5A90v0FG36GIje1qIgkQ.IfQwOCTc0Qpvm2Cjiec1HEH8aPlgckO_8jmv4oG-QSg&dib_tag=se&keywords=himanjali+burning&qid=1754199335&sprefix=himanjali+burnin%2Caps%2C335&sr=8-1",
+    "category": "adults",
+    "createdAt": "2025-08-03T07:56:53.848Z"
+  }
+]

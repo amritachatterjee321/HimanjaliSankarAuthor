@@ -1,0 +1,36 @@
+// SCSS Variables
+$primary-color: #8b4513;
+$secondary-color: #2c3e50;
+$accent-color: #a0522d;
+$text-color: #333;
+$light-bg: #fafafa;
+$white: #ffffff;
+$gray-light: #f8f6f3;
+$gray-medium: #666;
+
+// Typography
+$font-serif: 'Lora', serif;
+$font-sans: 'Montserrat', sans-serif;
+
+// Shadows
+$shadow-light: 0 2px 10px rgba(0,0,0,0.08);
+$shadow-medium: 0 5px 20px rgba(0,0,0,0.15);
+$shadow-heavy: 0 15px 40px rgba(0,0,0,0.2);
+
+// Border radius
+$border-radius: 8px;
+
+// Transitions
+$transition: all 0.3s ease;
+
+// Breakpoints
+$mobile: 480px;
+$tablet: 768px;
+$desktop: 1024px;
+$large: 1200px;
+
+// Z-index scale
+$z-loading: 9999;
+$z-notifications: 10000;
+$z-header: 1000;
+$z-modal: 2000;
