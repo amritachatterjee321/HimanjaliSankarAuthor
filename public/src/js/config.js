@@ -4,7 +4,7 @@ const CONFIG = {
     name: "HIMANJALI SANKAR"
   },
   api: {
-    baseUrl: import.meta.env.PROD ? '' : 'http://localhost:3000',
+    baseUrl: 'http://localhost:3000',
     endpoints: {
       books: '/api/books',
       contact: '/api/contact'
@@ -12,15 +12,20 @@ const CONFIG = {
   },
   navigation: [
     { name: "HOME", href: "#home" },
-    { name: "ABOUT", href: "#about" },
-    { name: "BOOKS", href: "#books" },
-    { name: "MEDIA", href: "#media" },
-    { name: "CONTACT", href: "#contact" }
+    { name: "ABOUT", href: "/about" },
+    { name: "BOOKS", href: "/books" },
+    { name: "MEDIA", href: "/media" },
+    { name: "CONTACT", href: "/contact" }
   ],
   social: [
-    { name: "Instagram", icon: "I", url: import.meta.env.VITE_INSTAGRAM_URL || "https://instagram.com" },
-    { name: "Facebook", icon: "F", url: import.meta.env.VITE_FACEBOOK_URL || "https://facebook.com" }
+    { name: "Instagram", icon: "I", url: "https://instagram.com" },
+    { name: "Facebook", icon: "F", url: "https://facebook.com" }
   ]
 };
+
+// Development mode detection
+if (typeof window !== 'undefined') {
+  console.log('🔧 Development mode detected');
+}
 
 export default CONFIG;

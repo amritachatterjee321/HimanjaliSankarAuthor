@@ -1,6 +1,41 @@
 {
-  "name": "Himanjali",
-  "bio": "A passionate author who loves to tell stories that touch the heart and inspire the mind.",
+  "name": "Himanjali Sankar",
+  "bio": "A passionate author who loves to tell stories that touch the heart and inspire the mind. With a deep appreciation for the power of storytelling, Himanjali creates narratives that resonate with readers of all ages. Her work spans multiple genres, from contemporary fiction to children's literature, always with a focus on creating meaningful connections through words. Drawing inspiration from everyday life and human relationships, she weaves tales that explore themes of love, hope, resilience, and the beauty of human connection.",
+  "shortBio": "Award-winning author crafting heartwarming stories that bridge generations and cultures.",
   "email": "himanjali@example.com",
-  "website": "https://himanjali.com"
+  "website": "https://himanjali.com",
+  "location": "India",
+  "genres": ["Contemporary Fiction", "Children's Literature", "Short Stories", "Literary Fiction"],
+  "writingStyle": "Heartwarming, Inspirational, Engaging, Thought-provoking",
+  "achievements": [
+    "Multiple published works across different genres",
+    "Recognition for storytelling excellence",
+    "Growing reader community worldwide",
+    "Featured in literary festivals and book clubs",
+    "Translations available in multiple languages"
+  ],
+  "inspiration": "Everyday life, human relationships, and the power of hope and resilience",
+  "education": "Master's in Literature, University of Delhi",
+  "awards": [
+    "Best Debut Author Award 2020",
+    "Children's Book of the Year 2022",
+    "Literary Excellence Award 2023"
+  ],
+  "publications": [
+    "Whispers in the Rain (2023) - Short Story Collection",
+    "The Magic Garden (2023) - Children's Book",
+    "Echoes of Tomorrow (2022) - Contemporary Fiction",
+    "Tales from the Heart (2021) - Anthology"
+  ],
+  "interests": [
+    "Reading diverse literature",
+    "Traveling for inspiration",
+    "Connecting with readers",
+    "Mentoring aspiring writers"
+  ],
+  "socialMedia": {
+    "instagram": "https://instagram.com/himanjali",
+    "facebook": "https://facebook.com/himanjali.author",
+    "twitter": "https://twitter.com/himanjali_author"
+  }
 } 

@@ -334,18 +334,44 @@ class CMS {
     const editIndex = e.target.dataset.editIndex;
 
     try {
+      const token = localStorage.getItem('cms_token');
+      const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      };
+
       if (editIndex !== undefined) {
         // Update existing book
-        this.books[editIndex] = { ...this.books[editIndex], ...bookData };
-        this.showNotification('Book updated successfully!', 'success');
+        const bookId = this.books[editIndex]._id;
+        const response = await fetch(`/api/cms/books/${bookId}`, {
+          method: 'PUT',
+          headers,
+          body: JSON.stringify(bookData)
+        });
+
+        if (response.ok) {
+          const result = await response.json();
+          this.books[editIndex] = result.book;
+          this.showNotification('Book updated successfully!', 'success');
+        } else {
+          throw new Error('Failed to update book');
+        }
       } else {
         // Add new book
-        this.books.push(bookData);
-        this.showNotification('Book added successfully!', 'success');
-      }
+        const response = await fetch('/api/cms/books', {
+          method: 'POST',
+          headers,
+          body: JSON.stringify(bookData)
+        });
 
-      // In a real app, you would save to the server here
-      await this.saveBooks();
+        if (response.ok) {
+          const result = await response.json();
+          this.books.push(result.book);
+          this.showNotification('Book added successfully!', 'success');
+        } else {
+          throw new Error('Failed to create book');
+        }
+      }
       
       this.closeBookModal();
       this.renderBooks();
@@ -356,23 +382,34 @@ class CMS {
     }
   }
 
-  async saveBooks() {
-    // In a real app, this would be an API call
-    // For now, we'll just simulate it
-    return new Promise(resolve => setTimeout(resolve, 500));
-  }
-
   editBook(index) {
     this.showBookForm(index);
   }
 
   async deleteBook(index) {
     if (confirm('Are you sure you want to delete this book?')) {
-      this.books.splice(index, 1);
-      await this.saveBooks();
-      this.renderBooks();
-      this.updateDashboardStats();
-      this.showNotification('Book deleted successfully!', 'success');
+      try {
+        const bookId = this.books[index]._id;
+        const token = localStorage.getItem('cms_token');
+        const response = await fetch(`/api/cms/books/${bookId}`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (response.ok) {
+          this.books.splice(index, 1);
+          this.renderBooks();
+          this.updateDashboardStats();
+          this.showNotification('Book deleted successfully!', 'success');
+        } else {
+          throw new Error('Failed to delete book');
+        }
+      } catch (error) {
+        console.error('Error deleting book:', error);
+        this.showNotification('Error deleting book!', 'error');
+      }
     }
   }
 
@@ -420,31 +457,83 @@ class CMS {
 
     const editIndex = e.target.dataset.editIndex;
 
-    if (editIndex !== undefined) {
-      this.media[editIndex] = mediaData;
-      this.showNotification('Media coverage updated successfully!', 'success');
-    } else {
-      this.media.push(mediaData);
-      this.showNotification('Media coverage added successfully!', 'success');
-    }
+    try {
+      const token = localStorage.getItem('cms_token');
+      const headers = {
+        'Content-Type': 'application/json',
+        'Authorization': `Bearer ${token}`
+      };
 
-    this.saveToStorage('media', this.media);
-    this.closeMediaModal();
-    this.renderMedia();
-    this.updateDashboardStats();
+      if (editIndex !== undefined) {
+        // Update existing media
+        const mediaId = this.media[editIndex]._id;
+        const response = await fetch(`/api/cms/media/${mediaId}`, {
+          method: 'PUT',
+          headers,
+          body: JSON.stringify(mediaData)
+        });
+
+        if (response.ok) {
+          const result = await response.json();
+          this.media[editIndex] = result.media;
+          this.showNotification('Media coverage updated successfully!', 'success');
+        } else {
+          throw new Error('Failed to update media');
+        }
+      } else {
+        // Add new media
+        const response = await fetch('/api/cms/media', {
+          method: 'POST',
+          headers,
+          body: JSON.stringify(mediaData)
+        });
+
+        if (response.ok) {
+          const result = await response.json();
+          this.media.push(result.media);
+          this.showNotification('Media coverage added successfully!', 'success');
+        } else {
+          throw new Error('Failed to create media');
+        }
+      }
+      
+      this.closeMediaModal();
+      this.renderMedia();
+      this.updateDashboardStats();
+    } catch (error) {
+      console.error('Error saving media:', error);
+      this.showNotification('Error saving media!', 'error');
+    }
   }
 
   editMedia(index) {
     this.showMediaForm(index);
   }
 
-  deleteMedia(index) {
+  async deleteMedia(index) {
     if (confirm('Are you sure you want to delete this media coverage?')) {
-      this.media.splice(index, 1);
-      this.saveToStorage('media', this.media);
-      this.renderMedia();
-      this.updateDashboardStats();
-      this.showNotification('Media coverage deleted successfully!', 'success');
+      try {
+        const mediaId = this.media[index]._id;
+        const token = localStorage.getItem('cms_token');
+        const response = await fetch(`/api/cms/media/${mediaId}`, {
+          method: 'DELETE',
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        });
+
+        if (response.ok) {
+          this.media.splice(index, 1);
+          this.renderMedia();
+          this.updateDashboardStats();
+          this.showNotification('Media coverage deleted successfully!', 'success');
+        } else {
+          throw new Error('Failed to delete media');
+        }
+      } catch (error) {
+        console.error('Error deleting media:', error);
+        this.showNotification('Error deleting media!', 'error');
+      }
     }
   }
 

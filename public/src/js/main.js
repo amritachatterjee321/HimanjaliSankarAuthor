@@ -36,15 +36,6 @@ class App {
       // Simulate loading time
       await this.loadingManager.simulateLoading();
 
-      // Show welcome notification
-      setTimeout(() => {
-        this.notificationSystem.show(
-          `Welcome to ${CONFIG.author.name}'s official website!`,
-          'success',
-          'Welcome'
-        );
-      }, 500);
-
       // Bind global events
       this.bindGlobalEvents();
 

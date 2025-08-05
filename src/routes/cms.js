@@ -1,49 +1,11 @@
 import express from 'express';
-import fs from 'fs/promises';
-import path from 'path';
-import { fileURLToPath } from 'url';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+import cmsService from '../services/cmsService.js';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
 
 const router = express.Router();
 
-// Data file paths
-const DATA_DIR = path.join(__dirname, '../../data');
-const BOOKS_FILE = path.join(DATA_DIR, 'books.json');
-const MEDIA_FILE = path.join(DATA_DIR, 'media.json');
-const AUTHOR_FILE = path.join(DATA_DIR, 'author.json');
-const SETTINGS_FILE = path.join(DATA_DIR, 'settings.json');
-
-// Ensure data directory exists
-async function ensureDataDir() {
-  try {
-    await fs.access(DATA_DIR);
-  } catch {
-    await fs.mkdir(DATA_DIR, { recursive: true });
-  }
-}
-
-// Helper function to read JSON file
-async function readJsonFile(filePath) {
-  try {
-    const data = await fs.readFile(filePath, 'utf8');
-    return JSON.parse(data);
-  } catch (error) {
-    if (error.code === 'ENOENT') {
-      return null;
-    }
-    throw error;
-  }
-}
-
-// Helper function to write JSON file
-async function writeJsonFile(filePath, data) {
-  await ensureDataDir();
-  await fs.writeFile(filePath, JSON.stringify(data, null, 2));
-}
-
-// Authentication middleware (simple token check)
+// Authentication middleware (JWT token check)
 const authenticateToken = (req, res, next) => {
   const authHeader = req.headers['authorization'];
   const token = authHeader && authHeader.split(' ')[1];
@@ -52,43 +14,58 @@ const authenticateToken = (req, res, next) => {
     return res.status(401).json({ error: 'Access token required' });
   }
 
-  // In production, verify JWT token
-  if (token === 'dummy_token') {
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key');
+    req.user = decoded;
     next();
-  } else {
-    res.status(403).json({ error: 'Invalid token' });
+  } catch (error) {
+    return res.status(403).json({ error: 'Invalid token' });
   }
 };
 
 // Authentication endpoints (no auth required)
 router.post('/auth/login', async (req, res) => {
   try {
-    const settings = await readJsonFile(SETTINGS_FILE) || {};
     const { username, password } = req.body;
-
-    if (username === settings.username && password === settings.password) {
-      res.json({ 
-        token: 'dummy_token',
-        message: 'Login successful'
-      });
-    } else {
-      res.status(401).json({ error: 'Invalid credentials' });
+    
+    // Get user from database
+    const user = await cmsService.getUserByUsername(username);
+    
+    if (!user) {
+      return res.status(401).json({ error: 'Invalid credentials' });
     }
+
+    // Verify password
+    const isValidPassword = await bcrypt.compare(password, user.password);
+    
+    if (!isValidPassword) {
+      return res.status(401).json({ error: 'Invalid credentials' });
+    }
+
+    // Generate JWT token
+    const token = jwt.sign(
+      { userId: user._id, username: user.username },
+      process.env.JWT_SECRET || 'your-secret-key',
+      { expiresIn: '24h' }
+    );
+
+    res.json({ 
+      token,
+      user: {
+        id: user._id,
+        username: user.username,
+        name: user.name
+      },
+      message: 'Login successful'
+    });
   } catch (error) {
     console.error('Login error:', error);
     res.status(500).json({ error: 'Login failed' });
   }
 });
 
-router.get('/auth/verify', (req, res) => {
-  const authHeader = req.headers['authorization'];
-  const token = authHeader && authHeader.split(' ')[1];
-
-  if (token === 'dummy_token') {
-    res.json({ valid: true });
-  } else {
-    res.status(401).json({ error: 'Invalid token' });
-  }
+router.get('/auth/verify', authenticateToken, (req, res) => {
+  res.json({ valid: true, user: req.user });
 });
 
 // Apply authentication to all other CMS routes
@@ -97,7 +74,7 @@ router.use(authenticateToken);
 // Books API
 router.get('/books', async (req, res) => {
   try {
-    const books = await readJsonFile(BOOKS_FILE) || [];
+    const books = await cmsService.getAllBooks();
     res.json({ books });
   } catch (error) {
     console.error('Error reading books:', error);
@@ -107,14 +84,7 @@ router.get('/books', async (req, res) => {
 
 router.post('/books', async (req, res) => {
   try {
-    const books = await readJsonFile(BOOKS_FILE) || [];
-    const newBook = {
-      id: Date.now().toString(),
-      ...req.body,
-      createdAt: new Date().toISOString()
-    };
-    books.push(newBook);
-    await writeJsonFile(BOOKS_FILE, books);
+    const newBook = await cmsService.createBook(req.body);
     res.status(201).json({ book: newBook });
   } catch (error) {
     console.error('Error creating book:', error);
@@ -124,21 +94,11 @@ router.post('/books', async (req, res) => {
 
 router.put('/books/:id', async (req, res) => {
   try {
-    const books = await readJsonFile(BOOKS_FILE) || [];
-    const bookIndex = books.findIndex(book => book.id === req.params.id);
-    
-    if (bookIndex === -1) {
+    const updatedBook = await cmsService.updateBook(req.params.id, req.body);
+    if (!updatedBook) {
       return res.status(404).json({ error: 'Book not found' });
     }
-
-    books[bookIndex] = {
-      ...books[bookIndex],
-      ...req.body,
-      updatedAt: new Date().toISOString()
-    };
-
-    await writeJsonFile(BOOKS_FILE, books);
-    res.json({ book: books[bookIndex] });
+    res.json({ book: updatedBook });
   } catch (error) {
     console.error('Error updating book:', error);
     res.status(500).json({ error: 'Failed to update book' });
@@ -147,15 +107,7 @@ router.put('/books/:id', async (req, res) => {
 
 router.delete('/books/:id', async (req, res) => {
   try {
-    const books = await readJsonFile(BOOKS_FILE) || [];
-    const bookIndex = books.findIndex(book => book.id === req.params.id);
-    
-    if (bookIndex === -1) {
-      return res.status(404).json({ error: 'Book not found' });
-    }
-
-    books.splice(bookIndex, 1);
-    await writeJsonFile(BOOKS_FILE, books);
+    await cmsService.deleteBook(req.params.id);
     res.json({ message: 'Book deleted successfully' });
   } catch (error) {
     console.error('Error deleting book:', error);
@@ -166,7 +118,7 @@ router.delete('/books/:id', async (req, res) => {
 // Media API
 router.get('/media', async (req, res) => {
   try {
-    const media = await readJsonFile(MEDIA_FILE) || [];
+    const media = await cmsService.getAllMedia();
     res.json({ media });
   } catch (error) {
     console.error('Error reading media:', error);
@@ -176,14 +128,7 @@ router.get('/media', async (req, res) => {
 
 router.post('/media', async (req, res) => {
   try {
-    const media = await readJsonFile(MEDIA_FILE) || [];
-    const newMedia = {
-      id: Date.now().toString(),
-      ...req.body,
-      createdAt: new Date().toISOString()
-    };
-    media.push(newMedia);
-    await writeJsonFile(MEDIA_FILE, media);
+    const newMedia = await cmsService.createMedia(req.body);
     res.status(201).json({ media: newMedia });
   } catch (error) {
     console.error('Error creating media:', error);
@@ -193,21 +138,11 @@ router.post('/media', async (req, res) => {
 
 router.put('/media/:id', async (req, res) => {
   try {
-    const media = await readJsonFile(MEDIA_FILE) || [];
-    const mediaIndex = media.findIndex(item => item.id === req.params.id);
-    
-    if (mediaIndex === -1) {
+    const updatedMedia = await cmsService.updateMedia(req.params.id, req.body);
+    if (!updatedMedia) {
       return res.status(404).json({ error: 'Media not found' });
     }
-
-    media[mediaIndex] = {
-      ...media[mediaIndex],
-      ...req.body,
-      updatedAt: new Date().toISOString()
-    };
-
-    await writeJsonFile(MEDIA_FILE, media);
-    res.json({ media: media[mediaIndex] });
+    res.json({ media: updatedMedia });
   } catch (error) {
     console.error('Error updating media:', error);
     res.status(500).json({ error: 'Failed to update media' });
@@ -216,15 +151,7 @@ router.put('/media/:id', async (req, res) => {
 
 router.delete('/media/:id', async (req, res) => {
   try {
-    const media = await readJsonFile(MEDIA_FILE) || [];
-    const mediaIndex = media.findIndex(item => item.id === req.params.id);
-    
-    if (mediaIndex === -1) {
-      return res.status(404).json({ error: 'Media not found' });
-    }
-
-    media.splice(mediaIndex, 1);
-    await writeJsonFile(MEDIA_FILE, media);
+    await cmsService.deleteMedia(req.params.id);
     res.json({ message: 'Media deleted successfully' });
   } catch (error) {
     console.error('Error deleting media:', error);
@@ -235,7 +162,7 @@ router.delete('/media/:id', async (req, res) => {
 // Author API
 router.get('/author', async (req, res) => {
   try {
-    const author = await readJsonFile(AUTHOR_FILE) || {};
+    const author = await cmsService.getAuthor();
     res.json({ author });
   } catch (error) {
     console.error('Error reading author:', error);
@@ -245,11 +172,7 @@ router.get('/author', async (req, res) => {
 
 router.put('/author', async (req, res) => {
   try {
-    const author = {
-      ...req.body,
-      updatedAt: new Date().toISOString()
-    };
-    await writeJsonFile(AUTHOR_FILE, author);
+    const author = await cmsService.updateAuthor(req.body);
     res.json({ author });
   } catch (error) {
     console.error('Error updating author:', error);
@@ -260,7 +183,7 @@ router.put('/author', async (req, res) => {
 // Social Media API
 router.get('/social', async (req, res) => {
   try {
-    const social = await readJsonFile(path.join(DATA_DIR, 'social.json')) || {};
+    const social = await cmsService.getSocial();
     res.json({ social });
   } catch (error) {
     console.error('Error reading social:', error);
@@ -270,11 +193,7 @@ router.get('/social', async (req, res) => {
 
 router.put('/social', async (req, res) => {
   try {
-    const social = {
-      ...req.body,
-      updatedAt: new Date().toISOString()
-    };
-    await writeJsonFile(path.join(DATA_DIR, 'social.json'), social);
+    const social = await cmsService.updateSocial(req.body);
     res.json({ social });
   } catch (error) {
     console.error('Error updating social:', error);
@@ -285,7 +204,7 @@ router.put('/social', async (req, res) => {
 // Settings API
 router.get('/settings', async (req, res) => {
   try {
-    const settings = await readJsonFile(SETTINGS_FILE) || {};
+    const settings = await cmsService.getSettings();
     res.json({ settings });
   } catch (error) {
     console.error('Error reading settings:', error);
@@ -295,11 +214,7 @@ router.get('/settings', async (req, res) => {
 
 router.put('/settings', async (req, res) => {
   try {
-    const settings = {
-      ...req.body,
-      updatedAt: new Date().toISOString()
-    };
-    await writeJsonFile(SETTINGS_FILE, settings);
+    const settings = await cmsService.updateSettings(req.body);
     res.json({ settings });
   } catch (error) {
     console.error('Error updating settings:', error);
@@ -310,16 +225,7 @@ router.put('/settings', async (req, res) => {
 // Dashboard stats
 router.get('/dashboard', async (req, res) => {
   try {
-    const books = await readJsonFile(BOOKS_FILE) || [];
-    const media = await readJsonFile(MEDIA_FILE) || [];
-    
-    const stats = {
-      totalBooks: books.length,
-      totalMedia: media.length,
-      siteViews: Math.floor(Math.random() * 1000) + 500, // Mock data
-      lastUpdated: new Date().toISOString()
-    };
-    
+    const stats = await cmsService.getDashboardStats();
     res.json({ stats });
   } catch (error) {
     console.error('Error getting dashboard stats:', error);

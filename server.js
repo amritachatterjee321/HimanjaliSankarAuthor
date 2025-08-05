@@ -8,10 +8,13 @@ import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
 import dotenv from 'dotenv';
 
-// Import routes
+// Import database and routes
+import database from './src/config/database.js';
+import cmsService from './src/services/cmsService.js';
 import contactRoutes from './src/routes/contact.js';
 import booksRoutes from './src/routes/books.js';
 import cmsRoutes from './src/routes/cms.js';
+import aboutRoutes from './src/routes/about.js';
 
 // Load environment variables
 dotenv.config();
@@ -22,16 +25,32 @@ const __dirname = dirname(__filename);
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Initialize database connection
+async function initializeDatabase() {
+  try {
+    await database.connect();
+    await cmsService.init();
+    console.log('✅ Database initialized successfully');
+  } catch (error) {
+    console.error('❌ Database initialization failed:', error);
+    process.exit(1);
+  }
+}
+
 // Security middleware
 app.use(helmet({
   contentSecurityPolicy: {
     directives: {
       defaultSrc: ["'self'"],
-      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
-      fontSrc: ["'self'", "https://fonts.gstatic.com"],
+      styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com", "https://cdnjs.cloudflare.com"],
+      fontSrc: ["'self'", "https://fonts.gstatic.com", "https://cdnjs.cloudflare.com"],
       imgSrc: ["'self'", "data:", "https:", "http:"],
-      scriptSrc: ["'self'"],
-      connectSrc: ["'self'"]
+      scriptSrc: ["'self'", "https://www.googletagmanager.com", "'unsafe-inline'"],
+      connectSrc: ["'self'"],
+      objectSrc: ["'none'"],
+      baseUri: ["'self'"],
+      formAction: ["'self'"],
+      frameAncestors: ["'none'"]
     }
   },
   crossOriginResourcePolicy: { policy: "cross-origin" }
@@ -63,6 +82,7 @@ app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 app.use('/api/contact', contactRoutes);
 app.use('/api/books', booksRoutes);
 app.use('/api/cms', cmsRoutes);
+app.use('/api/about', aboutRoutes);
 
 // Serve static files (including favicon)
 app.use(express.static(join(__dirname, 'public'), {
@@ -73,6 +93,9 @@ app.use(express.static(join(__dirname, 'public'), {
   }
 }));
 
+// Serve data files
+app.use('/data', express.static(join(__dirname, 'data')));
+
 // CMS route - serve the CMS interface
 app.get('/cms', (req, res) => {
   res.sendFile(join(__dirname, 'public', 'cms', 'index.html'));
@@ -80,6 +103,26 @@ app.get('/cms', (req, res) => {
 
 app.get('/cms/', (req, res) => {
   res.sendFile(join(__dirname, 'public', 'cms', 'index.html'));
+});
+
+// About page route
+app.get('/about', (req, res) => {
+  res.sendFile(join(__dirname, 'public', 'about.html'));
+});
+
+// Books page route
+app.get('/books', (req, res) => {
+  res.sendFile(join(__dirname, 'public', 'books.html'));
+});
+
+// Media page route
+app.get('/media', (req, res) => {
+  res.sendFile(join(__dirname, 'public', 'media.html'));
+});
+
+// Contact page route
+app.get('/contact', (req, res) => {
+  res.sendFile(join(__dirname, 'public', 'contact.html'));
 });
 
 // Serve static files in production
@@ -115,9 +158,21 @@ app.use((req, res) => {
 });
 
 // Start server
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on port ${PORT}`);
-  console.log(`📖 Environment: ${process.env.NODE_ENV || 'development'}`);
-});
+async function startServer() {
+  try {
+    await initializeDatabase();
+    
+    app.listen(PORT, () => {
+      console.log(`🚀 Server running on port ${PORT}`);
+      console.log(`📖 Environment: ${process.env.NODE_ENV || 'development'}`);
+      console.log(`🎨 CMS Interface: http://localhost:${PORT}/cms`);
+    });
+  } catch (error) {
+    console.error('❌ Failed to start server:', error);
+    process.exit(1);
+  }
+}
+
+startServer();
 
 export default app;

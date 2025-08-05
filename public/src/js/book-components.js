@@ -35,7 +35,7 @@ class LatestBook extends Component {
     if (!this.bookData) {
       return Utils.createElement('div', {
         className: 'loading',
-        innerHTML: 'Loading...'
+        innerHTML: 'LOADING'
       });
     }
 

@@ -50,12 +50,18 @@ class Header extends Component {
     });
 
     const logo = Utils.createElement('a', {
-      href: '#home',
+      href: '/',
       className: 'logo',
       innerHTML: CONFIG.author.name,
       onClick: (e) => {
         e.preventDefault();
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        if (window.location.pathname === '/' || window.location.pathname === '/index.html') {
+          // If we're on the homepage, scroll to top
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        } else {
+          // If we're on another page, navigate to homepage
+          window.location.href = '/';
+        }
       }
     });
 
@@ -76,14 +82,40 @@ class Header extends Component {
         onClick: (e) => {
           e.preventDefault();
           if (item.href === '#home') {
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+            // If we're on the homepage, scroll to top
+            if (window.location.pathname === '/' || window.location.pathname === '/index.html') {
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            } else {
+              // If we're on another page, navigate to homepage
+              window.location.href = '/';
+            }
+          } else if (item.href === '/about') {
+            // Navigate to the About page
+            window.location.href = '/about';
+          } else if (item.href === '/books') {
+            // Navigate to the Books page
+            window.location.href = '/books';
+          } else if (item.href === '/media') {
+            // Navigate to the Media page
+            window.location.href = '/media';
+          } else if (item.href === '/contact') {
+            // Navigate to the Contact page
+            window.location.href = '/contact';
+          } else if (item.href.startsWith('#')) {
+            // Handle other anchor links (like #contact)
+            if (window.location.pathname === '/' || window.location.pathname === '/index.html') {
+              // If we're on the homepage, scroll to the section
+              const target = document.querySelector(item.href);
+              if (target) {
+                target.scrollIntoView({ behavior: 'smooth' });
+              }
+            } else {
+              // If we're on another page, navigate to homepage and then scroll
+              window.location.href = `/${item.href}`;
+            }
           } else {
-            // For other pages, show coming soon
-            window.app.notificationSystem.show(
-              `${item.name} page coming soon!`,
-              'info',
-              'Coming Soon'
-            );
+            // For any other pages, navigate directly
+            window.location.href = item.href;
           }
           this.setActiveLink(item.href);
         }

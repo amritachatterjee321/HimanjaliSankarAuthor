@@ -53,6 +53,16 @@ class ApiService {
       body: JSON.stringify(formData)
     });
   }
+
+  // About API
+  async getAuthorInfo() {
+    return this.request('/api/about');
+  }
+
+  // Media API
+  async getMedia() {
+    return this.request('/api/cms/media');
+  }
 }
 
 export default ApiService;
