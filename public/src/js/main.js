@@ -14,6 +14,7 @@ class App {
     this.notificationSystem = new NotificationSystem();
     this.loadingManager = new LoadingManager();
     this.apiService = new ApiService(CONFIG.api.baseUrl);
+    this.currentRoute = window.location.pathname;
     
     this.init();
   }
@@ -38,6 +39,9 @@ class App {
 
       // Bind global events
       this.bindGlobalEvents();
+
+      // Handle initial route
+      this.handleRouteChange(this.currentRoute);
 
     } catch (error) {
       console.error('Error initializing app:', error);
@@ -78,6 +82,62 @@ class App {
         console.error(`❌ Failed to mount ${name} component:`, error);
       }
     }
+  }
+
+  handleRouteChange(path) {
+    console.log(`🔄 Route changed to: ${path}`);
+    this.currentRoute = path;
+    
+    // Update active navigation
+    const header = this.components.get('header');
+    if (header && header.setActiveLink) {
+      header.setActiveLink(path);
+    }
+    
+    // Handle specific routes
+    if (path === '/about') {
+      this.loadAboutPage();
+    } else if (path === '/books') {
+      this.loadBooksPage();
+    } else if (path === '/media') {
+      this.loadMediaPage();
+    } else if (path === '/contact') {
+      this.loadContactPage();
+    } else if (path.startsWith('/book/')) {
+      this.loadBookDetailPage(path);
+    } else if (path === '/' || path === '/index.html') {
+      this.loadHomePage();
+    }
+  }
+
+  async loadHomePage() {
+    console.log('🏠 Loading home page');
+    // Home page is already loaded by default
+  }
+
+  async loadAboutPage() {
+    console.log('ℹ️ Loading about page');
+    window.location.href = '/about';
+  }
+
+  async loadBooksPage() {
+    console.log('📚 Loading books page');
+    window.location.href = '/books';
+  }
+
+  async loadMediaPage() {
+    console.log('📰 Loading media page');
+    window.location.href = '/media';
+  }
+
+  async loadContactPage() {
+    console.log('📧 Loading contact page');
+    window.location.href = '/contact';
+  }
+
+  async loadBookDetailPage(path) {
+    console.log('📖 Loading book detail page:', path);
+    window.location.href = path;
   }
 
   bindGlobalEvents() {

@@ -55,13 +55,7 @@ class Header extends Component {
       innerHTML: CONFIG.author.name,
       onClick: (e) => {
         e.preventDefault();
-        if (window.location.pathname === '/' || window.location.pathname === '/index.html') {
-          // If we're on the homepage, scroll to top
-          window.scrollTo({ top: 0, behavior: 'smooth' });
-        } else {
-          // If we're on another page, navigate to homepage
-          window.location.href = '/';
-        }
+        this.navigateTo('/');
       }
     });
 
@@ -81,46 +75,7 @@ class Header extends Component {
         innerHTML: item.name,
         onClick: (e) => {
           e.preventDefault();
-          if (item.href === '#home') {
-            // If we're on the homepage, scroll to top
-            if (window.location.pathname === '/' || window.location.pathname === '/index.html') {
-              window.scrollTo({ top: 0, behavior: 'smooth' });
-            } else {
-              // If we're on another page, navigate to homepage
-              window.location.href = '/';
-            }
-          } else if (item.href === '/about') {
-            // Navigate to the About page
-            window.location.href = '/about';
-          } else if (item.href === '/books') {
-            // Navigate to the Books page
-            window.location.href = '/books';
-          } else if (item.href === '/media') {
-            // Navigate to the Media page
-            window.location.href = '/media';
-          } else if (item.href === '/contact') {
-            // Navigate to the Contact page
-            window.location.href = '/contact';
-          } else if (item.href === '/cms') {
-            // Navigate to the Admin Dashboard
-            window.location.href = '/cms';
-          } else if (item.href.startsWith('#')) {
-            // Handle other anchor links (like #contact)
-            if (window.location.pathname === '/' || window.location.pathname === '/index.html') {
-              // If we're on the homepage, scroll to the section
-              const target = document.querySelector(item.href);
-              if (target) {
-                target.scrollIntoView({ behavior: 'smooth' });
-              }
-            } else {
-              // If we're on another page, navigate to homepage and then scroll
-              window.location.href = `/${item.href}`;
-            }
-          } else {
-            // For any other pages, navigate directly
-            window.location.href = item.href;
-          }
-          this.setActiveLink(item.href);
+          this.handleNavigation(item.href);
         }
       });
 
@@ -136,10 +91,76 @@ class Header extends Component {
     return header;
   }
 
+  handleNavigation(href) {
+    if (href === '#home') {
+      // If we're on the homepage, scroll to top
+      if (window.location.pathname === '/' || window.location.pathname === '/index.html') {
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      } else {
+        // If we're on another page, navigate to homepage
+        this.navigateTo('/');
+      }
+    } else if (href.startsWith('/')) {
+      // Handle page navigation
+      this.navigateTo(href);
+    } else if (href.startsWith('#')) {
+      // Handle anchor links
+      if (window.location.pathname === '/' || window.location.pathname === '/index.html') {
+        // If we're on the homepage, scroll to the section
+        const target = document.querySelector(href);
+        if (target) {
+          target.scrollIntoView({ behavior: 'smooth' });
+        }
+      } else {
+        // If we're on another page, navigate to homepage and then scroll
+        this.navigateTo(`/${href}`);
+      }
+    }
+    
+    this.setActiveLink(href);
+  }
+
+  navigateTo(url) {
+    // Use pushState for better navigation experience
+    if (window.history && window.history.pushState) {
+      window.history.pushState({}, '', url);
+      // Trigger a custom event to notify the app about the route change
+      window.dispatchEvent(new CustomEvent('routechange', { detail: { url } }));
+    } else {
+      // Fallback for older browsers
+      window.location.href = url;
+    }
+  }
+
   bindEvents() {
     window.addEventListener('scroll', Utils.debounce(() => {
       this.handleScroll();
     }, 10));
+
+    // Listen for browser back/forward buttons
+    window.addEventListener('popstate', () => {
+      this.handleRouteChange();
+    });
+
+    // Listen for custom route change events
+    window.addEventListener('routechange', () => {
+      this.handleRouteChange();
+    });
+  }
+
+  handleRouteChange() {
+    const currentPath = window.location.pathname;
+    this.setActiveLink(currentPath);
+    
+    // Update the page content based on the route
+    this.updatePageContent(currentPath);
+  }
+
+  updatePageContent(path) {
+    // This will be handled by the main app router
+    if (window.app && window.app.handleRouteChange) {
+      window.app.handleRouteChange(path);
+    }
   }
 
   handleScroll() {
@@ -153,7 +174,11 @@ class Header extends Component {
   setActiveLink(href) {
     const navLinks = this.element.querySelectorAll('.nav-link');
     navLinks.forEach(link => {
-      link.classList.toggle('active', link.getAttribute('href') === href);
+      const linkHref = link.getAttribute('href');
+      const isActive = (href === linkHref) || 
+                      (href === '/' && linkHref === '#home') ||
+                      (href.startsWith('/') && linkHref === href);
+      link.classList.toggle('active', isActive);
     });
   }
 }
