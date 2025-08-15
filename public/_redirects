@@ -1,0 +1,7 @@
+/about    /about.html   200
+/books    /books.html   200
+/media    /media.html   200
+/contact  /contact.html 200
+/cms      /cms/index.html 200
+/book/*   /book-detail.html 200
+/*        /index.html   200

@@ -23,35 +23,10 @@
     {
       "source": "/book/:id",
       "destination": "/book-detail.html"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
     }
-  ],
-  "redirects": [
-    {
-      "source": "/about/",
-      "destination": "/about",
-      "permanent": true
-    },
-    {
-      "source": "/books/",
-      "destination": "/books",
-      "permanent": true
-    },
-    {
-      "source": "/media/",
-      "destination": "/media",
-      "permanent": true
-    },
-    {
-      "source": "/contact/",
-      "destination": "/contact",
-      "permanent": true
-    },
-    {
-      "source": "/cms/",
-      "destination": "/cms",
-      "permanent": true
-    }
-  ],
-  "trailingSlash": false,
-  "cleanUrls": true
+  ]
 }
