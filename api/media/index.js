@@ -1,4 +1,4 @@
-import clientPromise, { isMongoDBAvailable, getDatabaseName } from './lib/mongodb.js';
+import clientPromise, { isMongoDBAvailable, getDatabaseName } from '../lib/mongodb.js';
 
 // Vercel serverless function for media API
 export default async function handler(req, res) {
@@ -6,6 +6,7 @@ export default async function handler(req, res) {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.setHeader('Content-Type', 'application/json');
 
   if (req.method === 'OPTIONS') {
     res.status(200).end();
