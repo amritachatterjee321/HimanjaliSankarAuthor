@@ -1,0 +1,32 @@
+{
+  "rewrites": [
+    {
+      "source": "/about",
+      "destination": "/about.html"
+    },
+    {
+      "source": "/books",
+      "destination": "/books.html"
+    },
+    {
+      "source": "/media",
+      "destination": "/media.html"
+    },
+    {
+      "source": "/contact",
+      "destination": "/contact.html"
+    },
+    {
+      "source": "/cms",
+      "destination": "/cms/index.html"
+    },
+    {
+      "source": "/book/:id",
+      "destination": "/book-detail.html"
+    },
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}

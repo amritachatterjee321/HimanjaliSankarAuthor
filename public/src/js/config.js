@@ -4,7 +4,7 @@ const CONFIG = {
     name: "HIMANJALI SANKAR"
   },
   api: {
-    baseUrl: 'http://localhost:3000',
+    baseUrl: window.location.hostname === 'localhost' ? 'http://localhost:3000' : '',
     endpoints: {
       books: '/api/books',
       contact: '/api/contact'
