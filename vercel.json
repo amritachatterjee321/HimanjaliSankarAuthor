@@ -25,8 +25,28 @@
       "destination": "/book-detail.html"
     },
     {
-      "source": "/api/(.*)",
-      "destination": "/api/main"
+      "source": "/api/books",
+      "destination": "/api/main?endpoint=books"
+    },
+    {
+      "source": "/api/media",
+      "destination": "/api/main?endpoint=media"
+    },
+    {
+      "source": "/api/social",
+      "destination": "/api/main?endpoint=social"
+    },
+    {
+      "source": "/api/about",
+      "destination": "/api/main?endpoint=about"
+    },
+    {
+      "source": "/api/contact",
+      "destination": "/api/main?endpoint=contact"
+    },
+    {
+      "source": "/api/test",
+      "destination": "/api/main?endpoint=test"
     },
     {
       "source": "/(.*)",

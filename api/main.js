@@ -13,9 +13,10 @@ export default async function handler(req, res) {
     return;
   }
 
-  // Extract the endpoint from the URL path
-  const path = req.url || req.headers['x-vercel-path'] || '';
-  const endpoint = path.split('/').pop() || '';
+  // Get the endpoint from query parameter or default to books
+  const endpoint = req.query.endpoint || 'books';
+  
+  console.log('API called with endpoint:', endpoint, 'query:', req.query);
 
   try {
     if (endpoint === 'books') {
@@ -31,7 +32,9 @@ export default async function handler(req, res) {
     } else if (endpoint === 'test') {
       await handleTest(req, res);
     } else {
-      res.status(404).json({ message: 'Endpoint not found' });
+      // If endpoint not found, try to handle as books (fallback)
+      console.log('Endpoint not found, falling back to books:', endpoint);
+      await handleBooks(req, res);
     }
   } catch (error) {
     console.error('API error:', error);
