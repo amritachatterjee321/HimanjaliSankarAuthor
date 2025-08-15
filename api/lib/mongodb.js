@@ -23,7 +23,20 @@ if (process.env.NODE_ENV === 'development') {
 export default clientPromise
 
 // Export a helper function to check if MongoDB is available
-export const isMongoDBAvailable = () => !!uri;
+export const isMongoDBAvailable = () => {
+  const available = !!uri;
+  console.log('🔍 MongoDB Availability Check:');
+  console.log('  - MONGODB_URI exists:', !!uri);
+  console.log('  - URI length:', uri ? uri.length : 0);
+  console.log('  - Available:', available);
+  return available;
+};
 
 // Export database name
-export const getDatabaseName = () => process.env.DB_NAME || 'Cluster0';
+export const getDatabaseName = () => {
+  const dbName = process.env.DB_NAME || 'Cluster0';
+  console.log('🔍 Database Name Check:');
+  console.log('  - DB_NAME env var:', process.env.DB_NAME);
+  console.log('  - Using database name:', dbName);
+  return dbName;
+};

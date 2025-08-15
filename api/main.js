@@ -16,7 +16,13 @@ export default async function handler(req, res) {
   // Get the endpoint from query parameter or default to books
   const endpoint = req.query.endpoint || 'books';
   
-  console.log('API called with endpoint:', endpoint, 'query:', req.query);
+  console.log('🔍 API Debug Info:');
+  console.log('  - Method:', req.method);
+  console.log('  - URL:', req.url);
+  console.log('  - Endpoint:', endpoint);
+  console.log('  - Query:', req.query);
+  console.log('  - Headers:', req.headers);
+  console.log('  - Body:', req.body);
 
   try {
     if (endpoint === 'books') {
@@ -46,14 +52,23 @@ export default async function handler(req, res) {
 async function handleBooks(req, res) {
   if (req.method === 'GET') {
     try {
+      console.log('📚 Books API called');
+      
       if (!isMongoDBAvailable()) {
-        console.log('MongoDB not configured, using fallback data');
+        console.log('❌ MongoDB not configured, using fallback data');
         return res.status(200).json(getFallbackBooks());
       }
 
+      console.log('✅ MongoDB is available, attempting connection...');
       const client = await clientPromise;
-      const db = client.db(getDatabaseName());
+      console.log('✅ MongoDB client connected');
+      
+      const dbName = getDatabaseName();
+      console.log('📊 Database name:', dbName);
+      
+      const db = client.db(dbName);
       const booksCollection = db.collection('books');
+      console.log('📚 Books collection accessed');
 
       const { id, category, latest } = req.query;
 
