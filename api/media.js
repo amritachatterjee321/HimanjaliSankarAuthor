@@ -1,4 +1,4 @@
-import clientPromise from './lib/mongodb.js';
+import clientPromise, { isMongoDBAvailable, getDatabaseName } from './lib/mongodb.js';
 
 // Vercel serverless function for media API
 export default async function handler(req, res) {
@@ -14,9 +14,15 @@ export default async function handler(req, res) {
 
   if (req.method === 'GET') {
     try {
+      // Check if MongoDB is available
+      if (!isMongoDBAvailable()) {
+        console.log('MongoDB not configured, using fallback data');
+        return res.status(200).json(getFallbackMedia());
+      }
+
       // Connect to MongoDB
       const client = await clientPromise;
-      const db = client.db(process.env.DB_NAME || 'Cluster0');
+      const db = client.db(getDatabaseName());
       const mediaCollection = db.collection('media');
 
       // Check if specific media is requested
@@ -45,31 +51,43 @@ export default async function handler(req, res) {
     } catch (error) {
       console.error('Media API error:', error);
       
-      // Fallback to sample data if database connection fails
-      const fallbackMedia = [
-        {
-          _id: "fallback-media-1",
-          title: "Short story for BLink",
-          type: "short-work",
-          source: "BLink - The Hindu Business Line",
-          url: "https://www.thehindubusinessline.com/blink/cover/pinky-chadha-is-patriotic/article9490451.ece",
-          date: "2024-02-05",
-          description: "A compelling short story exploring themes of patriotism and identity."
-        },
-        {
-          _id: "fallback-media-2",
-          title: "Sample Book Review - Literary Magazine",
-          type: "review",
-          source: "Literary Magazine",
-          url: "https://example.com/review",
-          date: "2024-01-15",
-          description: "A sample book review for testing purposes."
-        }
-      ];
-      
-      res.status(200).json(fallbackMedia);
+      // Always return valid JSON, even on error
+      res.status(200).json(getFallbackMedia());
     }
   } else {
     res.status(405).json({ message: 'Method not allowed' });
   }
+}
+
+// Fallback data function
+function getFallbackMedia() {
+  return [
+    {
+      _id: "fallback-media-1",
+      title: "Short story for BLink",
+      type: "short-work",
+      source: "BLink - The Hindu Business Line",
+      url: "https://www.thehindubusinessline.com/blink/cover/pinky-chadha-is-patriotic/article9490451.ece",
+      date: "2024-02-05",
+      description: "A compelling short story exploring themes of patriotism and identity."
+    },
+    {
+      _id: "fallback-media-2",
+      title: "Sample Book Review - Literary Magazine",
+      type: "review",
+      source: "Literary Magazine",
+      url: "https://example.com/review",
+      date: "2024-01-15",
+      description: "A sample book review for testing purposes."
+    },
+    {
+      _id: "fallback-media-3",
+      title: "Short story for the anthology Behind the Shadows",
+      type: "short-work",
+      source: "Behind the Shadows Anthology",
+      url: "https://example.com/anthology",
+      date: "2022-05-08",
+      description: "A story exploring cultural identity and the human experience across continents."
+    }
+  ];
 }

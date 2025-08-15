@@ -1,4 +1,4 @@
-import clientPromise from './lib/mongodb.js';
+import clientPromise, { isMongoDBAvailable, getDatabaseName } from './lib/mongodb.js';
 
 // Vercel serverless function for books API
 export default async function handler(req, res) {
@@ -14,9 +14,15 @@ export default async function handler(req, res) {
 
   if (req.method === 'GET') {
     try {
+      // Check if MongoDB is available
+      if (!isMongoDBAvailable()) {
+        console.log('MongoDB not configured, using fallback data');
+        return res.status(200).json(getFallbackBooks());
+      }
+
       // Connect to MongoDB
       const client = await clientPromise;
-      const db = client.db(process.env.DB_NAME || 'Cluster0');
+      const db = client.db(getDatabaseName());
       const booksCollection = db.collection('books');
 
       // Check if specific book is requested
@@ -66,27 +72,53 @@ export default async function handler(req, res) {
     } catch (error) {
       console.error('Books API error:', error);
       
-      // Fallback to sample data if database connection fails
-      const fallbackBooks = {
-        adults: [
-          {
-            _id: "fallback-1",
-            title: "The Burnings",
-            year: "2024",
-            shortDescription: "A compelling narrative that explores themes of resilience and hope in the face of adversity.",
-            coverImage: {
-              url: "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=400&h=600&fit=crop"
-            },
-            amazonLink: "https://amazon.com/dp/B0C1234567",
-            category: "adults"
-          }
-        ],
-        children: []
-      };
-      
-      res.status(200).json(fallbackBooks);
+      // Always return valid JSON, even on error
+      res.status(200).json(getFallbackBooks());
     }
   } else {
     res.status(405).json({ message: 'Method not allowed' });
   }
+}
+
+// Fallback data function
+function getFallbackBooks() {
+  return {
+    adults: [
+      {
+        _id: "fallback-1",
+        title: "The Burnings",
+        year: "2024",
+        shortDescription: "A compelling narrative that explores themes of resilience and hope in the face of adversity.",
+        coverImage: {
+          url: "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=400&h=600&fit=crop"
+        },
+        amazonLink: "https://amazon.com/dp/B0C1234567",
+        category: "adults"
+      },
+      {
+        _id: "fallback-2",
+        title: "Echoes of Tomorrow",
+        year: "2023",
+        shortDescription: "A thought-provoking story about the future and human connection.",
+        coverImage: {
+          url: "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=400&h=600&fit=crop"
+        },
+        amazonLink: "https://amazon.com/dp/B0C2345678",
+        category: "adults"
+      }
+    ],
+    children: [
+      {
+        _id: "fallback-3",
+        title: "The Little Explorer",
+        year: "2024",
+        shortDescription: "An adventure story for young readers about discovering the world around them.",
+        coverImage: {
+          url: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=600&fit=crop"
+        },
+        amazonLink: "https://amazon.com/dp/B0C4567890",
+        category: "children"
+      }
+    ]
+  };
 }
