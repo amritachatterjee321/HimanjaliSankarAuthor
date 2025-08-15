@@ -1,142 +1,223 @@
-# MongoDB Setup Guide
+# MongoDB Setup Guide for Vercel
 
-This guide will help you set up MongoDB for your CMS.
+This guide explains how to connect your existing MongoDB database to your Vercel app.
 
-## Prerequisites
+## 🚀 **Quick Setup Steps**
 
-1. **MongoDB Atlas Account** (Recommended)
-   - Sign up at [MongoDB Atlas](https://www.mongodb.com/atlas)
-   - Create a free cluster
-   - Get your connection string
+### **1. Get Your MongoDB Connection String**
 
-2. **Local MongoDB** (Alternative)
-   - Install MongoDB Community Edition
-   - Run locally on `mongodb://localhost:27017`
+1. **Log into MongoDB Atlas** (or your MongoDB provider)
+2. **Go to your cluster** → **Connect**
+3. **Choose "Connect your application"**
+4. **Copy the connection string**
 
-## Environment Variables
-
-Create a `.env` file in your project root with the following variables:
-
-```env
-# MongoDB Configuration
-MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/Cluster0
-DB_NAME=Cluster0
-
-# JWT Configuration
-JWT_SECRET=your-super-secret-jwt-key-change-this-in-production
-
-# Server Configuration
-PORT=3000
-NODE_ENV=development
-
-# Rate Limiting
-RATE_LIMIT_WINDOW_MS=900000
-RATE_LIMIT_MAX_REQUESTS=100
-
-# CORS Configuration
-ALLOWED_ORIGINS=http://localhost:5173,http://localhost:3000
+Your connection string will look like:
+```
+mongodb+srv://username:password@cluster.mongodb.net/database?retryWrites=true&w=majority
 ```
 
-## MongoDB Atlas Setup
+### **2. Set Environment Variables in Vercel**
 
-1. **Create Cluster**
-   - Go to MongoDB Atlas
-   - Click "Build a Database"
-   - Choose "FREE" tier
-   - Select your preferred cloud provider and region
-   - Click "Create"
+1. **Go to your Vercel dashboard**
+2. **Select your project**
+3. **Go to Settings** → **Environment Variables**
+4. **Add these variables:**
 
-2. **Set Up Database Access**
-   - Go to "Database Access" in the left sidebar
-   - Click "Add New Database User"
-   - Create a username and password
-   - Select "Read and write to any database"
-   - Click "Add User"
+| Variable Name | Value | Environment |
+|---------------|-------|-------------|
+| `MONGODB_URI` | `mongodb+srv://username:password@cluster.mongodb.net/database?retryWrites=true&w=majority` | Production |
+| `DB_NAME` | `your_actual_database_name` | Production |
 
-3. **Set Up Network Access**
-   - Go to "Network Access" in the left sidebar
-   - Click "Add IP Address"
-   - Click "Allow Access from Anywhere" (for development)
-   - Click "Confirm"
+### **3. Update Your Connection String**
 
-4. **Get Connection String**
-   - Go to "Database" in the left sidebar
-   - Click "Connect"
-   - Choose "Connect your application"
-   - Copy the connection string
-   - Replace `<password>` with your actual password
-   - Replace `<dbname>` with `Cluster0`
+Replace the placeholder values in your connection string:
+- `username` → Your MongoDB username
+- `password` → Your MongoDB password
+- `cluster.mongodb.net` → Your actual cluster URL
+- `database` → Your actual database name
 
-## Migration
+## 🔧 **Local Development Setup**
 
-Run the migration script to move your existing JSON data to MongoDB:
+### **Option 1: Using .env.local file**
 
+1. **Create `.env.local` file** in your project root:
 ```bash
-node scripts/migrate-to-mongodb.js
+# .env.local
+MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/database?retryWrites=true&w=majority
+DB_NAME=your_database_name
+NODE_ENV=development
 ```
 
-This will:
-- Connect to your MongoDB database
-- Migrate all books, media, author, social, and settings data
-- Create a default admin user from your settings
-- Preserve all your existing data
+2. **Install Vercel CLI:**
+```bash
+npm i -g vercel
+```
 
-## Testing
+3. **Run locally:**
+```bash
+vercel dev
+```
 
-1. **Start the server:**
-   ```bash
-   npm run server:dev
-   ```
+### **Option 2: Using Vercel CLI**
 
-2. **Access the CMS:**
-   - Go to `http://localhost:3000/cms`
-   - Login with your credentials
+1. **Link your project:**
+```bash
+vercel link
+```
 
-3. **Verify data:**
-   - Check that all your books, media, and other data are present
-   - Test creating, editing, and deleting items
+2. **Pull environment variables:**
+```bash
+vercel env pull .env.local
+```
 
-## Troubleshooting
+3. **Run locally:**
+```bash
+vercel dev
+```
 
-### Connection Issues
-- Verify your MongoDB URI is correct
-- Check that your IP is whitelisted (for Atlas)
-- Ensure your database user has proper permissions
+## 🗄️ **Database Collections Structure**
 
-### Migration Issues
-- Make sure your JSON files are valid
-- Check that the database connection is working
-- Verify all required environment variables are set
+Your MongoDB database should have these collections:
 
-### Authentication Issues
-- Ensure JWT_SECRET is set
-- Check that the migration created a user properly
-- Verify username/password in your settings.json
+### **Books Collection**
+```json
+{
+  "_id": "book-1",
+  "title": "The Burnings",
+  "year": "2024",
+  "shortDescription": "A compelling narrative...",
+  "coverImage": {
+    "url": "https://example.com/cover.jpg"
+  },
+  "amazonLink": "https://amazon.com/dp/B0C1234567",
+  "category": "adults"
+}
+```
 
-## Security Notes
+### **Media Collection**
+```json
+{
+  "_id": "media-1",
+  "title": "Short story for BLink",
+  "type": "short-work",
+  "source": "BLink - The Hindu Business Line",
+  "url": "https://example.com/story",
+  "date": "2024-02-05",
+  "description": "A compelling short story..."
+}
+```
 
-1. **Change the JWT_SECRET** to a strong, unique key
-2. **Use environment variables** for all sensitive data
-3. **Restrict network access** in production
-4. **Use strong passwords** for database users
-5. **Enable MongoDB authentication** in production
+### **Social Media Collection**
+```json
+{
+  "_id": "social-1",
+  "name": "Instagram",
+  "url": "https://instagram.com/himanjalisankar",
+  "icon": "I",
+  "active": true
+}
+```
 
-## Production Deployment
+## 🔒 **Security Best Practices**
 
-For production deployment:
+### **1. Network Access**
+- **Whitelist Vercel IPs** in MongoDB Atlas
+- **Or use 0.0.0.0/0** for development (not recommended for production)
 
-1. **Use MongoDB Atlas** (recommended) or a managed MongoDB service
-2. **Set NODE_ENV=production**
-3. **Use a strong JWT_SECRET**
-4. **Restrict CORS origins** to your actual domain
-5. **Set up proper rate limiting**
-6. **Use HTTPS** for all connections
-7. **Regular backups** of your database
+### **2. Database User**
+- **Create a dedicated user** for your Vercel app
+- **Use strong passwords**
+- **Limit permissions** to only what's needed
 
-## Support
+### **3. Environment Variables**
+- **Never commit** `.env.local` to git
+- **Use Vercel dashboard** for production secrets
+- **Rotate passwords** regularly
 
-If you encounter issues:
-1. Check the console logs for error messages
-2. Verify your MongoDB connection string
-3. Ensure all environment variables are set correctly
-4. Check that your JSON data is valid before migration 
+## 🧪 **Testing Your Connection**
+
+### **1. Test API Endpoints**
+Visit these URLs to test your MongoDB connection:
+- `/api/books` - Should return books from database
+- `/api/media` - Should return media from database
+- `/api/social` - Should return social media from database
+
+### **2. Check Vercel Logs**
+1. **Go to Vercel dashboard**
+2. **Select your project**
+3. **Go to Functions** → **View logs**
+4. **Look for MongoDB connection errors**
+
+### **3. Common Error Messages**
+
+| Error | Solution |
+|-------|----------|
+| `MongoNetworkError: connect ECONNREFUSED` | Check MongoDB URI and network access |
+| `MongoServerSelectionError: getaddrinfo ENOTFOUND` | Verify cluster hostname |
+| `MongoError: Authentication failed` | Check username/password |
+| `MongoError: Database does not exist` | Verify database name |
+
+## 🚀 **Deployment Checklist**
+
+- [ ] MongoDB connection string configured in Vercel
+- [ ] Database name set correctly
+- [ ] Network access configured (IP whitelist)
+- [ ] Database user has correct permissions
+- [ ] Collections exist with proper structure
+- [ ] API endpoints tested locally
+- [ ] Environment variables deployed to Vercel
+
+## 🔄 **Updating Data**
+
+### **Option 1: Direct Database Updates**
+- Use MongoDB Compass or Atlas interface
+- Update documents directly in collections
+
+### **Option 2: Create Admin API Endpoints**
+- Add POST/PUT endpoints for data management
+- Implement authentication for admin access
+- Use these endpoints to update content
+
+### **Option 3: CMS Integration**
+- Connect to headless CMS like Contentful
+- Use webhooks to sync data changes
+- Maintain content through CMS interface
+
+## 📊 **Monitoring & Performance**
+
+### **Vercel Dashboard**
+- Monitor function execution times
+- Check error rates
+- View request volumes
+
+### **MongoDB Atlas**
+- Monitor connection pool usage
+- Check query performance
+- Set up alerts for issues
+
+## 🆘 **Troubleshooting**
+
+### **Connection Issues**
+1. **Verify connection string** format
+2. **Check network access** settings
+3. **Confirm database user** permissions
+4. **Test connection** locally first
+
+### **Performance Issues**
+1. **Add database indexes** for frequently queried fields
+2. **Implement connection pooling** (already done)
+3. **Use projection** to limit returned fields
+4. **Add caching** for static data
+
+### **Data Issues**
+1. **Verify collection names** match your code
+2. **Check document structure** matches expected format
+3. **Validate data types** (especially ObjectIds)
+4. **Test queries** in MongoDB shell first
+
+## 📚 **Additional Resources**
+
+- [MongoDB Atlas Documentation](https://docs.atlas.mongodb.com/)
+- [Vercel Environment Variables](https://vercel.com/docs/concepts/projects/environment-variables)
+- [MongoDB Node.js Driver](https://docs.mongodb.com/drivers/node/)
+- [Vercel Serverless Functions](https://vercel.com/docs/concepts/functions) 

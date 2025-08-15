@@ -285,7 +285,7 @@ class CMS {
             this.books = (response.books || []).map(book => {
                 // Ensure consistent ID handling - always use _id as the primary identifier
                 const bookWithConsistentId = {
-                    ...book,
+                ...book,
                     _id: book._id || book.id, // Ensure _id is always present
                     id: book._id || book.id   // Keep id for backward compatibility
                 };
@@ -312,10 +312,10 @@ class CMS {
             console.log('📰 Response keys:', Object.keys(response));
             
             if (response && response.media) {
-                this.media = (response.media || []).map(media => ({
-                    ...media,
-                    id: media._id || media.id
-                }));
+            this.media = (response.media || []).map(media => ({
+                ...media,
+                id: media._id || media.id
+            }));
                 console.log('📰 Processed media data:', this.media);
                 console.log('📰 Media count:', this.media.length);
             } else {
@@ -412,7 +412,7 @@ class CMS {
     renderMedia() {
         const list = document.getElementById('media-list');
         list.innerHTML = '';
-        
+
         this.media.forEach(item => {
             const mediaItem = document.createElement('div');
             mediaItem.className = 'media-item';
@@ -449,11 +449,11 @@ class CMS {
             
             list.appendChild(mediaItem);
         });
-        
+
         this.bindMediaEvents();
     }
 
-           populateAuthorForm() {
+    populateAuthorForm() {
            // Populate bio fields - handle rich text editor
            const bioEditor = document.getElementById('author-bio-editor');
            const bioTextarea = document.getElementById('author-bio');
@@ -469,7 +469,7 @@ class CMS {
                bioTextarea.value = this.author.bio || '';
            }
            
-           document.getElementById('author-awards').value = Array.isArray(this.author.awards) ? this.author.awards.join('\n') : '';
+        document.getElementById('author-awards').value = Array.isArray(this.author.awards) ? this.author.awards.join('\n') : '';
 
            // Show current author image if it exists
            const imagePreview = document.getElementById('author-image-preview');
@@ -489,7 +489,7 @@ class CMS {
            setTimeout(() => {
                this.initRichTextEditor();
            }, 100);
-       }
+    }
 
     populateSocialForm(social) {
         document.getElementById('instagram-url').value = social.instagram || '';
@@ -557,7 +557,7 @@ class CMS {
         // Reset form
         form.reset();
         form.dataset.mediaId = '';
-        
+
         if (media) {
             title.textContent = 'Edit Media Item';
             form.dataset.mediaId = media._id || media.id;
@@ -570,7 +570,7 @@ class CMS {
         } else {
             title.textContent = 'Add New Media Item';
         }
-        
+
         modal.classList.remove('hidden');
     }
 
@@ -978,7 +978,7 @@ class CMS {
             date: document.getElementById('media-date').value,
             description: document.getElementById('media-description').value.trim() || null
         };
-        
+
         try {
             if (mediaId) {
                 // Update existing media
@@ -998,8 +998,8 @@ class CMS {
         }
     }
 
-           async saveAuthor() {
-           const form = document.getElementById('author-form');
+    async saveAuthor() {
+        const form = document.getElementById('author-form');
            const authorImageFile = document.getElementById('author-image').files[0];
 
            // Get form values - handle rich text editor
@@ -1012,11 +1012,11 @@ class CMS {
                this.showNotification('Full bio is required', 'error');
                return;
            }
-
-           const authorData = {
+        
+        const authorData = {
                bio: bio,
                awards: awards
-           };
+        };
 
         try {
             // First save the author data

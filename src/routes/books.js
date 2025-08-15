@@ -62,10 +62,10 @@ router.get('/', async (req, res) => {
       books = await booksCollection.find({}).sort({ createdAt: -1 }).toArray();
       
       // Get homepage configuration from CMS
-      try {
-        const homepageConfigCollection = database.getHomepageConfigCollection();
-        const homepageConfig = await homepageConfigCollection.findOne({});
-        
+    try {
+      const homepageConfigCollection = database.getHomepageConfigCollection();
+      const homepageConfig = await homepageConfigCollection.findOne({});
+      
         if (homepageConfig) {
           console.log('✅ Found homepage configuration from CMS:', {
             featuredBook: homepageConfig.featuredBook,
@@ -78,25 +78,25 @@ router.get('/', async (req, res) => {
               book._id?.toString() === homepageConfig.featuredBook || 
               book.id === homepageConfig.featuredBook
             );
-            
-            if (featuredBook) {
+        
+        if (featuredBook) {
               console.log('✅ Found featured book from CMS config:', featuredBook.title);
-              featuredBookData = {
+          featuredBookData = {
                 id: featuredBook._id?.toString() || featuredBook.id,
-                title: featuredBook.title,
+            title: featuredBook.title,
                 subtitle: "Latest Release",
-                description: featuredBook.description,
+            description: featuredBook.description,
                 shortDescription: featuredBook.shortDescription || featuredBook.description?.substring(0, 200),
                 year: featuredBook.year,
                 genre: featuredBook.genre,
                 category: featuredBook.category,
-                amazonLink: featuredBook.amazonLink,
+            amazonLink: featuredBook.amazonLink,
                 awards: featuredBook.awards || [],
                 reviews: featuredBook.reviews || [],
                 coverImage: featuredBook.coverImage,
                 coverClass: featuredBook.coverClass
-              };
-            } else {
+                };
+              } else {
               console.log('⚠️ Featured book from CMS config not found in books collection');
             }
           }
@@ -200,7 +200,7 @@ router.get('/latest', async (req, res) => {
       if (homepageConfig && homepageConfig.featuredBook) {
         // Get the featured book from the books collection
         const booksCollection = database.getBooksCollection();
-        const featuredBook = await booksCollection.findOne({
+        const featuredBook = await booksCollection.findOne({ 
           $or: [
             { _id: new ObjectId(homepageConfig.featuredBook) },
             { id: homepageConfig.featuredBook }
@@ -209,7 +209,7 @@ router.get('/latest', async (req, res) => {
         
         if (featuredBook) {
           console.log('✅ Using CMS homepage config for featured book:', featuredBook.title);
-                    const transformedLatest = {
+          const transformedLatest = {
             id: featuredBook._id?.toString() || featuredBook.id,
             title: featuredBook.title,
             subtitle: "Latest Release",
