@@ -23,16 +23,58 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3001;
 
 // Initialize database connection
 async function initializeDatabase() {
   try {
-    await database.connect();
-    await cmsService.init();
-    console.log('✅ Database initialized successfully');
+    // Check if we're in development mode and should skip MongoDB
+    if (process.env.NODE_ENV === 'development' && process.env.SKIP_MONGODB === 'true') {
+      console.log('⚠️ Development mode: Skipping MongoDB connection');
+      console.log('💡 To enable MongoDB:');
+      console.log('   1. Set SKIP_MONGODB=false in your .env file');
+      console.log('   2. Or use local MongoDB: MONGODB_URI=mongodb://127.0.0.1:27017');
+      return;
+    }
+    
+    try {
+      await database.connect();
+      await cmsService.init();
+      console.log('✅ Database initialized successfully');
+    } catch (dbError) {
+      console.error('❌ Database connection failed:', dbError.message);
+      
+      // In development mode, continue without database
+      if (process.env.NODE_ENV === 'development') {
+        console.log('⚠️ Development mode: Continuing without database connection');
+        console.log('📝 Note: Some features may not work without MongoDB');
+        console.log('🔧 To fix MongoDB connection:');
+        console.log('   1. Check your MongoDB Atlas network access settings');
+        console.log('   2. Verify your connection string in .env file');
+        console.log('   3. Try using a local MongoDB installation');
+        console.log('   4. Or set SKIP_MONGODB=true to skip database entirely');
+        return;
+      }
+      
+      // Re-throw error for production mode
+      throw dbError;
+    }
   } catch (error) {
     console.error('❌ Database initialization failed:', error);
+    
+    // In development mode, allow the server to start without MongoDB
+    if (process.env.NODE_ENV === 'development') {
+      console.log('⚠️ Development mode: Continuing without database connection');
+      console.log('📝 Note: Some features may not work without MongoDB');
+      console.log('🔧 To fix MongoDB connection:');
+      console.log('   1. Check your MongoDB Atlas network access settings');
+      console.log('   2. Verify your connection string in .env file');
+      console.log('   3. Try using a local MongoDB installation');
+      return;
+    }
+    
+    // Only exit in production mode
+    console.error('❌ Production mode: Cannot continue without database');
     process.exit(1);
   }
 }
@@ -65,7 +107,7 @@ app.use(limiter);
 
 // CORS configuration
 const corsOptions = {
-  origin: process.env.ALLOWED_ORIGINS?.split(',') || ['http://localhost:5173'],
+  origin: process.env.ALLOWED_ORIGINS?.split(',') || ['http://localhost:5173', 'http://localhost:3000'],
   credentials: true
 };
 app.use(cors(corsOptions));
@@ -84,6 +126,28 @@ app.use('/api/books', booksRoutes);
 app.use('/api/cms', cmsRoutes);
 app.use('/api/about', aboutRoutes);
 
+// Public social media endpoint (no authentication required)
+app.get('/api/social', async (req, res) => {
+  try {
+    const social = await cmsService.getSocial();
+    res.json({ social });
+  } catch (error) {
+    console.error('Error reading social media:', error);
+    res.status(500).json({ error: 'Failed to load social links' });
+  }
+});
+
+// Public media endpoint (no authentication required)
+app.get('/api/media', async (req, res) => {
+  try {
+    const media = await cmsService.getAllMedia();
+    res.json({ media });
+  } catch (error) {
+    console.error('Error reading media:', error);
+    res.status(500).json({ error: 'Failed to load media' });
+  }
+});
+
 // Serve static files (including favicon)
 app.use(express.static(join(__dirname, 'public'), {
   setHeaders: (res, path) => {
@@ -92,6 +156,9 @@ app.use(express.static(join(__dirname, 'public'), {
     }
   }
 }));
+
+// Serve uploaded files
+app.use('/uploads', express.static(join(__dirname, 'public', 'uploads')));
 
 // Serve data files
 app.use('/data', express.static(join(__dirname, 'data')));
@@ -115,6 +182,26 @@ app.get('/books', (req, res) => {
   res.sendFile(join(__dirname, 'public', 'books.html'));
 });
 
+// Book detail page route
+app.get('/book-detail', (req, res) => {
+  res.sendFile(join(__dirname, 'public', 'book-detail.html'));
+});
+
+// Individual book page route
+app.get('/book/:id', (req, res) => {
+  res.sendFile(join(__dirname, 'public', 'book-detail.html'));
+});
+
+// Test page route
+app.get('/test', (req, res) => {
+  res.sendFile(join(__dirname, 'test-book-detail.html'));
+});
+
+// Simple test page route
+app.get('/test-simple', (req, res) => {
+  res.sendFile(join(__dirname, 'public', 'test-simple.html'));
+});
+
 // Media page route
 app.get('/media', (req, res) => {
   res.sendFile(join(__dirname, 'public', 'media.html'));
@@ -133,13 +220,9 @@ if (process.env.NODE_ENV === 'production') {
     res.sendFile(join(__dirname, 'dist', 'index.html'));
   });
 } else {
-  // Development route
+  // Development route - serve the main index.html
   app.get('/', (req, res) => {
-    res.json({ 
-      message: 'Himanjali Sankar Author Website API',
-      version: process.env.npm_package_version || '1.0.0',
-      environment: process.env.NODE_ENV || 'development'
-    });
+    res.sendFile(join(__dirname, 'public', 'index.html'));
   });
 }
 

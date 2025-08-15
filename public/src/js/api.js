@@ -5,10 +5,17 @@ class ApiService {
   }
 
   async request(endpoint, options = {}) {
-    const url = `${this.baseUrl}${endpoint}`;
+    // Add cache-busting parameter to prevent browser caching
+    const cacheBuster = `_t=${Date.now()}`;
+    const separator = endpoint.includes('?') ? '&' : '?';
+    const url = `${this.baseUrl}${endpoint}${separator}${cacheBuster}`;
+    
     const config = {
       headers: {
         'Content-Type': 'application/json',
+        'Cache-Control': 'no-cache, no-store, must-revalidate',
+        'Pragma': 'no-cache',
+        'Expires': '0',
         ...options.headers
       },
       ...options
@@ -59,9 +66,14 @@ class ApiService {
     return this.request('/api/about');
   }
 
+  // Social Media API
+  async getSocialMedia() {
+    return this.request('/api/social');
+  }
+
   // Media API
   async getMedia() {
-    return this.request('/api/cms/media');
+    return this.request('/api/media');
   }
 }
 

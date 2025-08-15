@@ -10,24 +10,83 @@ class LatestBook extends Component {
     super(container, eventBus);
     this.apiService = apiService;
     this.bookData = null;
+    this.refreshInterval = null;
+    this.lastUpdateTime = null;
   }
 
   async fetchData() {
     try {
-      this.bookData = await this.apiService.getLatestBook();
+      console.log('🔄 Fetching latest book data...');
+      const newData = await this.apiService.getLatestBook();
+      console.log('📖 Received data:', newData);
+      console.log('📖 Short description:', newData.shortDescription);
+      console.log('📖 Awards:', newData.awards);
+      console.log('📖 Reviews:', newData.reviews);
+      
+      // Check if data has actually changed
+      if (this.hasDataChanged(newData)) {
+        console.log('🔄 New book data detected, updating display...');
+        console.log('Old data:', this.bookData);
+        console.log('New data:', newData);
+        this.bookData = newData;
+        this.lastUpdateTime = new Date();
+        this.render(); // Re-render with new data
+      } else {
+        console.log('📖 No changes detected in book data');
+      }
+      
+      return newData;
     } catch (error) {
       console.error('Failed to fetch latest book:', error);
-      // Fallback to static data
-      this.bookData = {
-        title: "Echoes of Tomorrow",
-        subtitle: "Latest Release",
-        genre: "A Novel",
-        description: "A compelling exploration of memory, time, and the choices that define us.",
-        publicationYear: "2024",
-        publisher: "Literary Press",
-        amazonLink: "https://amazon.com/echoes-tomorrow",
-        pages: "324"
-      };
+      // Don't overwrite existing data on error
+      if (!this.bookData) {
+        // Fallback to static data only if no data exists
+        this.bookData = {
+          title: "Echoes of Tomorrow",
+          subtitle: "Latest Release",
+          genre: "A Novel",
+          description: "A compelling exploration of memory, time, and the choices that define us.",
+          publicationYear: "2024",
+          publisher: "Literary Press",
+          amazonLink: "https://amazon.com/echoes-tomorrow",
+          pages: "324"
+        };
+      }
+    }
+  }
+
+  hasDataChanged(newData) {
+    if (!this.bookData) return true;
+    
+    // Compare key fields to detect changes
+    const fieldsToCompare = ['title', 'subtitle', 'genre', 'description', 'publicationYear', 'publisher'];
+    const hasChanges = fieldsToCompare.some(field => {
+      const oldValue = this.bookData[field];
+      const newValue = newData[field];
+      if (oldValue !== newValue) {
+        console.log(`🔄 Field "${field}" changed:`, { old: oldValue, new: newValue });
+        return true;
+      }
+      return false;
+    });
+    
+    return hasChanges;
+  }
+
+  startAutoRefresh() {
+    // Refresh every 30 seconds to check for CMS updates
+    this.refreshInterval = setInterval(async () => {
+      await this.fetchData();
+    }, 30000); // 30 seconds
+    
+    console.log('🔄 Auto-refresh enabled: checking for CMS updates every 30 seconds');
+  }
+
+  stopAutoRefresh() {
+    if (this.refreshInterval) {
+      clearInterval(this.refreshInterval);
+      this.refreshInterval = null;
+      console.log('🔄 Auto-refresh disabled');
     }
   }
 
@@ -52,29 +111,35 @@ class LatestBook extends Component {
       className: 'latest-book-image'
     });
 
+    // Use dynamic cover class from CMS data, fallback to 'featured'
+    const coverClass = this.bookData.coverClass || 'featured';
+    
     const bookCover = Utils.createElement('div', {
-      className: 'book-cover-large featured'
+      className: `book-cover-large ${coverClass} clickable`
     });
 
-    const genre = Utils.createElement('div', {
-      className: 'book-genre-large',
-      innerHTML: this.bookData.genre
-    });
+    // Add actual cover image if available from CMS
+    if (this.bookData.coverImage && this.bookData.coverImage.url) {
+      const coverImg = Utils.createElement('img', {
+        src: this.bookData.coverImage.url,
+        alt: `${this.bookData.title} cover`,
+        className: 'book-cover-image'
+      });
+      bookCover.appendChild(coverImg);
+      
+      // Add has-cover-image class for styling
+      bookCover.classList.add('has-cover-image');
+    }
 
-    const title = Utils.createElement('h1', {
-      className: 'book-title-large',
-      innerHTML: this.bookData.title
-    });
-
-    const author = Utils.createElement('div', {
-      className: 'book-author-large',
-      innerHTML: CONFIG.author.name
-    });
-
-    bookCover.appendChild(genre);
-    bookCover.appendChild(title);
-    bookCover.appendChild(author);
+    // Remove all text overlays - no more genre, title, or author text on covers
     imageContainer.appendChild(bookCover);
+
+    // Make cover clickable
+    bookCover.style.cursor = 'pointer';
+    bookCover.addEventListener('click', () => {
+      const bookId = this.bookData.id || 'latest';
+      window.location.href = `/book-detail.html?id=${bookId}`;
+    });
 
     // Book Content
     const content = Utils.createElement('div', {
@@ -83,55 +148,107 @@ class LatestBook extends Component {
 
     const subtitle = Utils.createElement('div', {
       className: 'book-subtitle',
-      innerHTML: this.bookData.subtitle
+      innerHTML: 'Latest Release'
     });
 
     const bookTitle = Utils.createElement('h2', {
-      innerHTML: this.bookData.title
+      innerHTML: this.bookData.title,
+      className: 'clickable'
     });
+
+    // Make title clickable
+    bookTitle.style.cursor = 'pointer';
+    bookTitle.addEventListener('click', () => {
+      const bookId = this.bookData.id || 'latest';
+      window.location.href = `/book-detail.html?id=${bookId}`;
+    });
+
+    // Add awards above description if available
+    let awardsSection = null;
+    if (this.bookData.awards && Array.isArray(this.bookData.awards) && this.bookData.awards.length > 0) {
+      awardsSection = Utils.createElement('div', {
+        className: 'book-awards'
+      });
+      
+      const awardsList = Utils.createElement('ul', {
+        className: 'awards-list'
+      });
+      
+      this.bookData.awards.forEach(award => {
+        const awardItem = Utils.createElement('li', {
+          className: 'award-item',
+          innerHTML: award
+        });
+        awardsList.appendChild(awardItem);
+      });
+      
+      awardsSection.appendChild(awardsList);
+    }
 
     const description = Utils.createElement('p', {
       className: 'book-description',
-      innerHTML: this.bookData.description
+      innerHTML: this.bookData.shortDescription || this.bookData.description
     });
 
-    const meta = Utils.createElement('div', {
-      className: 'book-meta'
-    });
-
-    const metaItems = [
-      { label: 'Published', value: this.bookData.publicationYear },
-      { label: 'Publisher', value: this.bookData.publisher },
-      { label: 'Pages', value: this.bookData.pages }
-    ];
-
-    metaItems.forEach(item => {
-      const metaItem = Utils.createElement('div', {
-        className: 'book-meta-item',
-        innerHTML: `<strong>${item.label}:</strong> ${item.value}`
-      });
-      meta.appendChild(metaItem);
-    });
-
+    // Create buy button with fallback if no Amazon link
+    const amazonLink = this.bookData.amazonLink || '#';
+    console.log('🛒 Creating buy button with Amazon link:', amazonLink);
+    
     const buyButton = Utils.createElement('a', {
-      href: this.bookData.amazonLink,
+      href: amazonLink,
       className: 'buy-button',
       target: '_blank',
       innerHTML: 'Buy Now on Amazon',
       onClick: (e) => {
+        if (!this.bookData.amazonLink) {
+          e.preventDefault();
+          console.log('⚠️ No Amazon link available, showing notification');
+          if (window.app && window.app.notificationSystem) {
+            window.app.notificationSystem.show(
+              'Amazon link not available yet',
+              'warning',
+              'Purchase'
+            );
+          }
+          return;
+        }
+        
         // Track the purchase click
-        window.app.notificationSystem.show(
-          'Redirecting to Amazon...',
-          'info',
-          'Purchase'
-        );
+        console.log('🛒 Redirecting to Amazon:', this.bookData.amazonLink);
+        if (window.app && window.app.notificationSystem) {
+          window.app.notificationSystem.show(
+            'Redirecting to Amazon...',
+            'info',
+            'Purchase'
+          );
+        }
       }
     });
 
+    // Add some debugging styles to ensure button is visible
+    buyButton.style.cssText = `
+      background: #9b6b9e !important;
+      color: #ffffff !important;
+      border: 2px solid #9b6b9e !important;
+      border-radius: 8px !important;
+      padding: 20px 45px !important;
+      font-size: 16px !important;
+      font-weight: 700 !important;
+      text-decoration: none !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      gap: 15px !important;
+      cursor: pointer !important;
+      margin-top: 10px !important;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.08) !important;
+    `;
+
     content.appendChild(subtitle);
     content.appendChild(bookTitle);
+    if (awardsSection) {
+      content.appendChild(awardsSection);
+    }
     content.appendChild(description);
-    content.appendChild(meta);
     content.appendChild(buyButton);
 
     container.appendChild(imageContainer);
@@ -143,7 +260,13 @@ class LatestBook extends Component {
 
   async mount() {
     await this.fetchData();
+    this.startAutoRefresh(); // Start auto-refresh on mount
     return super.mount();
+  }
+
+  destroy() {
+    this.stopAutoRefresh(); // Clean up interval when component is destroyed
+    super.destroy();
   }
 
   bindEvents() {

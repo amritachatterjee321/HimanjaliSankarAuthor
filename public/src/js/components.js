@@ -101,6 +101,9 @@ class Header extends Component {
           } else if (item.href === '/contact') {
             // Navigate to the Contact page
             window.location.href = '/contact';
+          } else if (item.href === '/cms') {
+            // Navigate to the Admin Dashboard
+            window.location.href = '/cms';
           } else if (item.href.startsWith('#')) {
             // Handle other anchor links (like #contact)
             if (window.location.pathname === '/' || window.location.pathname === '/index.html') {

@@ -3,7 +3,7 @@ import ApiService from './api.js';
 import Utils from './utils.js';
 import { EventEmitter, NotificationSystem } from './services.js';
 import { Header } from './components.js';
-import { About } from './app-components.js';
+import { About, Footer } from './app-components.js';
 
 // About Page Component
 class AboutPage {
@@ -60,6 +60,7 @@ class AboutPage {
     // Initialize components
     this.components.set('header', new Header(header, this.eventBus));
     this.components.set('about', new About(main, this.eventBus, this.apiService));
+    this.components.set('footer', new Footer(footer, this.eventBus));
   }
 
   async mountComponents() {

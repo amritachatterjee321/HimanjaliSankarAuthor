@@ -32,8 +32,8 @@
 
 .book-cover-large {
   width: 100%;
-  max-width: 450px;
-  height: 650px;
+  max-width: 400px;
+  height: 600px;
   border-radius: $border-radius;
   box-shadow: $shadow-heavy;
   transition: $transition;
@@ -47,68 +47,105 @@
   position: relative;
   overflow: hidden;
 
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: linear-gradient(135deg, transparent 0%, rgba(0,0,0,0.2) 100%);
-    pointer-events: none;
-  }
+  // Remove the overlay gradient
+  // &::before {
+  //   content: '';
+  //   position: absolute;
+  //   top: 0;
+  //   left: 0;
+  //   right: 0;
+  //   bottom: 0;
+  //   background: linear-gradient(135deg, transparent 0%, rgba(0,0,0,var(--overlay-opacity, 0.2)) 100%);
+  //   pointer-events: none;
+  // }
 
   &:hover {
     transform: scale(1.02) rotate(-1deg);
     box-shadow: 0 25px 60px rgba(0,0,0,0.3);
   }
 
+  &.clickable {
+    cursor: pointer;
+    
+    &:hover {
+      transform: scale(1.02) rotate(-1deg);
+      box-shadow: 0 25px 60px rgba(0,0,0,0.3);
+    }
+  }
+
   &.featured {
     background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  }
+  
+  // When cover image is present, adjust layout for clean display
+  &.has-cover-image {
+    padding: 0; // Remove padding when image is present
+    
+    .book-cover-image {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 1;
+    }
+    
+    // Remove the cover content overlay completely
+    // .book-cover-content {
+    //   position: relative;
+    //   z-index: 2;
+    //   background: rgba(0, 0, 0, 0.7);
+    //   padding: 15px;
+    //   border-radius: $border-radius;
+    //   margin-top: auto;
+    // }
   }
 
   @media (max-width: $tablet) {
     max-width: 350px;
-    height: 500px;
+    height: 525px;
   }
 
   @media (max-width: $mobile) {
-    height: 400px;
+    max-width: 300px;
+    height: 450px;
   }
 }
 
-.book-genre-large {
-  font-family: $font-sans;
-  font-size: 14px;
-  text-transform: uppercase;
-  letter-spacing: 2px;
-  opacity: 0.9;
-  margin-bottom: 20px;
-  position: relative;
-  z-index: 1;
-}
+// Remove the text overlay styles since they're no longer used
+// .book-genre-large {
+//   font-family: $font-sans;
+//   font-size: 14px;
+//   text-transform: uppercase;
+//   letter-spacing: 2px;
+//   opacity: 0.9;
+//   margin-bottom: 20px;
+//   position: relative;
+//   z-index: 1;
+// }
 
-.book-title-large {
-  font-size: 3.2em;
-  font-weight: 700;
-  margin-bottom: 20px;
-  line-height: 1.1;
-  position: relative;
-  z-index: 1;
+// .book-title-large {
+//   font-size: 3.2em;
+//   font-weight: 700;
+//   margin-bottom: 20px;
+//   line-height: 1.1;
+//   position: relative;
+//   z-index: 1;
 
-  @media (max-width: $tablet) {
-    font-size: 2.2em;
-  }
-}
+//   @media (max-width: $tablet) {
+//     font-size: 2.2em;
+//   }
+// }
 
-.book-author-large {
-  font-family: $font-sans;
-  font-size: 1.4em;
-  font-weight: 600;
-  margin-top: auto;
-  position: relative;
-  z-index: 1;
-}
+// .book-author-large {
+//   font-family: $font-sans;
+//   font-size: 1.4em;
+//   font-weight: 600;
+//   margin-top: auto;
+//   position: relative;
+//   z-index: 1;
+// }
 
 .latest-book-content {
   h2 {
@@ -244,5 +281,322 @@
 
   @media (max-width: $mobile) {
     grid-template-columns: 1fr;
+  }
+}
+
+/* Book Detail Page Styles */
+.book-detail-section {
+  background: $white;
+  padding: 80px 20px;
+  min-height: 70vh;
+
+  @media (max-width: $mobile) {
+    padding: 50px 15px;
+  }
+}
+
+.book-detail-container {
+  max-width: $large;
+  margin: 0 auto;
+}
+
+.back-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: $primary-color;
+  text-decoration: none;
+  font-weight: 500;
+  margin-bottom: 40px;
+  transition: color 0.3s ease;
+  
+  &:hover {
+    color: $accent-color;
+  }
+  
+  i {
+    font-size: 14px;
+  }
+}
+
+.book-detail-header {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  align-items: start;
+  margin-bottom: 60px;
+
+  @media (max-width: $tablet) {
+    grid-template-columns: 1fr;
+    gap: 50px;
+    text-align: center;
+  }
+}
+
+.book-detail-cover {
+  .book-cover-large {
+    width: 100%;
+    max-width: 400px;
+    height: 600px;
+    margin: 0 auto;
+  }
+}
+
+.book-detail-basic-info {
+  .book-detail-title {
+    font-family: $font-serif;
+    font-size: 2.5rem;
+    color: $secondary-color;
+    margin-bottom: 15px;
+    line-height: 1.2;
+
+    @media (max-width: $tablet) {
+      font-size: 2rem;
+    }
+  }
+
+  .book-detail-subtitle {
+    font-family: $font-serif;
+    font-size: 1.3rem;
+    color: $primary-color;
+    margin-bottom: 25px;
+    font-style: italic;
+  }
+
+  .book-detail-meta {
+    margin-bottom: 30px;
+  }
+
+  .book-detail-meta-item {
+    font-family: $font-sans;
+    font-size: 14px;
+    color: $gray-medium;
+    margin-bottom: 10px;
+
+    strong {
+      color: $secondary-color;
+    }
+  }
+
+  .buy-button.large {
+    padding: 15px 30px;
+    font-size: 1.1rem;
+    font-weight: 600;
+  }
+}
+
+.book-detail-description {
+  margin-bottom: 60px;
+
+  h3 {
+    font-family: $font-serif;
+    font-size: 1.8rem;
+    color: $secondary-color;
+    margin-bottom: 20px;
+  }
+
+  .book-detail-description-text {
+    font-size: 1.1rem;
+    line-height: 1.7;
+    color: $gray-medium;
+  }
+}
+
+// When description is inside basic info section
+.book-detail-basic-info .book-detail-description {
+  margin-top: 30px;
+  margin-bottom: 40px;
+}
+
+.book-detail-awards {
+  margin-bottom: 30px;
+
+  .awards-list {
+    list-style: none;
+    padding: 0;
+
+    li {
+      font-size: 1.2rem;
+      color: $secondary-color;
+      font-weight: 600;
+      padding: 8px 0;
+      border-bottom: 1px solid $gray-light;
+      
+      &:last-child {
+        border-bottom: none;
+      }
+    }
+  }
+}
+
+.book-detail-reviews {
+  margin-bottom: 30px;
+
+  .reviews-list {
+    .review-item {
+      margin-bottom: 20px;
+
+      .review-text {
+        font-size: 1.1rem;
+        line-height: 1.6;
+        color: $gray-medium;
+        font-style: italic;
+        margin-bottom: 15px;
+      }
+
+      .review-source {
+        font-weight: 600;
+        color: $secondary-color;
+        margin-bottom: 10px;
+        
+        &.clickable {
+          text-decoration: none;
+          transition: color 0.3s ease;
+          
+          &:hover {
+            color: $accent-color;
+            text-decoration: underline;
+          }
+        }
+      }
+    }
+  }
+}
+
+// When reviews are inside basic info section
+.book-detail-basic-info .book-detail-reviews {
+  margin-top: 40px;
+  margin-bottom: 40px;
+}
+
+/* Other Books Carousel Styles */
+.other-books-carousel {
+  margin-top: 80px;
+  padding-top: 60px;
+  border-top: 1px solid $gray-light;
+
+  .carousel-title {
+    font-family: $font-serif;
+    font-size: 2rem;
+    color: $secondary-color;
+    text-align: center;
+    margin-bottom: 40px;
+  }
+
+  .carousel-container {
+    position: relative;
+    max-width: 100%;
+    margin: 0 auto;
+  }
+
+  .carousel-track {
+    display: flex;
+    gap: 30px;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+    padding: 20px 0;
+
+    &::-webkit-scrollbar {
+      display: none; /* Chrome, Safari, Opera */
+    }
+  }
+
+  .carousel-book-card {
+    flex: 0 0 200px;
+    text-align: center;
+    transition: transform 0.3s ease;
+
+    &:hover {
+      transform: translateY(-5px);
+    }
+  }
+
+  .book-cover-small {
+    width: 150px;
+    height: 225px;
+    margin: 0 auto 15px;
+    border-radius: $border-radius;
+    box-shadow: $shadow-light;
+    transition: $transition;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: $white;
+    font-size: 0.9rem;
+    text-align: center;
+    padding: 20px;
+
+    &:hover {
+      transform: scale(1.05);
+      box-shadow: $shadow-medium;
+    }
+
+    &.has-cover-image {
+      padding: 0;
+      
+      .book-cover-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: $border-radius;
+      }
+    }
+  }
+
+  .carousel-book-title {
+    font-family: $font-serif;
+    font-size: 1.1rem;
+    color: $secondary-color;
+    margin-bottom: 8px;
+    line-height: 1.3;
+  }
+
+  .carousel-book-genre {
+    font-size: 0.9rem;
+    color: $gray-medium;
+    font-style: italic;
+  }
+
+  .carousel-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: $white;
+    border: 2px solid $primary-color;
+    color: $primary-color;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    z-index: 10;
+
+    &:hover {
+      background: $primary-color;
+      color: $white;
+    }
+
+    &.prev {
+      left: -20px;
+    }
+
+    &.next {
+      right: -20px;
+    }
+
+    @media (max-width: $tablet) {
+      &.prev {
+        left: 10px;
+      }
+
+      &.next {
+        right: 10px;
+      }
+    }
   }
 }

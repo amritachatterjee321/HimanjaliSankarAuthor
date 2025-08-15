@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simple Test - Book Detail</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .test-section { margin: 20px 0; padding: 20px; border: 1px solid #ccc; }
+        .error { color: red; }
+        .success { color: green; }
+    </style>
+</head>
+<body>
+    <h1>Simple Book Detail Test</h1>
+    
+    <div class="test-section">
+        <h2>Test 1: Basic Page Load</h2>
+        <div id="test1">Testing basic page load...</div>
+    </div>
+    
+    <div class="test-section">
+        <h2>Test 2: API Call</h2>
+        <div id="test2">Testing API call...</div>
+        <button onclick="testAPI()">Test API</button>
+    </div>
+    
+    <div class="test-section">
+        <h2>Test 3: Book Detail Page</h2>
+        <a href="/book-detail.html?id=the-burnings" target="_blank">Open Book Detail Page (The Burnings)</a>
+    </div>
+    
+    <div class="test-section">
+        <h2>Test 4: Console Check</h2>
+        <div id="test4">Check browser console for errors...</div>
+    </div>
+
+    <script>
+        // Test 1: Basic page load
+        document.getElementById('test1').innerHTML = '<span class="success">✅ Page loaded successfully</span>';
+        
+        // Test 2: API call
+        async function testAPI() {
+            try {
+                const response = await fetch('/api/books/the-burnings');
+                if (response.ok) {
+                    const data = await response.json();
+                    document.getElementById('test2').innerHTML = 
+                        `<span class="success">✅ API call successful</span><br>
+                         Book: ${data.title}<br>
+                         Status: ${response.status}`;
+                } else {
+                    document.getElementById('test2').innerHTML = 
+                        `<span class="error">❌ API call failed: ${response.status}</span>`;
+                }
+            } catch (error) {
+                document.getElementById('test2').innerHTML = 
+                    `<span class="error">❌ API call error: ${error.message}</span>`;
+            }
+        }
+        
+        // Test 4: Console check
+        console.log('✅ Test page JavaScript is working');
+        document.getElementById('test4').innerHTML = 
+            '<span class="success">✅ JavaScript is working - check console</span>';
+    </script>
+</body>
+</html>

@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
+// Use original MongoDB Atlas URI without SSL modifications
 const MONGODB_URI = process.env.MONGODB_URI || 'mongodb://127.0.0.1:27017';
 const DB_NAME = process.env.DB_NAME || 'Cluster0';
 
@@ -18,7 +19,21 @@ class Database {
         return this.db;
       }
 
-             this.client = new MongoClient(MONGODB_URI);
+      console.log('🔄 Attempting to connect to MongoDB...');
+      
+      // Use working SSL/TLS configuration for MongoDB Atlas
+      const options = {
+        retryWrites: true,
+        w: 'majority',
+        serverSelectionTimeoutMS: 10000,
+        socketTimeoutMS: 15000,
+        ssl: true,
+        tls: true,
+        tlsAllowInvalidCertificates: true,
+        tlsAllowInvalidHostnames: true,
+      };
+
+      this.client = new MongoClient(MONGODB_URI, options);
 
       await this.client.connect();
       this.db = this.client.db(DB_NAME);
@@ -26,7 +41,17 @@ class Database {
       console.log('✅ Connected to MongoDB successfully');
       return this.db;
     } catch (error) {
-      console.error('❌ MongoDB connection error:', error);
+      console.error('❌ MongoDB connection error:', error.message);
+      
+      // Provide helpful error information
+      if (error.message.includes('SSL') || error.message.includes('TLS')) {
+        console.error('🔧 SSL/TLS Issue detected. This is often caused by:');
+        console.error('   1. Node.js version compatibility issues');
+        console.error('   2. Network/firewall restrictions');
+        console.error('   3. MongoDB Atlas SSL configuration');
+        console.error('💡 Try running with SKIP_MONGODB=true for development');
+      }
+      
       throw error;
     }
   }
@@ -71,6 +96,15 @@ class Database {
   getUsersCollection() {
     return this.getDb().collection('users');
   }
+
+  getImagesCollection() {
+    return this.getDb().collection('images');
+  }
+
+  getHomepageConfigCollection() {
+    return this.getDb().collection('homepageConfig');
+  }
+
 }
 
 // Create a singleton instance

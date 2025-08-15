@@ -1,1 +1,1115 @@
-﻿*{margin:0;padding:0;box-sizing:border-box}body{font-family:"Lora",serif;line-height:1.7;color:#333;background-color:#fafafa;overflow-x:hidden}h1,h2,h3,h4,h5,h6{font-family:"Lora",serif}a{color:inherit;text-decoration:none}button{border:none;background:none;cursor:pointer;font-family:inherit}input,textarea,select{font-family:inherit;border:none;outline:none}ul,ol{list-style:none}img{max-width:100%;height:auto;display:block}.container{max-width:1200px;margin:0 auto;padding:0 20px}.text-center{text-align:center}.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0, 0, 0, 0);white-space:nowrap;border:0}.loading{display:flex;justify-content:center;align-items:center;padding:40px;font-size:1.2em;color:#666}*:focus{outline:2px solid #9b6b9e;outline-offset:2px}html{scroll-behavior:smooth}.loading-screen{position:fixed;top:0;left:0;width:100%;height:100%;background:linear-gradient(135deg, #ffffff 0%, #f8f6f3 100%);display:flex;justify-content:center;align-items:center;z-index:9999;transition:opacity .5s ease,visibility .5s ease}.loading-screen.hidden{opacity:0;visibility:hidden}.loader{text-align:center}.loader p{font-family:"Montserrat",sans-serif;color:#9b6b9e;font-size:14px;text-transform:uppercase;letter-spacing:2px;animation:pulse 2s infinite}.book-animation{width:60px;height:80px;position:relative;margin:0 auto 30px}.page{position:absolute;width:50px;height:70px;background:#fff;border:2px solid #9b6b9e;border-radius:3px;animation:pageFlip 2s infinite}.page:nth-child(1){animation-delay:0s}.page:nth-child(2){animation-delay:.3s}.page:nth-child(3){animation-delay:.6s}@keyframes pageFlip{0%,80%{transform:rotateY(0deg)}40%{transform:rotateY(180deg)}}@keyframes pulse{0%,100%{opacity:.7}50%{opacity:1}}.about-section{padding:80px 0;background:linear-gradient(135deg, #ffffff 0%, #f8f6f3 100%)}.about-section .section-header{text-align:center;margin-bottom:60px}.about-section .section-header .section-title{font-family:"Lora",serif;font-size:2.5rem;color:#9b6b9e;margin-bottom:20px;position:relative}.about-section .section-header .section-title::after{content:"";position:absolute;bottom:-10px;left:50%;transform:translateX(-50%);width:60px;height:3px;background:#b894c7;border-radius:2px}.about-section .section-header .section-subtitle{font-family:"Montserrat",sans-serif;font-size:1.2rem;color:#666;font-style:italic;max-width:600px;margin:0 auto;line-height:1.6}.about-section .about-content{display:grid;grid-template-columns:1fr 2fr;gap:60px;align-items:start;max-width:1200px;margin:0 auto;padding:0 20px}@media(max-width: 768px){.about-section .about-content{grid-template-columns:1fr;gap:40px}}.about-section .author-photo{text-align:center}.about-section .author-photo .photo-placeholder{width:300px;height:400px;background:linear-gradient(135deg, #9b6b9e 0%, #b894c7 100%);border-radius:15px;display:flex;align-items:center;justify-content:center;margin:0 auto;box-shadow:0 15px 40px rgba(0,0,0,.2);position:relative;overflow:hidden}.about-section .author-photo .photo-placeholder::before{content:"";position:absolute;top:0;left:0;right:0;bottom:0;background:hsla(0,0%,100%,.1);border-radius:15px}.about-section .author-photo .photo-placeholder i{font-size:4rem;color:#fff;opacity:.8}@media(max-width: 768px){.about-section .author-photo .photo-placeholder{width:250px;height:330px}.about-section .author-photo .photo-placeholder i{font-size:3rem}}.about-section .author-bio .bio-title{font-family:"Lora",serif;font-size:2rem;color:#9b6b9e;margin-bottom:20px;font-weight:600}.about-section .author-bio .bio-text{font-family:"Montserrat",sans-serif;font-size:1.1rem;line-height:1.8;color:#333;margin-bottom:30px;text-align:justify}.about-section .author-bio .author-details{margin-bottom:40px}.about-section .author-bio .author-details .details-list{list-style:none;padding:0;margin:0}.about-section .author-bio .author-details .details-list .detail-item{display:flex;margin-bottom:15px;padding:15px;background:#fff;border-radius:8px;box-shadow:0 2px 10px rgba(0,0,0,.08);border-left:4px solid #9b6b9e}.about-section .author-bio .author-details .details-list .detail-item .detail-label{font-family:"Montserrat",sans-serif;font-weight:600;color:#9b6b9e;min-width:120px;margin-right:15px}.about-section .author-bio .author-details .details-list .detail-item .detail-value{font-family:"Montserrat",sans-serif;color:#333;flex:1}.about-section .author-bio .awards-section{margin-bottom:40px}.about-section .author-bio .awards-section .section-subtitle{font-family:"Lora",serif;font-size:1.3rem;color:#9b6b9e;margin-bottom:20px;font-weight:600}.about-section .author-bio .awards-section .awards-list{list-style:none;padding:0;margin:0}.about-section .author-bio .awards-section .awards-list .award-item{display:flex;align-items:center;margin-bottom:12px;padding:12px 15px;background:#fff;border-radius:8px;box-shadow:0 2px 10px rgba(0,0,0,.08);border-left:4px solid gold}.about-section .author-bio .awards-section .awards-list .award-item i{color:gold;margin-right:12px;font-size:1.1rem}.about-section .author-bio .publications-section{margin-bottom:40px}.about-section .author-bio .publications-section .publications-list{list-style:none;padding:0;margin:0}.about-section .author-bio .publications-section .publications-list .publication-item{display:flex;align-items:center;margin-bottom:12px;padding:12px 15px;background:#fff;border-radius:8px;box-shadow:0 2px 10px rgba(0,0,0,.08);border-left:4px solid #b894c7}.about-section .author-bio .publications-section .publications-list .publication-item i{color:#b894c7;margin-right:12px;font-size:1.1rem}.about-section .author-bio .interests-section{margin-bottom:40px}.about-section .author-bio .interests-section .interests-list{list-style:none;padding:0;margin:0}.about-section .author-bio .interests-section .interests-list .interest-item{display:flex;align-items:center;margin-bottom:12px;padding:12px 15px;background:#fff;border-radius:8px;box-shadow:0 2px 10px rgba(0,0,0,.08);border-left:4px solid #e74c3c}.about-section .author-bio .interests-section .interests-list .interest-item i{color:#e74c3c;margin-right:12px;font-size:1.1rem}.about-section .author-bio .social-section{margin-bottom:40px}.about-section .author-bio .social-section .social-links{display:flex;gap:15px;flex-wrap:wrap}.about-section .author-bio .social-section .social-links .social-link{display:flex;align-items:center;justify-content:center;width:50px;height:50px;background:linear-gradient(135deg, #9b6b9e 0%, #b894c7 100%);color:#fff;border-radius:50%;text-decoration:none;transition:all .3s ease;box-shadow:0 5px 20px rgba(0,0,0,.15)}.about-section .author-bio .social-section .social-links .social-link i{font-size:1.2rem}.about-section .author-bio .social-section .social-links .social-link:hover{transform:translateY(-3px);box-shadow:0 15px 40px rgba(0,0,0,.2);background:linear-gradient(135deg, rgb(126.6530612245, 84.7265306122, 129.2734693878) 0%, rgb(161.7852760736, 114.5214723926, 181.4785276074) 100%)}.about-section .author-bio .social-section .social-links .social-link.instagram{background:linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%)}.about-section .author-bio .social-section .social-links .social-link.facebook{background:#1877f2}.about-section .author-bio .social-section .social-links .social-link.twitter{background:#1da1f2}.about-section .author-bio .contact-info{background:linear-gradient(135deg, #9b6b9e 0%, #b894c7 100%);padding:30px;border-radius:8px;text-align:center;color:#fff}.about-section .author-bio .contact-info .contact-title{font-family:"Lora",serif;font-size:1.5rem;margin-bottom:15px;font-weight:600}.about-section .author-bio .contact-info .contact-text{font-family:"Montserrat",sans-serif;font-size:1rem;line-height:1.6;margin-bottom:25px;opacity:.9}.about-section .author-bio .contact-info .contact-button{display:inline-block;background:#fff;color:#9b6b9e;padding:12px 30px;border-radius:8px;text-decoration:none;font-family:"Montserrat",sans-serif;font-weight:600;font-size:1rem;transition:all .3s ease;box-shadow:0 5px 20px rgba(0,0,0,.15)}.about-section .author-bio .contact-info .contact-button:hover{transform:translateY(-2px);box-shadow:0 15px 40px rgba(0,0,0,.2);background:hsl(0,0%,95%)}.about-page-main .about-section{padding:120px 0 80px}.about-page-main .about-section .about-content{grid-template-columns:1fr 2fr;gap:60px;align-items:start}@media(max-width: 768px){.about-page-main .about-section .about-content{grid-template-columns:1fr;gap:40px}}.about-page-main .about-section .author-photo .photo-placeholder{width:400px;height:500px}@media(max-width: 768px){.about-page-main .about-section .author-photo .photo-placeholder{width:300px;height:380px}}.about-page-main .about-section .author-bio .bio-title{font-size:2.5rem;margin-bottom:25px;margin-top:0}.about-page-main .about-section .author-bio .bio-text{font-size:1.2rem;line-height:1.9;margin-bottom:0}.books-page-section{padding:80px 0;background:linear-gradient(135deg, #ffffff 0%, #f8f6f3 100%)}.books-page-section .books-page-container{max-width:1200px;margin:0 auto;padding:0 20px}.books-page-section .page-header{text-align:center;margin-bottom:60px}.books-page-section .page-header .page-title{font-family:"Lora",serif;font-size:2.5rem;color:#9b6b9e;margin-bottom:20px;position:relative}.books-page-section .page-header .page-title::after{content:"";position:absolute;bottom:-10px;left:50%;transform:translateX(-50%);width:60px;height:3px;background:#b894c7;border-radius:2px}@media(max-width: 768px){.books-page-section .page-header .page-title{font-size:2rem}}.books-page-section .page-header .page-subtitle{font-family:"Montserrat",sans-serif;font-size:1.2rem;color:#666;font-style:italic;max-width:600px;margin:0 auto;line-height:1.6}.books-page-section .books-categories-container{display:flex;flex-direction:column;gap:80px}.books-page-section .books-category-section .category-header{margin-bottom:40px;text-align:center}.books-page-section .books-category-section .category-header .category-title{font-family:"Lora",serif;font-size:2.5rem;color:#9b6b9e;margin-bottom:20px;position:relative}.books-page-section .books-category-section .category-header .category-title::after{content:"";position:absolute;bottom:-10px;left:50%;transform:translateX(-50%);width:60px;height:3px;background:#b894c7;border-radius:2px}@media(max-width: 768px){.books-page-section .books-category-section .category-header .category-title{font-size:2rem}}.books-page-section .books-category-section .books-grid{display:grid;grid-template-columns:repeat(auto-fit, minmax(300px, 1fr));gap:40px}@media(max-width: 768px){.books-page-section .books-category-section .books-grid{grid-template-columns:1fr;gap:30px}}.books-page-section .books-category-section .book-card{background:#fff;border-radius:8px;box-shadow:0 2px 10px rgba(0,0,0,.08);overflow:hidden;transition:transform .3s ease,box-shadow .3s ease}.books-page-section .books-category-section .book-card:hover{transform:translateY(-5px);box-shadow:0 5px 20px rgba(0,0,0,.15)}.books-page-section .books-category-section .book-card .book-cover{height:300px;background:linear-gradient(135deg, #9b6b9e 0%, #b894c7 100%);display:flex;align-items:center;justify-content:center;position:relative}.books-page-section .books-category-section .book-card .book-cover::before{content:"";position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.1)}.books-page-section .books-category-section .book-card .book-cover i{font-size:4rem;color:#fff;z-index:1;position:relative}.books-page-section .books-category-section .book-card .book-info{padding:30px}.books-page-section .books-category-section .book-card .book-info .book-title{font-family:"Lora",serif;font-size:1.5rem;font-weight:600;color:#2c3e50;margin-bottom:10px}.books-page-section .books-category-section .book-card .book-info .book-genre{font-size:.9rem;color:#9b6b9e;font-weight:500;margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px}.books-page-section .books-category-section .book-card .book-info .book-year{font-size:.9rem;color:#666;margin-bottom:15px}.books-page-section .books-category-section .book-card .book-info .book-description{font-size:1rem;line-height:1.6;color:#666;margin-bottom:25px}.books-page-section .books-category-section .book-card .book-info .book-actions .btn{width:100%;text-align:center;padding:12px 24px;font-weight:500}.books-page-section .books-category-section .book-card .book-info .book-actions .btn i{margin-right:8px}.media-page-section{padding:80px 0;background:linear-gradient(135deg, #ffffff 0%, #f8f6f3 100%)}.media-page-section .media-page-container{max-width:1200px;margin:0 auto;padding:0 20px}.media-page-section .page-header{text-align:center;margin-bottom:60px}.media-page-section .page-header .page-title{font-family:"Lora",serif;font-size:2.5rem;color:#9b6b9e;margin-bottom:20px;position:relative}.media-page-section .page-header .page-title::after{content:"";position:absolute;bottom:-10px;left:50%;transform:translateX(-50%);width:60px;height:3px;background:#b894c7;border-radius:2px}@media(max-width: 768px){.media-page-section .page-header .page-title{font-size:2rem}}.media-page-section .page-header .page-subtitle{font-family:"Montserrat",sans-serif;font-size:1.2rem;color:#666;font-style:italic;max-width:600px;margin:0 auto;line-height:1.6}.media-page-section .media-categories-container{display:flex;flex-direction:column;gap:80px}.media-page-section .media-type-section .type-header{margin-bottom:40px;text-align:center}.media-page-section .media-type-section .type-header .type-title{font-family:"Lora",serif;font-size:2.5rem;color:#9b6b9e;margin-bottom:20px;position:relative}.media-page-section .media-type-section .type-header .type-title::after{content:"";position:absolute;bottom:-10px;left:50%;transform:translateX(-50%);width:60px;height:3px;background:#b894c7;border-radius:2px}@media(max-width: 768px){.media-page-section .media-type-section .type-header .type-title{font-size:2rem}}.media-page-section .media-type-section .media-grid{display:grid;grid-template-columns:repeat(auto-fit, minmax(350px, 1fr));gap:30px}@media(max-width: 768px){.media-page-section .media-type-section .media-grid{grid-template-columns:1fr;gap:20px}}.media-page-section .media-type-section .media-card{background:#fff;border-radius:8px;box-shadow:0 2px 10px rgba(0,0,0,.08);overflow:hidden;transition:transform .3s ease,box-shadow .3s ease}.media-page-section .media-type-section .media-card:hover{transform:translateY(-5px);box-shadow:0 5px 20px rgba(0,0,0,.15)}.media-page-section .media-type-section .media-card .media-content{padding:30px}.media-page-section .media-type-section .media-card .media-content .media-header{margin-bottom:20px}.media-page-section .media-type-section .media-card .media-content .media-header .media-title{font-family:"Lora",serif;font-size:1.3rem;font-weight:600;color:#2c3e50;margin-bottom:10px;line-height:1.3}.media-page-section .media-type-section .media-card .media-content .media-header .media-meta{display:flex;gap:20px;align-items:center;flex-wrap:wrap}.media-page-section .media-type-section .media-card .media-content .media-header .media-meta .media-date{font-size:.9rem;color:#9b6b9e;font-weight:500}.media-page-section .media-type-section .media-card .media-content .media-header .media-meta .media-source{font-size:.9rem;color:#666;font-style:italic}.media-page-section .media-type-section .media-card .media-content .media-description{font-size:1rem;line-height:1.6;color:#666;margin-bottom:25px}.media-page-section .media-type-section .media-card .media-content .media-actions .media-link{display:inline-block;color:#9b6b9e;text-decoration:none;font-family:"Montserrat",sans-serif;font-size:12px;text-transform:uppercase;letter-spacing:1px;font-weight:600;transition:all .3s ease;padding:8px 16px;border:1px solid #9b6b9e;border-radius:4px}.media-page-section .media-type-section .media-card .media-content .media-actions .media-link:hover{background:#9b6b9e;color:#fff;transform:translateY(-2px)}.contact-page-section{padding:80px 0;background:linear-gradient(135deg, #ffffff 0%, #f8f6f3 100%)}.contact-page-section .contact-page-container{max-width:1200px;margin:0 auto;padding:0 20px}.contact-page-section .contact-content{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:start}@media(max-width: 768px){.contact-page-section .contact-content{grid-template-columns:1fr;gap:60px}}.contact-page-section .contact-info .info-title{font-family:"Lora",serif;font-size:2.5rem;color:#9b6b9e;margin-bottom:20px;position:relative}.contact-page-section .contact-info .info-title::after{content:"";position:absolute;bottom:-10px;left:0;width:60px;height:3px;background:#b894c7;border-radius:2px}@media(max-width: 768px){.contact-page-section .contact-info .info-title{font-size:2rem}}.contact-page-section .contact-info .info-description{font-size:1.1rem;line-height:1.7;color:#666;margin-bottom:40px}.contact-page-section .contact-info .contact-methods{display:flex;flex-direction:column;gap:30px}.contact-page-section .contact-info .contact-methods .contact-method{display:flex;align-items:center;gap:20px;padding:20px;background:#fff;border-radius:8px;box-shadow:0 2px 10px rgba(0,0,0,.08);transition:transform .3s ease,box-shadow .3s ease}.contact-page-section .contact-info .contact-methods .contact-method:hover{transform:translateY(-2px);box-shadow:0 5px 20px rgba(0,0,0,.15)}.contact-page-section .contact-info .contact-methods .contact-method .contact-icon{font-size:1.5rem;color:#9b6b9e;width:40px;text-align:center}.contact-page-section .contact-info .contact-methods .contact-method .method-info .method-label{font-family:"Lora",serif;font-size:1.2rem;font-weight:600;color:#2c3e50;margin-bottom:5px}.contact-page-section .contact-info .contact-methods .contact-method .method-info .method-detail{font-size:1rem;color:#666;margin:0}.contact-page-section .contact-form-container{background:#fff;padding:40px;border-radius:8px;box-shadow:0 2px 10px rgba(0,0,0,.08)}.contact-page-section .contact-form-container .form-title{font-family:"Lora",serif;font-size:2rem;color:#9b6b9e;margin-bottom:30px;position:relative}.contact-page-section .contact-form-container .form-title::after{content:"";position:absolute;bottom:-10px;left:0;width:60px;height:3px;background:#b894c7;border-radius:2px}.contact-page-section .contact-form-container .contact-form{display:flex;flex-direction:column;gap:25px}.contact-page-section .contact-form-container .contact-form .form-group{display:flex;flex-direction:column;gap:8px}.contact-page-section .contact-form-container .contact-form .form-group .form-label{font-family:"Montserrat",sans-serif;font-weight:600;font-size:.9rem;color:#2c3e50;text-transform:uppercase;letter-spacing:.5px}.contact-page-section .contact-form-container .contact-form .form-group .form-input,.contact-page-section .contact-form-container .contact-form .form-group .form-select,.contact-page-section .contact-form-container .contact-form .form-group .form-textarea{padding:12px 16px;border:2px solid #f8f6f3;border-radius:8px;font-family:"Montserrat",sans-serif;font-size:1rem;transition:border-color .3s ease,box-shadow .3s ease}.contact-page-section .contact-form-container .contact-form .form-group .form-input:focus,.contact-page-section .contact-form-container .contact-form .form-group .form-select:focus,.contact-page-section .contact-form-container .contact-form .form-group .form-textarea:focus{outline:none;border-color:#9b6b9e;box-shadow:0 0 0 3px rgba(155,107,158,.1)}.contact-page-section .contact-form-container .contact-form .form-group .form-input::placeholder,.contact-page-section .contact-form-container .contact-form .form-group .form-select::placeholder,.contact-page-section .contact-form-container .contact-form .form-group .form-textarea::placeholder{color:#666}.contact-page-section .contact-form-container .contact-form .form-group .form-textarea{resize:vertical;min-height:120px}.contact-page-section .contact-form-container .contact-form .form-group .form-select{background:#fff;cursor:pointer}.contact-page-section .contact-form-container .contact-form .form-group .submit-button{background:linear-gradient(135deg, #9b6b9e 0%, #b894c7 100%);color:#fff;border:none;padding:15px 30px;border-radius:8px;font-family:"Montserrat",sans-serif;font-weight:600;font-size:1rem;text-transform:uppercase;letter-spacing:1px;cursor:pointer;transition:transform .3s ease,box-shadow .3s ease}.contact-page-section .contact-form-container .contact-form .form-group .submit-button:hover{transform:translateY(-2px);box-shadow:0 5px 20px rgba(0,0,0,.15)}.contact-page-section .contact-form-container .contact-form .form-group .submit-button:disabled{opacity:.7;cursor:not-allowed;transform:none}#notification-container{position:fixed;top:20px;right:20px;z-index:10000}.notification{background:#fff;border-left:4px solid #9b6b9e;border-radius:8px;box-shadow:0 5px 20px rgba(0,0,0,.15);padding:16px 20px;margin-bottom:10px;max-width:350px;animation:slideInRight .3s ease;position:relative;overflow:hidden}.notification.success{border-left-color:#28a745}.notification.error{border-left-color:#dc3545}.notification.warning{border-left-color:#ffc107}.notification.info{border-left-color:#17a2b8}.notification-content{position:relative;z-index:1}.notification-title{font-family:"Montserrat",sans-serif;font-weight:600;font-size:14px;margin-bottom:5px;color:#2c3e50}.notification-message{font-size:13px;color:#666}.notification-close{position:absolute;top:8px;right:12px;background:none;border:none;font-size:18px;color:#666;cursor:pointer;z-index:2}@keyframes slideInRight{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}@keyframes slideOutRight{from{transform:translateX(0);opacity:1}to{transform:translateX(100%);opacity:0}}.header{background:#fff;position:fixed;top:0;left:0;right:0;z-index:1000;transition:all .3s ease;box-shadow:0 2px 10px rgba(0,0,0,.08)}.header.scrolled{background:hsla(0,0%,100%,.95);backdrop-filter:blur(10px);padding:10px 0}.header-content{max-width:1200px;margin:0 auto;padding:20px;display:flex;justify-content:space-between;align-items:center}@media(max-width: 768px){.header-content{flex-direction:column;gap:20px}}.logo{font-family:"Lora",serif;font-size:2.2em;font-weight:500;color:#2c3e50;text-decoration:none;letter-spacing:2px;transition:all .3s ease}.logo:hover{color:#9b6b9e}@media(max-width: 768px){.logo{font-size:1.8em}}.nav-menu{display:flex;list-style:none;gap:40px;align-items:center}@media(max-width: 768px){.nav-menu{gap:20px;flex-wrap:wrap;justify-content:center}}.nav-item{position:relative}.nav-link{font-family:"Montserrat",sans-serif;text-decoration:none;color:#555;font-size:13px;text-transform:uppercase;letter-spacing:1.5px;font-weight:600;transition:all .3s ease;position:relative;padding:5px 0}.nav-link::after{content:"";position:absolute;bottom:0;left:50%;width:0;height:2px;background:#9b6b9e;transition:all .3s ease;transform:translateX(-50%)}.nav-link:hover,.nav-link.active{color:#9b6b9e}.nav-link:hover::after,.nav-link.active::after{width:100%}.main-content{margin-top:100px}@media(max-width: 768px){.main-content{margin-top:140px}}.btn{font-family:"Montserrat",sans-serif;display:inline-flex;align-items:center;gap:15px;padding:15px 35px;text-decoration:none;text-transform:uppercase;letter-spacing:1px;font-weight:600;font-size:12px;border-radius:8px;transition:all .3s ease;cursor:pointer;border:none;position:relative;overflow:hidden}.btn::before{content:"";position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);transition:left .5s}.btn:hover::before{left:100%}.btn-primary{background:#9b6b9e;color:#fff}.btn-primary:hover{background:#b894c7;transform:translateY(-3px);box-shadow:0 5px 20px rgba(0,0,0,.15)}.btn-secondary{background:rgba(0,0,0,0);color:#9b6b9e;border:2px solid #9b6b9e}.btn-secondary:hover{background:#9b6b9e;color:#fff;transform:translateY(-3px)}.buy-button{display:inline-flex;align-items:center;gap:15px;background:#9b6b9e;color:#fff;padding:18px 40px;text-decoration:none;font-family:"Montserrat",sans-serif;font-size:14px;text-transform:uppercase;letter-spacing:1.5px;font-weight:700;border-radius:8px;transition:all .3s ease;box-shadow:0 2px 10px rgba(0,0,0,.08)}.buy-button:hover{background:#b894c7;transform:translateY(-3px);box-shadow:0 5px 20px rgba(0,0,0,.15)}.buy-button::after{content:"→";font-size:18px;transition:all .3s ease}.buy-button:hover::after{transform:translateX(5px)}.latest-book-section{background:#fff;padding:80px 20px;min-height:70vh;display:flex;align-items:center}@media(max-width: 480px){.latest-book-section{padding:50px 15px}}.latest-book-container{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center}@media(max-width: 768px){.latest-book-container{grid-template-columns:1fr;gap:50px;text-align:center}}.latest-book-image{position:relative}.book-cover-large{width:100%;max-width:450px;height:650px;border-radius:8px;box-shadow:0 15px 40px rgba(0,0,0,.2);transition:all .3s ease;display:flex;flex-direction:column;justify-content:center;align-items:center;color:#fff;text-align:center;padding:40px;position:relative;overflow:hidden}.book-cover-large::before{content:"";position:absolute;top:0;left:0;right:0;bottom:0;background:linear-gradient(135deg, transparent 0%, rgba(0, 0, 0, 0.2) 100%);pointer-events:none}.book-cover-large:hover{transform:scale(1.02) rotate(-1deg);box-shadow:0 25px 60px rgba(0,0,0,.3)}.book-cover-large.featured{background:linear-gradient(135deg, #667eea 0%, #764ba2 100%)}@media(max-width: 768px){.book-cover-large{max-width:350px;height:500px}}@media(max-width: 480px){.book-cover-large{height:400px}}.book-genre-large{font-family:"Montserrat",sans-serif;font-size:14px;text-transform:uppercase;letter-spacing:2px;opacity:.9;margin-bottom:20px;position:relative;z-index:1}.book-title-large{font-size:3.2em;font-weight:700;margin-bottom:20px;line-height:1.1;position:relative;z-index:1}@media(max-width: 768px){.book-title-large{font-size:2.2em}}.book-author-large{font-family:"Montserrat",sans-serif;font-size:1.4em;font-weight:600;margin-top:auto;position:relative;z-index:1}.latest-book-content h2{font-size:3.5em;color:#2c3e50;margin-bottom:20px;line-height:1.1}@media(max-width: 768px){.latest-book-content h2{font-size:2.5em}}@media(max-width: 480px){.latest-book-content h2{font-size:2em}}.book-subtitle{font-family:"Montserrat",sans-serif;color:#9b6b9e;font-size:16px;text-transform:uppercase;letter-spacing:2px;margin-bottom:30px;font-weight:600}.book-description{font-size:1.2em;line-height:1.7;color:#333;margin-bottom:40px}.book-meta{margin-bottom:40px}.book-meta-item{font-family:"Montserrat",sans-serif;font-size:14px;color:#666;margin-bottom:10px}.book-meta-item strong{color:#2c3e50}.books-grid-section{background:#f8f6f3;padding:80px 20px}@media(max-width: 480px){.books-grid-section{padding:50px 15px}}.books-grid-container{max-width:1200px;margin:0 auto}.section-header{text-align:center;margin-bottom:60px}.section-title{font-size:3em;color:#2c3e50;margin-bottom:20px}@media(max-width: 768px){.section-title{font-size:2.2em}}.section-description{font-size:1.2em;color:#666;max-width:600px;margin:0 auto}.books-categories{display:grid;gap:60px}.category-section{background:#fff;padding:50px;border-radius:8px;box-shadow:0 2px 10px rgba(0,0,0,.08)}@media(max-width: 768px){.category-section{padding:30px 20px}}.category-title{font-size:2.2em;color:#2c3e50;margin-bottom:40px;text-align:center;position:relative}.category-title::after{content:"";position:absolute;bottom:-15px;left:50%;transform:translateX(-50%);width:80px;height:3px;background:#9b6b9e}.books-grid{display:grid;grid-template-columns:repeat(auto-fit, minmax(250px, 1fr));gap:40px;margin-top:40px}@media(max-width: 768px){.books-grid{grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:30px}}@media(max-width: 480px){.books-grid{grid-template-columns:1fr}}.book-card{background:#fff;border-radius:8px;padding:20px;box-shadow:0 2px 10px rgba(0,0,0,.08);transition:all .3s ease;cursor:pointer;text-align:center;border:2px solid rgba(0,0,0,0)}.book-card:hover{transform:translateY(-10px);box-shadow:0 5px 20px rgba(0,0,0,.15);border-color:#9b6b9e}.book-cover{width:180px;height:270px;margin:0 auto 20px;border-radius:8px;display:flex;flex-direction:column;justify-content:center;align-items:center;color:#fff;text-align:center;padding:20px;box-shadow:0 5px 20px rgba(0,0,0,.15);transition:all .3s ease;position:relative}.book-cover:hover{transform:perspective(1000px) rotateY(10deg)}.book-cover.adult-1{background:linear-gradient(135deg, #f093fb 0%, #f5576c 100%)}.book-cover.adult-2{background:linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)}.book-cover.adult-3{background:linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)}.book-cover.children-1{background:linear-gradient(135deg, #fa709a 0%, #fee140 100%)}.book-cover.children-2{background:linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)}.book-cover.children-3{background:linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%)}.book-genre{font-family:"Montserrat",sans-serif;font-size:10px;text-transform:uppercase;letter-spacing:1px;opacity:.8;margin-bottom:15px}.book-title{font-size:1.4em;margin-bottom:15px;line-height:1.2;font-weight:600}.book-author{font-family:"Montserrat",sans-serif;font-size:.9em;font-weight:600;margin-top:auto}.book-info h3{font-size:1.2em;margin-bottom:10px;color:#2c3e50}.book-year{font-family:"Montserrat",sans-serif;font-size:12px;color:#666;text-transform:uppercase;letter-spacing:1px;margin-bottom:15px}.book-description-short{color:#666;font-size:.9em;line-height:1.5;margin-bottom:15px}.book-link{color:#9b6b9e;text-decoration:none;font-family:"Montserrat",sans-serif;font-size:12px;text-transform:uppercase;letter-spacing:1px;font-weight:600;transition:all .3s ease;display:inline-block;padding:8px 16px;border:1px solid #9b6b9e;border-radius:4px}.book-link:hover{background:#9b6b9e;color:#fff;transform:translateY(-2px)}.footer{background:#2c3e50;color:#fff;padding:50px 20px 30px;text-align:center}.footer-content{max-width:1200px;margin:0 auto}.footer-links{margin-bottom:30px}@media(max-width: 480px){.footer-links{display:flex;flex-direction:column;gap:15px}}.footer-link{color:#fff;text-decoration:none;margin:0 20px;font-size:13px;text-transform:uppercase;letter-spacing:1px;font-family:"Montserrat",sans-serif;font-weight:400;transition:all .3s ease}.footer-link:hover{color:#9b6b9e}@media(max-width: 480px){.footer-link{margin:0}}.social-icons{display:flex;justify-content:center;gap:20px;margin:30px 0}.social-icon{width:45px;height:45px;background:hsla(0,0%,100%,.1);border-radius:50%;display:flex;align-items:center;justify-content:center;text-decoration:none;color:#fff;font-family:"Montserrat",sans-serif;font-weight:bold;transition:all .3s ease}.social-icon:hover{background:#9b6b9e;transform:translateY(-3px)}.copyright{font-size:12px;opacity:.7;margin-top:30px;font-family:"Montserrat",sans-serif}#app{min-height:100vh}.app-loading{display:flex;flex-direction:column;justify-content:center;align-items:center;min-height:100vh;color:#666}.app-loading .loading-spinner{width:40px;height:40px;border:4px solid #f8f6f3;border-top:4px solid #9b6b9e;border-radius:50%;animation:spin 1s linear infinite;margin-bottom:20px}.app-loading p{font-family:"Montserrat",sans-serif;text-transform:uppercase;letter-spacing:1px;font-size:14px}@keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}@media print{.header,.footer,.loading-screen,#notification-container{display:none !important}.main-content{margin-top:0}.latest-book-section,.books-grid-section{page-break-inside:avoid}.book-card{box-shadow:none;border:1px solid #ddd}}@media(prefers-contrast: high){.book-cover{border:2px solid currentColor}.notification{border:2px solid currentColor}}@media(prefers-reduced-motion: reduce){*,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important;scroll-behavior:auto !important}.book-cover:hover{transform:none}.book-card:hover{transform:none}}/*# sourceMappingURL=main.css.map */
+﻿*{margin:0;padding:0;box-sizing:border-box}body{font-family:"Lora",serif;line-height:1.7;color:#333;background-color:#fafafa;overflow-x:hidden}h1,h2,h3,h4,h5,h6{font-family:"Lora",serif}a{color:inherit;text-decoration:none}button{border:none;background:none;cursor:pointer;font-family:inherit}input,textarea,select{font-family:inherit;border:none;outline:none}ul,ol{list-style:none}img{max-width:100%;height:auto;display:block}.container{max-width:1200px;margin:0 auto;padding:0 20px}.text-center{text-align:center}.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0, 0, 0, 0);white-space:nowrap;border:0}.loading{display:flex;justify-content:center;align-items:center;padding:40px;font-size:1.2em;color:#666}*:focus{outline:2px solid #9b6b9e;outline-offset:2px}html{scroll-behavior:smooth}.loading-screen{position:fixed;top:0;left:0;width:100%;height:100%;background:linear-gradient(135deg, #ffffff 0%, #f8f6f3 100%);display:flex;justify-content:center;align-items:center;z-index:9999;transition:opacity .5s ease,visibility .5s ease}.loading-screen.hidden{opacity:0;visibility:hidden}.loader{text-align:center}.loader p{font-family:"Montserrat",sans-serif;color:#9b6b9e;font-size:14px;text-transform:uppercase;letter-spacing:2px;animation:pulse 2s infinite}.book-animation{width:60px;height:80px;position:relative;margin:0 auto 30px}.page{position:absolute;width:50px;height:70px;background:#fff;border:2px solid #9b6b9e;border-radius:3px;animation:pageFlip 2s infinite}.page:nth-child(1){animation-delay:0s}.page:nth-child(2){animation-delay:.3s}.page:nth-child(3){animation-delay:.6s}@keyframes pageFlip{0%,80%{transform:rotateY(0deg)}40%{transform:rotateY(180deg)}}@keyframes pulse{0%,100%{opacity:.7}50%{opacity:1}}.about-section{padding:80px 0;background:linear-gradient(135deg, #ffffff 0%, #f8f6f3 100%)}.about-section .section-header{text-align:center;margin-bottom:60px}.about-section .section-header .section-title{font-family:"Lora",serif;font-size:2.5rem;color:#9b6b9e;margin-bottom:20px;position:relative}.about-section .section-header .section-title::after{content:"";position:absolute;bottom:-10px;left:50%;transform:translateX(-50%);width:60px;height:3px;background:#b894c7;border-radius:2px}.about-section .section-header .section-subtitle{font-family:"Montserrat",sans-serif;font-size:1.2rem;color:#666;font-style:italic;max-width:600px;margin:0 auto;line-height:1.6}.about-section .about-content{display:grid;grid-template-columns:1fr 2fr;gap:60px;align-items:start;max-width:1200px;margin:0 auto;padding:0 20px}@media(max-width: 768px){.about-section .about-content{grid-template-columns:1fr;gap:40px}}.about-section .author-photo{text-align:center}.about-section .author-photo .photo-placeholder{width:300px;height:400px;background:linear-gradient(135deg, #9b6b9e 0%, #b894c7 100%);border-radius:15px;display:flex;align-items:center;justify-content:center;margin:0 auto;box-shadow:0 15px 40px rgba(0,0,0,.2);position:relative;overflow:hidden}.about-section .author-photo .photo-placeholder::before{content:"";position:absolute;top:0;left:0;right:0;bottom:0;background:hsla(0,0%,100%,.1);border-radius:15px}.about-section .author-photo .photo-placeholder i{font-size:4rem;color:#fff;opacity:.8}
+
+/* Author Image Styles */
+.about-section .author-photo .author-image {
+    width: 300px;
+    height: 400px;
+    border-radius: 15px;
+    object-fit: cover;
+    box-shadow: 0 15px 40px rgba(0,0,0,.2);
+    transition: all 0.3s ease;
+}
+
+.about-section .author-photo .author-image:hover {
+    transform: scale(1.02);
+    box-shadow: 0 20px 50px rgba(0,0,0,.3);
+}
+
+@media(max-width: 768px){
+    .about-section .author-photo .photo-placeholder{width:250px;height:330px}
+    .about-section .author-photo .photo-placeholder i{font-size:3rem}
+    .about-section .author-photo .author-image{width:250px;height:330px}
+}.about-section .author-bio .bio-title{font-family:"Lora",serif;font-size:2rem;color:#9b6b9e;margin-bottom:20px;font-weight:600}.about-section .author-bio .bio-text{font-family:"Montserrat",sans-serif;font-size:1.1rem;line-height:1.8;color:#333;margin-bottom:30px;text-align:justify}
+
+.about-section .author-bio .bio-text p {
+    margin: 0 0 1rem 0;
+}
+
+.about-section .author-bio .bio-text p:last-child {
+    margin-bottom: 0;
+}
+
+.about-section .author-bio .bio-text strong {
+    font-weight: 700;
+}
+
+.about-section .author-bio .bio-text em {
+    font-style: italic;
+}.about-section .author-bio .author-details{margin-bottom:40px}.about-section .author-bio .author-details .details-list{list-style:none;padding:0;margin:0}.about-section .author-bio .author-details .details-list .detail-item{display:flex;margin-bottom:15px;padding:15px;background:#fff;border-radius:8px;box-shadow:0 2px 10px rgba(0,0,0,.08);border-left:4px solid #9b6b9e}.about-section .author-bio .author-details .details-list .detail-item .detail-label{font-family:"Montserrat",sans-serif;font-weight:600;color:#9b6b9e;min-width:120px;margin-right:15px}.about-section .author-bio .author-details .details-list .detail-item .detail-value{font-family:"Montserrat",sans-serif;color:#333;flex:1}.about-section .author-bio .awards-section{margin-bottom:40px}.about-section .author-bio .awards-section .section-subtitle{font-family:"Lora",serif;font-size:1.3rem;color:#9b6b9e;margin-bottom:20px;font-weight:600}.about-section .author-bio .awards-section .awards-list{list-style:none;padding:0;margin:0}.about-section .author-bio .awards-section .awards-list .award-item{display:flex;align-items:center;margin-bottom:12px;padding:12px 15px;background:#fff;border-radius:8px;box-shadow:0 2px 10px rgba(0,0,0,.08);border-left:4px solid gold}.about-section .author-bio .awards-section .awards-list .award-item i{color:gold;margin-right:12px;font-size:1.1rem}
+
+/* New Author Awards Section */
+.about-section .author-bio .author-awards {
+    margin-bottom: 40px;
+}
+
+.about-section .author-bio .author-awards .awards-title {
+    font-family: "Lora", serif;
+    font-size: 1.5rem;
+    color: #9b6b9e;
+    margin-bottom: 20px;
+    font-weight: 600;
+    position: relative;
+}
+
+.about-section .author-bio .author-awards .awards-title::after {
+    content: "";
+    position: absolute;
+    bottom: -8px;
+    left: 0;
+    width: 40px;
+    height: 2px;
+    background: #b894c7;
+    border-radius: 1px;
+}
+
+.about-section .author-bio .author-awards .awards-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.about-section .author-bio .author-awards .awards-list .award-item {
+    padding: 12px 15px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,.08);
+    border-left: 4px solid gold;
+    margin-bottom: 12px;
+    font-family: "Montserrat", sans-serif;
+    color: #333;
+    font-size: 1rem;
+    line-height: 1.5;
+}
+
+.about-section .author-bio .author-awards .awards-list .award-item:last-child {
+    margin-bottom: 0;
+}
+
+/* Simplified Awards Section - Just Bold Text */
+.about-section .author-bio .author-awards-simple {
+    margin-bottom: 30px;
+}
+
+.about-section .author-bio .author-awards-simple .award-text {
+    font-family: "Montserrat", sans-serif;
+    font-size: 1rem;
+    line-height: 1.6;
+    color: #333;
+    margin-bottom: 15px;
+    text-align: left;
+}
+
+.about-section .author-bio .author-awards-simple .award-text:last-child {
+    margin-bottom: 0;
+}
+
+.about-section .author-bio .author-awards-simple .award-text strong {
+    font-weight: 700;
+    color: #2c3e50;
+}.about-section .author-bio .publications-section{margin-bottom:40px}.about-section .author-bio .publications-section .publications-list{list-style:none;padding:0;margin:0}.about-section .author-bio .publications-section .publications-list .publication-item{display:flex;align-items:center;margin-bottom:12px;padding:12px 15px;background:#fff;border-radius:8px;box-shadow:0 2px 10px rgba(0,0,0,.08);border-left:4px solid #b894c7}.about-section .author-bio .publications-section .publications-list .publication-item i{color:#b894c7;margin-right:12px;font-size:1.1rem}.about-section .author-bio .interests-section{margin-bottom:40px}.about-section .author-bio .interests-section .interests-list{list-style:none;padding:0;margin:0}.about-section .author-bio .interests-section .interests-list .interest-item{display:flex;align-items:center;margin-bottom:12px;padding:12px 15px;background:#fff;border-radius:8px;box-shadow:0 2px 10px rgba(0,0,0,.08);border-left:4px solid #e74c3c}.about-section .author-bio .interests-section .interests-list .interest-item i{color:#e74c3c;margin-right:12px;font-size:1.1rem}.about-section .author-bio .social-section{margin-bottom:40px}.about-section .author-bio .social-section .social-links{display:flex;gap:15px;flex-wrap:wrap}.about-section .author-bio .social-section .social-links .social-link{display:flex;align-items:center;justify-content:center;width:50px;height:50px;background:linear-gradient(135deg, #9b6b9e 0%, #b894c7 100%);color:#fff;border-radius:50%;text-decoration:none;transition:all .3s ease;box-shadow:0 5px 20px rgba(0,0,0,.15)}.about-section .author-bio .social-section .social-links .social-link i{font-size:1.2rem}.about-section .author-bio .social-section .social-links .social-link:hover{transform:translateY(-3px);box-shadow:0 15px 40px rgba(0,0,0,.2);background:linear-gradient(135deg, rgb(126.6530612245, 84.7265306122, 129.2734693878) 0%, rgb(161.7852760736, 114.5214723926, 181.4785276074) 100%)}.about-section .author-bio .social-section .social-links .social-link.instagram{background:linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%)}.about-section .author-bio .social-section .social-links .social-link.facebook{background:#1877f2}.about-section .author-bio .social-section .social-links .social-link.twitter{background:#1da1f2}.about-section .author-bio .contact-info{background:linear-gradient(135deg, #9b6b9e 0%, #b894c7 100%);padding:30px;border-radius:8px;text-align:center;color:#fff}.about-section .author-bio .contact-info .contact-title{font-family:"Lora",serif;font-size:1.5rem;margin-bottom:15px;font-weight:600}.about-section .author-bio .contact-info .contact-text{font-family:"Montserrat",sans-serif;font-size:1rem;line-height:1.6;margin-bottom:25px;opacity:.9}.about-section .author-bio .contact-info .contact-button{display:inline-block;background:#fff;color:#9b6b9e;padding:12px 30px;border-radius:8px;text-decoration:none;font-family:"Montserrat",sans-serif;font-weight:600;font-size:1rem;transition:all .3s ease;box-shadow:0 5px 20px rgba(0,0,0,.15)}.about-section .author-bio .contact-info .contact-button:hover{transform:translateY(-2px);box-shadow:0 15px 40px rgba(0,0,0,.2);background:hsl(0,0%,95%)}.about-page-main .about-section{padding:120px 0 80px}.about-page-main .about-section .about-content{grid-template-columns:1fr 2fr;gap:60px;align-items:start}@media(max-width: 768px){.about-page-main .about-section .about-content{grid-template-columns:1fr;gap:40px}}.about-page-main .about-section .author-photo .photo-placeholder{width:400px;height:500px}@media(max-width: 768px){.about-page-main .about-section .author-photo .photo-placeholder{width:300px;height:380px}}.about-page-main .about-section .author-bio .bio-title{font-size:2.5rem;margin-bottom:25px;margin-top:0}.about-page-main .about-section .author-bio .bio-text{font-size:1.2rem;line-height:1.9;margin-bottom:0}.books-page-section{padding:80px 0;background:linear-gradient(135deg, #ffffff 0%, #f8f6f3 100%)}.books-page-section .books-page-container{max-width:1200px;margin:0 auto;padding:0 20px}.books-page-section .page-header{text-align:center;margin-bottom:60px}.books-page-section .page-header .page-title{font-family:"Lora",serif;font-size:2.5rem;color:#9b6b9e;margin-bottom:20px;position:relative}.books-page-section .page-header .page-title::after{content:"";position:absolute;bottom:-10px;left:50%;transform:translateX(-50%);width:60px;height:3px;background:#b894c7;border-radius:2px}@media(max-width: 768px){.books-page-section .page-header .page-title{font-size:2rem}}.books-page-section .page-header .page-subtitle{font-family:"Montserrat",sans-serif;font-size:1.2rem;color:#666;font-style:italic;max-width:600px;margin:0 auto;line-height:1.6}.books-page-section .books-categories-container{display:flex;flex-direction:column;gap:80px}.books-page-section .books-category-section .category-header{margin-bottom:40px;text-align:center}.books-page-section .books-category-section .category-header .category-title{font-family:"Lora",serif;font-size:2.5rem;color:#9b6b9e;margin-bottom:20px;position:relative}.books-page-section .books-category-section .category-header .category-title::after{content:"";position:absolute;bottom:-10px;left:50%;transform:translateX(-50%);width:60px;height:3px;background:#b894c7;border-radius:2px}@media(max-width: 768px){.books-page-section .books-category-section .category-header .category-title{font-size:2rem}}.books-page-section .books-category-section .books-grid{display:grid;grid-template-columns:repeat(auto-fit, minmax(300px, 1fr));gap:40px}@media(max-width: 768px){.books-page-section .books-category-section .books-grid{grid-template-columns:1fr;gap:30px}}.books-page-section .books-category-section .book-card{background:transparent;border-radius:0;box-shadow:none;overflow:visible;transition:transform .3s ease,box-shadow .3s ease}.books-page-section .books-category-section .book-card:hover{transform:translateY(-5px);box-shadow:0 5px 20px rgba(0,0,0,.15)}.books-page-section .books-category-section .book-card .book-cover{height:300px;width:200px;background:linear-gradient(135deg, #9b6b9e 0%, #b894c7 100%);display:flex;align-items:center;justify-content:center;position:relative;margin:0 auto 20px;border-radius:8px;flex-shrink:0}.books-page-section .books-category-section .book-card .book-cover::before{content:"";position:absolute;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.1)}.books-page-section .books-category-section .book-card .book-cover i{font-size:4rem;color:#fff;z-index:1;position:relative}.books-page-section .books-category-section .book-card .book-info{padding:0}.books-page-section .books-category-section .book-card .book-info .book-title{font-family:"Lora",serif;font-size:1.5rem;font-weight:600;color:#2c3e50;margin-bottom:10px}.books-page-section .books-category-section .book-card .book-info .book-title.clickable{cursor:pointer;transition:color .3s ease}.books-page-section .books-category-section .book-card .book-info .book-title.clickable:hover{color:#b894c7}.books-page-section .books-category-section .book-card .book-info .book-genre{font-size:.9rem;color:#9b6b9e;font-weight:500;margin-bottom:5px;text-transform:uppercase;letter-spacing:.5px}.books-page-section .books-category-section .book-card .book-info .book-year{font-size:.9rem;color:#666;margin-bottom:15px}.books-page-section .books-category-section .book-card .book-info .book-description{font-size:1rem;line-height:1.6;color:#666;margin-bottom:25px}.books-page-section .books-category-section .book-card .book-info .book-description-short{font-size:.9rem;color:#666;line-height:1.4;margin-bottom:15px}.books-page-section .books-category-section .book-card .book-info .book-awards{font-size:.85rem;color:#9b6b9e;font-weight:600;margin-bottom:15px;padding:5px 0}.books-page-section .books-category-section .book-card .book-info .book-awards strong{color:#2c3e50}.books-page-section .books-category-section .book-card .book-info .book-actions .btn{width:100%;text-align:center;padding:12px 24px;font-weight:500}.books-page-section .books-category-section .book-card .book-info .book-actions .btn i{margin-right:8px}.contact-page-section{padding:80px 0;background:linear-gradient(135deg, #ffffff 0%, #f8f6f3 100%)}.contact-page-section .contact-page-container{max-width:1200px;margin:0 auto;padding:0 20px}.contact-page-section .contact-content{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:start}@media(max-width: 768px){.contact-page-section .contact-content{grid-template-columns:1fr;gap:60px}}.contact-page-section .contact-info .info-title{font-family:"Lora",serif;font-size:2.5rem;color:#9b6b9e;margin-bottom:20px;position:relative}.contact-page-section .contact-info .info-title::after{content:"";position:absolute;bottom:-10px;left:0;width:60px;height:3px;background:#b894c7;border-radius:2px}@media(max-width: 768px){.contact-page-section .contact-info .info-title{font-size:2rem}}.contact-page-section .contact-info .info-description{font-size:1.1rem;line-height:1.7;color:#666;margin-bottom:40px}.contact-page-section .contact-info .contact-methods{display:flex;flex-direction:column;gap:30px}.contact-page-section .contact-info .contact-methods .contact-method{display:flex;align-items:center;gap:20px;padding:20px;background:#fff;border-radius:8px;box-shadow:0 2px 10px rgba(0,0,0,.08);transition:transform .3s ease,box-shadow .3s ease}.contact-page-section .contact-info .contact-methods .contact-method:hover{transform:translateY(-2px);box-shadow:0 5px 20px rgba(0,0,0,.15)}.contact-page-section .contact-info .contact-methods .contact-method .contact-icon{font-size:1.5rem;color:#9b6b9e;width:40px;text-align:center}.contact-page-section .contact-info .contact-methods .contact-method .method-info .method-label{font-family:"Lora",serif;font-size:1.2rem;font-weight:600;color:#2c3e50;margin-bottom:5px}.contact-page-section .contact-info .contact-methods .contact-method .method-info .method-detail{font-size:1rem;color:#666;margin:0}.contact-page-section .contact-form-container{background:#fff;padding:40px;border-radius:8px;box-shadow:0 2px 10px rgba(0,0,0,.08)}.contact-page-section .contact-form-container .form-title{font-family:"Lora",serif;font-size:2rem;color:#9b6b9e;margin-bottom:30px;position:relative}.contact-page-section .contact-form-container .form-title::after{content:"";position:absolute;bottom:-10px;left:0;width:60px;height:3px;background:#b894c7;border-radius:2px}.contact-page-section .contact-form-container .contact-form{display:flex;flex-direction:column;gap:25px}.contact-page-section .contact-form-container .contact-form .form-group{display:flex;flex-direction:column;gap:8px}.contact-page-section .contact-form-container .contact-form .form-group .form-label{font-family:"Montserrat",sans-serif;font-weight:600;font-size:.9rem;color:#2c3e50;text-transform:uppercase;letter-spacing:.5px}.contact-page-section .contact-form-container .contact-form .form-group .form-input,.contact-page-section .contact-form-container .contact-form .form-group .form-select,.contact-page-section .contact-form-container .contact-form .form-group .form-textarea{padding:12px 16px;border:2px solid #f8f6f3;border-radius:8px;font-family:"Montserrat",sans-serif;font-size:1rem;transition:border-color .3s ease,box-shadow .3s ease}.contact-page-section .contact-form-container .contact-form .form-group .form-input:focus,.contact-page-section .contact-form-container .contact-form .form-group .form-select:focus,.contact-page-section .contact-form-container .contact-form .form-group .form-textarea:focus{outline:none;border-color:#9b6b9e;box-shadow:0 0 0 3px rgba(155,107,158,.1)}.contact-page-section .contact-form-container .contact-form .form-group .form-input::placeholder,.contact-page-section .contact-form-container .contact-form .form-group .form-select::placeholder,.contact-page-section .contact-form-container .contact-form .form-group .form-textarea::placeholder{color:#666}.contact-page-section .contact-form-container .contact-form .form-group .form-textarea{resize:vertical;min-height:120px}.contact-page-section .contact-form-container .contact-form .form-group .form-select{background:#fff;cursor:pointer}.contact-page-section .contact-form-container .contact-form .form-group .submit-button{background:linear-gradient(135deg, #9b6b9e 0%, #b894c7 100%);color:#fff;border:none;padding:15px 30px;border-radius:8px;font-family:"Montserrat",sans-serif;font-weight:600;font-size:1rem;text-transform:uppercase;letter-spacing:1px;cursor:pointer;transition:transform .3s ease,box-shadow .3s ease}.contact-page-section .contact-form-container .contact-form .form-group .submit-button:hover{transform:translateY(-2px);box-shadow:0 5px 20px rgba(0,0,0,.15)}.contact-page-section .contact-form-container .contact-form .form-group .submit-button:disabled{opacity:.7;cursor:not-allowed;transform:none}#notification-container{position:fixed;top:20px;right:20px;z-index:10000}.notification{background:#fff;border-left:4px solid #9b6b9e;border-radius:8px;box-shadow:0 5px 20px rgba(0,0,0,.15);padding:16px 20px;margin-bottom:10px;max-width:350px;animation:slideInRight .3s ease;position:relative;overflow:hidden}.notification.success{border-left-color:#28a745}.notification.error{border-left-color:#dc3545}.notification.warning{border-left-color:#ffc107}.notification.info{border-left-color:#17a2b8}.notification-content{position:relative;z-index:1}.notification-title{font-family:"Montserrat",sans-serif;font-weight:600;font-size:14px;margin-bottom:5px;color:#2c3e50}.notification-message{font-size:13px;color:#666}.notification-close{position:absolute;top:8px;right:12px;background:none;border:none;font-size:18px;color:#666;cursor:pointer;z-index:2}@keyframes slideInRight{from{transform:translateX(100%);opacity:0}to{transform:translateX(0);opacity:1}}@keyframes slideOutRight{from{transform:translateX(0);opacity:1}to{transform:translateX(100%);opacity:0}}.header{background:#fff;position:fixed;top:0;left:0;right:0;z-index:1000;transition:all .3s ease;box-shadow:0 2px 10px rgba(0,0,0,.08)}.header.scrolled{background:hsla(0,0%,100%,.95);backdrop-filter:blur(10px);padding:10px 0}.header-content{max-width:1200px;margin:0 auto;padding:20px;display:flex;justify-content:space-between;align-items:center}@media(max-width: 768px){.header-content{flex-direction:column;gap:20px}}.logo{font-family:"Lora",serif;font-size:2.2em;font-weight:500;color:#2c3e50;text-decoration:none;letter-spacing:2px;transition:all .3s ease}.logo:hover{color:#9b6b9e}@media(max-width: 768px){.logo{font-size:1.8em}}.nav-menu{display:flex;list-style:none;gap:40px;align-items:center}@media(max-width: 768px){.nav-menu{gap:20px;flex-wrap:wrap;justify-content:center}}.nav-item{position:relative}.nav-link{font-family:"Montserrat",sans-serif;text-decoration:none;color:#555;font-size:13px;text-transform:uppercase;letter-spacing:1.5px;font-weight:600;transition:all .3s ease;position:relative;padding:5px 0}.nav-link::after{content:"";position:absolute;bottom:0;left:50%;width:0;height:2px;background:#9b6b9e;transition:all .3s ease;transform:translateX(-50%)}.nav-link:hover,.nav-link.active{color:#9b6b9e}.nav-link:hover::after,.nav-link.active::after{width:100%}.main-content{margin-top:100px}@media(max-width: 768px){.main-content{margin-top:140px}}.btn{font-family:"Montserrat",sans-serif;display:inline-flex;align-items:center;gap:15px;padding:15px 35px;text-decoration:none;text-transform:uppercase;letter-spacing:1px;font-weight:600;font-size:12px;border-radius:8px;transition:all .3s ease;cursor:pointer;border:none;position:relative;overflow:hidden}.btn::before{content:"";position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);transition:left .5s}.btn:hover::before{left:100%}.btn-primary{background:#9b6b9e;color:#fff}.btn-primary:hover{background:#b894c7;transform:translateY(-3px);box-shadow:0 5px 20px rgba(0,0,0,.15)}.btn-secondary{background:rgba(0,0,0,0);color:#9b6b9e;border:2px solid #9b6b9e}.btn-secondary:hover{background:#9b6b9e;color:#fff;transform:translateY(-3px)}.buy-button{display:inline-flex;align-items:center;gap:15px;background:#9b6b9e;color:#fff;padding:18px 40px;text-decoration:none;font-family:"Montserrat",sans-serif;font-size:14px;text-transform:uppercase;letter-spacing:1.5px;font-weight:700;border-radius:8px;transition:all .3s ease;box-shadow:0 2px 10px rgba(0,0,0,.08)}.buy-button:hover{background:#b894c7;transform:translateY(-3px);box-shadow:0 5px 20px rgba(0,0,0,.15)}.buy-button::after{content:"→";font-size:18px;transition:all .3s ease}.buy-button:hover::after{transform:translateX(5px)}.latest-book-section{background:#fff;padding:80px 20px;min-height:70vh;display:flex;align-items:center}@media(max-width: 480px){.latest-book-section{padding:50px 15px}}.latest-book-container{max-width:1200px;margin:0 auto;display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:center}@media(max-width: 768px){.latest-book-container{grid-template-columns:1fr;gap:50px;text-align:center}}.latest-book-image{position:relative}.book-cover-large{width:100%;max-width:400px;height:600px;border-radius:8px;box-shadow:0 15px 40px rgba(0,0,0,.2);transition:all .3s ease;display:flex;flex-direction:column;justify-content:center;align-items:center;color:#fff;text-align:center;padding:40px;position:relative;overflow:visible}.book-cover-large:hover{transform:scale(1.02) rotate(-1deg);box-shadow:0 25px 60px rgba(0,0,0,.3)}.book-cover-large.clickable{cursor:pointer}.book-cover-large.clickable:hover{transform:scale(1.02) rotate(-1deg);box-shadow:0 25px 60px rgba(0,0,0,.3)}.book-cover-large.featured{background:linear-gradient(135deg, #667eea 0%, #764ba2 100%)}.book-cover-large.has-cover-image{padding:0}.book-cover-large.has-cover-image .book-cover-image{position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;z-index:1;overflow:visible}@media(max-width: 768px){.book-cover-large{max-width:350px;height:525px}}@media(max-width: 480px){.book-cover-large{max-width:300px;height:450px}}.latest-book-content h2{font-size:3.5em;color:#2c3e50;margin-bottom:20px;line-height:1.1}@media(max-width: 768px){.latest-book-content h2{font-size:2.5em}}@media(max-width: 480px){.latest-book-content h2{font-size:2em}}.book-subtitle{font-family:"Montserrat",sans-serif;color:#9b6b9e;font-size:16px;text-transform:uppercase;letter-spacing:2px;margin-bottom:30px;font-weight:600}.book-description{font-size:1.2em;line-height:1.7;color:#333;margin-bottom:40px}
+
+/* Homepage Latest Release Section - Optimized Description Text */
+.latest-book-section .book-description {
+    font-size: 1.1em !important;
+    line-height: 1.6 !important;
+    color: #333 !important;
+    margin-bottom: 25px !important;
+    font-weight: 400 !important;
+}
+
+/* Ensure the Amazon button is properly styled in the latest release section */
+.latest-book-section .buy-button {
+    margin-top: 10px !important;
+    font-size: 16px !important;
+    padding: 20px 45px !important;
+    background: #9b6b9e !important;
+    color: #ffffff !important;
+    border: 2px solid #9b6b9e !important;
+    border-radius: 8px !important;
+    text-decoration: none !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 15px !important;
+    font-family: "Montserrat", sans-serif !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 1.5px !important;
+    transition: all 0.3s ease !important;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.08) !important;
+    cursor: pointer !important;
+    position: relative !important;
+    z-index: 10 !important;
+}
+
+.latest-book-section .buy-button:hover {
+    background: #b894c7 !important;
+    border-color: #b894c7 !important;
+    transform: translateY(-3px) !important;
+    box-shadow: 0 5px 20px rgba(0,0,0,0.15) !important;
+}
+
+.latest-book-section .buy-button::after {
+    content: "→" !important;
+    font-size: 18px !important;
+    transition: all 0.3s ease !important;
+}
+
+.latest-book-section .buy-button:hover::after {
+    transform: translateX(5px) !important;
+}.book-meta{margin-bottom:40px}.book-meta-item{font-family:"Montserrat",sans-serif;font-size:14px;color:#666;margin-bottom:10px}.book-meta-item strong{color:#2c3e50}.books-grid-section{background:#f8f6f3;padding:80px 20px}@media(max-width: 480px){.books-grid-section{padding:50px 15px}}.books-grid-container{max-width:1200px;margin:0 auto}.section-header{text-align:center;margin-bottom:60px}.section-title{font-size:3em;color:#2c3e50;margin-bottom:20px}@media(max-width: 768px){.section-title{font-size:2.2em}}.section-description{font-size:1.2em;color:#666;max-width:600px;margin:0 auto}.books-categories{display:grid;gap:60px}.category-section{padding:50px 0;border-radius:0;text-align:center;max-width:100%;margin:0 auto}@media(max-width: 768px){.category-section{padding:30px 0;margin:0 auto}.books-carousel-container{margin:0 auto}}.category-title{font-size:2.2em;color:#2c3e50;margin-bottom:10px;text-align:center;position:relative}.category-title::after{content:"";position:absolute;bottom:-15px;left:50%;transform:translateX(-50%);width:80px;height:3px;background:#9b6b9e}.books-grid{display:grid;grid-template-columns:repeat(auto-fit, minmax(250px, 1fr));gap:40px;margin-top:40px}@media(max-width: 768px){.books-grid{grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:30px}}@media(max-width: 480px){.books-grid{grid-template-columns:1fr}}.book-detail-section{background:#fff;padding:80px 20px;min-height:70vh}@media(max-width: 480px){.book-detail-section{padding:50px 15px}}.book-detail-container{max-width:1200px;margin:0 auto}.back-button{display:inline-flex;align-items:center;gap:10px;color:#9b6b9e;text-decoration:none;font-weight:500;margin-bottom:40px;transition:color .3s ease}.back-button:hover{color:#b894c7}.back-button i{font-size:14px}.book-detail-header{display:grid;grid-template-columns:1fr 1fr;gap:80px;align-items:start;margin-bottom:60px}@media(max-width: 768px){.book-detail-header{grid-template-columns:1fr;gap:50px;text-align:center}}.book-detail-cover .book-cover-large{width:100%;max-width:400px;height:600px;margin:0 auto}.book-detail-basic-info .book-detail-title{font-family:"Lora",serif;font-size:2.5rem;color:#2c3e50;margin-bottom:15px;line-height:1.2}@media(max-width: 768px){.book-detail-basic-info .book-detail-title{font-size:2rem}}.book-detail-basic-info .book-detail-subtitle{font-family:"Lora",serif;font-size:1.3rem;color:#9b6b9e;margin-bottom:25px;font-style:italic}.book-detail-basic-info .book-detail-meta{margin-bottom:30px}.book-detail-basic-info .book-detail-meta-item{font-family:"Montserrat",sans-serif;font-size:14px;color:#666;margin-bottom:10px}.book-detail-basic-info .book-detail-meta-item strong{color:#2c3e50}.book-detail-basic-info .buy-button.large{padding:15px 30px;font-size:1.1rem;font-weight:600}.book-detail-description{margin-bottom:60px}.book-detail-description h3{font-family:"Lora",serif;font-size:1.8rem;color:#2c3e50;margin-bottom:20px}.book-detail-description .book-detail-description-text{font-size:1.1rem;line-height:1.7;color:#666}.book-detail-basic-info .book-detail-description{margin-top:30px;margin-bottom:40px}.book-detail-awards{margin-bottom:30px}.book-detail-awards .awards-list{list-style:none;padding:0}.book-detail-awards .awards-list li{font-size:1.2rem;color:#2c3e50;font-weight:600;padding:8px 0;border-bottom:1px solid #f8f6f3}.book-detail-awards .awards-list li:last-child{border-bottom:none}.book-detail-reviews{margin-bottom:30px}.book-detail-reviews .reviews-list .review-item{margin-bottom:20px}.book-detail-reviews .reviews-list .review-item .review-text{font-size:1.1rem;line-height:1.6;color:#666;font-style:italic;margin-bottom:15px}.book-detail-reviews .reviews-list .review-item .review-source{font-weight:600;color:#2c3e50;margin-bottom:10px}.book-detail-reviews .reviews-list .review-item .review-source.clickable{text-decoration:none;transition:color .3s ease}.book-detail-reviews .reviews-list .review-item .review-source.clickable:hover{color:#b894c7;text-decoration:underline}.book-detail-basic-info .book-detail-reviews{margin-top:40px;margin-bottom:40px}.other-books-carousel{margin-top:80px;padding-top:60px;border-top:1px solid #f8f6f3}.other-books-carousel .carousel-title{font-family:"Lora",serif;font-size:2rem;color:#2c3e50;text-align:center;margin-bottom:40px;position:relative}.other-books-carousel .carousel-container{position:relative;max-width:100%;margin:0 auto}.other-books-carousel .carousel-track{display:flex;gap:30px;overflow-x:auto;scroll-behavior:smooth;scrollbar-width:none;-ms-overflow-style:none;padding:20px 0;overflow-y:visible;touch-action:pan-x;cursor:grab;user-select:none;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;transition:cursor 0.2s ease;}.other-books-carousel .carousel-track:active{cursor:grabbing}.other-books-carousel .carousel-track::-webkit-scrollbar{display:none}.other-books-carousel .carousel-book-card{flex:0 0 200px;text-align:center;transition:transform .3s ease}.other-books-carousel .carousel-book-card:hover{transform:translateY(-5px)}.other-books-carousel .book-cover-small{width:150px;height:225px;margin:0 auto 15px;transition:all .3s ease;display:flex;align-items:center;justify-content:center}.other-books-carousel .book-cover-small:hover{
+    transform: scale(1.1);
+    box-shadow: 0 8px 25px rgba(0,0,0,.2);
+    z-index: 10;
+}.other-books-carousel .book-cover-small.has-cover-image{padding:0}.other-books-carousel .book-cover-small.has-cover-image .book-cover-image{
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+}
+
+.other-books-carousel .book-cover-small.has-cover-image:hover .book-cover-image {
+    transform: scale(1.05);
+    box-shadow: 0 5px 20px rgba(0,0,0,.2);
+}.other-books-carousel .carousel-book-title{font-family:"Lora",serif;font-size:1.1rem;color:#2c3e50;margin-bottom:8px;line-height:1.3}.other-books-carousel .carousel-book-info{font-size:.9rem;color:#666;font-style:italic;margin-bottom:8px}.book-card{background:transparent;border-radius:0;padding:0;transition:all .3s ease;cursor:pointer;text-align:center;border:none;box-shadow:none}.book-card:hover{transform:translateY(-10px);box-shadow:none;border-color:transparent}.book-cover{width:180px;height:270px;margin:0 auto 20px;border-radius:8px;display:flex;flex-direction:column;justify-content:center;align-items:center;color:#fff;text-align:center;padding:20px;transition:all .3s ease;position:relative}
+
+.book-cover-image{
+    width: 180px;
+    height: 270px;
+    margin: 0 auto 20px;
+    border-radius: 8px;
+    object-fit: cover;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    box-shadow: 0 8px 25px rgba(0,0,0,.15);
+    position: relative; /* For z-index to work */
+}
+
+.book-cover-image:hover{
+    transform: perspective(1000px) rotateY(10deg) scale(1.1) translateY(-10px);
+    box-shadow: 0 15px 40px rgba(0,0,0,.25);
+    z-index: 10; /* Ensure hovered image appears above others */
+    position: relative; /* Ensure z-index works properly */
+}
+
+/* Cover placeholder styling */
+.cover-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    padding: 1rem;
+    text-align: center;
+    color: #666;
+    font-size: 0.9rem;
+    font-style: italic;
+    background: #f8f9fa;
+    border: 2px dashed #dee2e6;
+    border-radius: 8px;
+}
+
+/* Small cover placeholder for carousel */
+.cover-placeholder-small {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    padding: 0.5rem;
+    text-align: center;
+    color: #666;
+    font-size: 0.7rem;
+    font-style: italic;
+    background: #f8f9fa;
+    border: 2px dashed #dee2e6;
+    border-radius: 8px;
+    word-wrap: break-word;
+    overflow: hidden;
+}
+
+/* Large cover placeholder for main book cover */
+.cover-placeholder-large {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    padding: 2rem;
+    text-align: center;
+    color: #666;
+    font-size: 1.2rem;
+    font-style: italic;
+    background: #f8f9fa;
+    border: 2px dashed #dee2e6;
+    border-radius: 8px;
+    word-wrap: break-word;
+    overflow: hidden;
+}
+
+/* Book card layout improvements */
+.book-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 0;
+    background: transparent;
+    border-radius: 0;
+    box-shadow: none;
+    transition: all 0.3s ease;
+    min-height: auto;
+    position: relative; /* For absolute positioning of button */
+}
+
+.book-card:hover {
+    transform: translateY(-5px);
+    box-shadow: none;
+}
+
+.book-info {
+    width: 100%;
+    margin-top: 1rem;
+    flex: 1; /* Take up remaining space */
+    display: flex;
+    flex-direction: column;
+}
+
+.book-title {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+    line-height: 1.3;
+}
+
+.book-year {
+    font-family: "Montserrat", sans-serif;
+    font-size: 0.8rem;
+    color: #9b6b9e;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 1rem;
+    font-weight: 500;
+}
+
+.book-description {
+    color: #666;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    margin-bottom: 1rem;
+    text-align: left;
+    flex: 1; /* Take up remaining space */
+}
+
+.book-actions {
+    margin-top: auto; /* Push to bottom */
+    width: 100%;
+}
+
+.book-link {
+    color: #9b6b9e;
+    text-decoration: none;
+    font-family: "Montserrat", sans-serif;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    border: 2px solid #9b6b9e;
+    border-radius: 6px;
+    background: transparent;
+    width: 100%; /* Full width button */
+    text-align: center;
+}
+
+.book-link:hover {
+    background: #9b6b9e;
+    color: white;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(155, 107, 158, 0.3);
+}.book-cover:hover{transform:perspective(1000px) rotateY(10deg) scale(1.15) translateY(-15px)}.book-cover.adult-1{background:linear-gradient(135deg, #f093fb 0%, #f5576c 100%)}.book-cover.adult-2{background:linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)}.book-cover.adult-3{background:linear-gradient(135deg, #43e97b 0%, #38f9d7 100%)}.book-cover.children-1{background:linear-gradient(135deg, #fa709a 0%, #fee140 100%)}.book-cover.children-2{background:linear-gradient(135deg, #a8edea 0%, #fed6e3 100%)}.book-cover.children-3{background:linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%)}.book-genre{font-family:"Montserrat",sans-serif;font-size:10px;text-transform:uppercase;letter-spacing:1px;opacity:.8;margin-bottom:15px}.book-title{font-size:1.4em;margin-bottom:15px;line-height:1.2;font-weight:600}.book-author{font-family:"Montserrat",sans-serif;font-size:.9em;font-weight:600;margin-top:auto}.book-info h3{font-size:1.2em;margin-bottom:10px;color:#2c3e50}.book-year{font-family:"Montserrat",sans-serif;font-size:12px;color:#666;text-transform:uppercase;letter-spacing:1px;margin-bottom:15px}.book-description-short{color:#666;font-size:.9em;line-height:1.5;margin-bottom:15px}.book-link{color:#9b6b9e;text-decoration:none;font-family:"Montserrat",sans-serif;font-size:12px;text-transform:uppercase;letter-spacing:1px;font-weight:600;transition:all .3s ease;display:inline-block;padding:8px 16px;border:1px solid #9b6b9e;border-radius:4px;background:transparent}.book-link:hover{background:#9b6b9e;color:#fff;transform:translateY(-2px)}.footer{background:#2c3e50;color:#fff;padding:50px 20px 30px;text-align:center}.footer-content{max-width:1200px;margin:0 auto}.footer-links{margin-bottom:30px}@media(max-width: 480px){.footer-links{display:flex;flex-direction:column;gap:15px}}.footer-link{color:#fff;text-decoration:none;margin:0 20px;font-size:13px;text-transform:uppercase;letter-spacing:1px;font-family:"Montserrat",sans-serif;font-weight:400;transition:all .3s ease}.footer-link:hover{color:#9b6b9e}@media(max-width: 480px){.footer-link{margin:0}}.social-links{display:flex;justify-content:center;gap:30px;margin:30px 0}@media(max-width: 480px){.social-links{flex-direction:column;gap:15px}}.social-link{text-decoration:none;color:#fff;font-family:"Montserrat",sans-serif;font-size:14px;text-transform:uppercase;letter-spacing:1px;font-weight:600;transition:all .3s ease;padding:8px 16px;border:1px solid transparent;border-radius:4px}.social-link:hover{color:#9b6b9e;border-color:#9b6b9e;transform:translateY(-2px)}.copyright{font-size:12px;opacity:.7;margin-top:30px;font-family:"Montserrat",sans-serif}#app{min-height:100vh}.app-loading{display:flex;flex-direction:column;justify-content:center;align-items:center;min-height:100vh;color:#666}.app-loading .loading-spinner{width:40px;height:40px;border:4px solid #f8f6f3;border-top:4px solid #9b6b9e;border-radius:50%;animation:spin 1s linear infinite;margin-bottom:20px}.app-loading p{font-family:"Montserrat",sans-serif;text-transform:uppercase;letter-spacing:1px;font-size:14px}@keyframes spin{0%{transform:rotate(0deg)}100%{transform:rotate(360deg)}}@media print{.header,.footer,.loading-screen,#notification-container{display:none !important}.main-content{margin-top:0}.latest-book-section,.books-grid-section{page-break-inside:avoid}.book-card{box-shadow:none;border:1px solid #ddd}}@media(prefers-contrast: high){.book-cover{border:2px solid currentColor}.notification{border:2px solid currentColor}}@media(prefers-reduced-motion: reduce){*,*::before,*::after{animation-duration:.01ms !important;animation-iteration-count:1 !important;transition-duration:.01ms !important;scroll-behavior:auto !important}.book-cover:hover{transform:none}.book-card:hover{transform:none}}/*# sourceMappingURL=main.css.map */
+
+/* Empty State Styling */
+.empty-state {
+    text-align: center;
+    color: #666;
+    font-style: italic;
+    padding: 2rem;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,.08);
+    margin: 2rem 0;
+}
+
+.empty-state h3 {
+    color: #9b6b9e;
+    margin-bottom: 1rem;
+}
+
+.empty-state p {
+    margin-bottom: 0.5rem;
+}
+
+/* Books Grid Styling */
+.books-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+    padding: 2rem 0;
+    overflow: visible;
+    align-items: stretch;
+}
+
+/* Ensure all book cards in the grid have the same height */
+.books-grid .book-card {
+    height: 100% !important;
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+/* Force remove all book card backgrounds and containers */
+.book-card,
+.books-page-section .books-category-section .book-card,
+.books-page-section .book-card {
+    background: transparent !important;
+    background-color: transparent !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    overflow: visible !important;
+    padding: 0 !important;
+    border: none !important;
+}
+
+/* Ensure all book-related containers allow overflow for hover effects */
+.books-page-section,
+.books-page-container,
+.books-category-section,
+.books-grid,
+.books-carousel-container,
+.books-carousel-track,
+.latest-book-section,
+.latest-book-container,
+.book-detail-section,
+.book-detail-container,
+.other-books-carousel,
+.other-books-carousel .carousel-container,
+.other-books-carousel .carousel-track {
+    overflow: visible !important;
+}
+
+/* Dual Row Scrolling Carousel Styling */
+.books-carousel-container {
+    position: relative;
+    overflow: visible;
+    padding: 20px 0;
+    margin-top: 10px;
+}
+
+.books-carousel-track {
+    display: flex;
+    gap: 30px;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    padding: 20px 0;
+    overflow-y: visible;
+}
+
+.books-carousel-track::-webkit-scrollbar {
+    display: none;
+}
+
+/* Top row styling */
+.books-carousel-track.top-track {
+    margin-bottom: 20px;
+    animation: scrollLeftToRight 60s linear infinite;
+}
+
+/* Bottom row styling */
+.books-carousel-track.bottom-track {
+    animation: scrollRightToLeft 60s linear infinite;
+}
+
+/* Pause animation on hover */
+.books-carousel-track:hover {
+    animation-play-state: paused;
+}
+
+/* Scrolling animations */
+@keyframes scrollLeftToRight {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-50%);
+    }
+}
+
+@keyframes scrollRightToLeft {
+    0% {
+        transform: translateX(-50%);
+    }
+    100% {
+        transform: translateX(0);
+    }
+}
+
+/* Book cards in scrolling rows */
+.books-carousel-track .book-card {
+    flex: 0 0 250px;
+    margin: 0;
+    transition: transform 0.3s ease;
+}
+
+.books-carousel-track .book-card:hover {
+    transform: translateY(-10px) scale(1.05);
+    z-index: 10;
+}
+
+.books-carousel-track .book-cover {
+    width: 200px;
+    height: 300px;
+    margin: 0 auto;
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+}
+
+.books-carousel-track .book-cover.has-cover-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.books-carousel-track .book-card:hover .book-cover.has-cover-image img {
+    transform: scale(1.1);
+}
+
+/* Ensure book covers can expand freely on hover */
+.book-cover,
+.book-cover-image,
+.books-carousel-track .book-card .book-cover,
+.book-cover-large,
+.book-cover-small,
+.other-books-carousel .book-cover-small,
+.other-books-carousel .book-cover-small.has-cover-image .book-cover-image {
+    overflow: visible !important;
+    position: relative !important;
+}
+
+/* Enhanced hover effects for all book covers across all pages */
+.book-cover:hover,
+.book-cover-image:hover,
+.books-carousel-track .book-card .book-cover:hover,
+.book-cover-large:hover,
+.book-cover-small:hover,
+.other-books-carousel .book-cover-small:hover,
+.other-books-carousel .book-cover-small.has-cover-image:hover .book-cover-image,
+.books-carousel-track .book-card .book-cover.has-cover-image .book-cover-image:hover {
+    z-index: 15 !important; /* Higher z-index for hovered elements */
+    position: relative !important;
+}
+
+/* Remove all white containers and backgrounds from book info sections */
+.book-info,
+.book-info *,
+.book-title,
+.book-year,
+.book-description,
+.book-description-short,
+.book-actions,
+.book-link,
+.book-genre,
+.book-author {
+    background: transparent !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+}
+
+/* Ensure book info sections are completely transparent */
+.book-info {
+    padding: 0 !important;
+    margin: 0 !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+/* Books page specific styling for better button alignment */
+.books-page-section .book-card {
+    display: flex !important;
+    flex-direction: column !important;
+    height: 100% !important;
+}
+
+.books-page-section .book-card .book-info {
+    display: flex !important;
+    flex-direction: column !important;
+    flex: 1 !important;
+    justify-content: space-between !important;
+}
+
+.books-page-section .book-card .book-actions {
+    margin-top: auto !important;
+    padding-top: 15px !important;
+}
+
+.books-page-section .book-card .book-link {
+    width: 100% !important;
+    text-align: center !important;
+    padding: 12px 20px !important;
+    font-size: 14px !important;
+    font-weight: 600 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 1px !important;
+    color: #9b6b9e !important;
+    background: transparent !important;
+    border: 2px solid #9b6b9e !important;
+    border-radius: 8px !important;
+    text-decoration: none !important;
+    transition: all 0.3s ease !important;
+    display: inline-block !important;
+    outline: 2px solid transparent !important;
+    outline-offset: 2px !important;
+}
+
+.books-page-section .book-card .book-link:hover {
+    background: #9b6b9e !important;
+    color: #ffffff !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 4px 15px rgba(155, 107, 158, 0.3) !important;
+    outline: 2px solid #b894c7 !important;
+    outline-offset: 2px !important;
+}
+
+.books-page-section .book-card .book-link:focus {
+    outline: 2px solid #b894c7 !important;
+    outline-offset: 2px !important;
+}
+
+/* Ensure consistent description heights for proper button alignment */
+.books-page-section .book-card .book-description,
+.books-page-section .book-card .book-description-short {
+    flex: 1 !important;
+    min-height: 80px !important;
+    display: flex !important;
+    align-items: flex-start !important;
+    margin-bottom: 15px !important;
+}
+
+/* Ensure all book covers have consistent, uniform sizing */
+.books-page-section .book-card .book-cover,
+.books-page-section .book-card .book-cover-image {
+    width: 200px !important;
+    height: 300px !important;
+    margin: 0 auto 20px !important;
+    border-radius: 8px !important;
+    object-fit: cover !important;
+    flex-shrink: 0 !important;
+}
+
+/* Fallback for CSS-based covers */
+.books-page-section .book-card .book-cover {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: linear-gradient(135deg, #9b6b9e 0%, #b894c7 100%) !important;
+    color: #ffffff !important;
+    text-align: center !important;
+    padding: 20px !important;
+    font-size: 1.2rem !important;
+    font-weight: 600 !important;
+}
+
+/* Ensure cover images maintain aspect ratio */
+.books-page-section .book-card .book-cover-image {
+    object-fit: cover !important;
+    object-position: center !important;
+}
+
+/* Remove any remaining white containers from all book-related elements */
+.book-card *,
+.book-cover *,
+.book-info *,
+.book-title,
+.book-year,
+.book-description,
+.book-description-short,
+.book-actions,
+.book-link,
+.book-genre,
+.book-author,
+.book-meta,
+.book-meta-item,
+.book-subtitle,
+.book-awards,
+.book-reviews,
+.book-detail-basic-info,
+.book-detail-description,
+.book-detail-awards,
+.book-detail-reviews {
+    background: transparent !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    border: none !important;
+}
+
+/* Ensure no white backgrounds exist anywhere in book sections */
+.books-page-section *,
+.books-grid *,
+.books-category-section *,
+.books-carousel-container *,
+.books-carousel-track *,
+.latest-book-section *,
+.book-detail-section *,
+.other-books-carousel * {
+    background: transparent !important;
+    background-color: transparent !important;
+}
+
+/* Final override for any remaining white containers */
+[class*="book"] {
+    background: transparent !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
+}
+
+[class*="book"] * {
+    background: transparent !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
+}
+
+/* Additional book cover types that might exist */
+.book-cover.adult-1:hover,
+.book-cover.adult-2:hover,
+.book-cover.adult-3:hover,
+.book-cover.children-1:hover,
+.book-cover.children-2:hover,
+.book-cover.children-3:hover,
+.book-cover.default-cover:hover {
+    z-index: 15 !important;
+    position: relative !important;
+}
+
+.book-card:hover,
+.books-page-section .books-category-section .book-card:hover,
+.books-page-section .book-card:hover {
+    background: transparent !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+    z-index: 5 !important; /* Ensure hovered cards appear above others */
+    position: relative !important; /* Ensure z-index works properly */
+}
+
+.books-category-section {
+    margin-bottom: 3rem;
+    overflow: visible;
+}
+
+.category-header {
+    text-align: center;
+    margin-bottom: 2rem;
+}
+
+.category-title {
+    font-size: 2rem;
+    color: #2c3e50;
+    font-weight: 600;
+    margin: 0;
+}
+
+/* Books Carousel Styling */
+.books-carousel-container {
+  position: relative;
+  overflow: visible;
+  padding: 20px 0;
+  margin-top: 10px; /* Further reduced from 20px to 10px */
+  text-align: center; /* Center the carousel content */
+  max-width: 1200px; /* Match the container max-width */
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.books-carousel-track {
+  display: flex;
+  gap: 40px;
+  transition: transform 0.1s ease-out;
+  will-change: transform;
+  margin-bottom: 10px; /* Reduced space between top and bottom tracks */
+  justify-content: center; /* Center the track content */
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.books-carousel-track:last-child {
+  margin-bottom: 0; /* Remove margin from bottom track */
+}
+
+.books-carousel-track .book-card {
+  flex: 0 0 300px;
+  min-width: 300px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.books-carousel-track .book-card .book-cover {
+  width: 220px;
+  height: 330px;
+  margin: 0 auto 20px;
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
+  text-align: center;
+  padding: 20px;
+  transition: all 0.3s ease;
+  position: relative;
+  cursor: pointer;
+}
+
+.books-carousel-track .book-card:hover {
+  transform: translateY(-10px) scale(1.02);
+  box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+  z-index: 10;
+  cursor: pointer;
+}
+
+.books-carousel-track .book-card:hover .book-cover {
+  border: 2px solid #9b6b9e;
+  box-shadow: 0 0 20px rgba(155, 107, 158, 0.3);
+}
+
+/* Single track styling */
+.top-track {
+  border: none;
+  padding: 0;
+}
+
+.books-carousel-track .book-card .book-cover:hover {
+  transform: perspective(1000px) rotateY(10deg) scale(1.15) translateY(-15px) !important;
+}
+
+.books-carousel-track .book-card .book-cover.has-cover-image {
+  padding: 0;
+}
+
+.books-carousel-track .book-card .book-cover.has-cover-image .book-cover-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .books-carousel-track .book-card {
+    flex: 0 0 200px;
+    min-width: 200px;
+    cursor: pointer;
+  }
+  
+  .books-carousel-track {
+    gap: 30px;
+  }
+}
+
+@media (max-width: 480px) {
+  .books-carousel-track .book-card {
+    flex: 0 0 180px;
+    min-width: 180px;
+    cursor: pointer;
+  }
+  
+  .books-carousel-track {
+    gap: 20px;
+  }
+}
+
+/* Book Awards Styling - Simple */
+.book-awards {
+  margin-bottom: 30px;
+}
+
+.awards-title {
+  font-weight: bold;
+  font-style: italic;
+  margin-bottom: 15px;
+}
+
+.awards-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.award-item {
+  font-weight: bold;
+  font-style: italic;
+  margin-bottom: 8px;
+}
+
+@media (max-width: 768px) {
+  .book-awards {
+    margin-bottom: 25px;
+  }
+  
+  .award-item {
+    margin-bottom: 6px;
+  }
+}
+
+.footer .copyright {
+  text-align: center;
+  color: #ccc;
+  font-size: 0.9rem;
+  margin-top: 20px;
+}
+
+.footer .website-credit {
+  text-align: center;
+  color: #999;
+  font-size: 0.8rem;
+  margin-top: 10px;
+  font-style: italic;
+}
+
+/* Media Page Styles */
+.media-page {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+}
+
+.media-page-header {
+    text-align: center;
+    margin-bottom: 3rem;
+}
+
+.media-page-header h1 {
+    font-size: 2.5rem;
+    color: #2c3e50;
+    margin-bottom: 1rem;
+    font-family: 'Georgia', serif;
+}
+
+.media-section {
+    margin-bottom: 4rem;
+}
+
+.media-section h2 {
+    font-size: 2rem;
+    color: #9b6b9e;
+    text-align: center;
+    margin-bottom: 1.5rem;
+    font-family: 'Georgia', serif;
+    position: relative;
+}
+
+.media-section h2::after {
+    content: '';
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 80px;
+    height: 3px;
+    background-color: #b894c7;
+}
+
+.media-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 2rem;
+    margin-top: 2rem;
+}
+
+.media-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    padding: 1.5rem;
+    transition: all 0.3s ease;
+    border: 1px solid #f0f0f0;
+}
+
+.media-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.15);
+}
+
+.media-title {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 1rem;
+    line-height: 1.4;
+    font-family: 'Georgia', serif;
+}
+
+.media-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+    color: #9b6b9e;
+    flex-wrap: wrap;
+}
+
+.media-source {
+    font-weight: 500;
+}
+
+.media-date {
+    color: #7f8c8d;
+}
+
+.media-description {
+    color: #555;
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+    font-size: 0.95rem;
+}
+
+.media-link {
+    display: inline-block;
+    background: #9b6b9e;
+    color: white;
+    padding: 0.75rem 1.5rem;
+    text-decoration: none;
+    border-radius: 6px;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    border: 2px solid #9b6b9e;
+}
+
+.media-link:hover {
+    background: #b894c7;
+    border-color: #b894c7;
+    transform: translateY(-2px);
+}
+
+.media-link:active {
+    transform: translateY(0);
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .media-page {
+        padding: 1rem;
+    }
+    
+    .media-page-header h1 {
+        font-size: 2rem;
+    }
+    
+    .media-section h2 {
+        font-size: 1.5rem;
+    }
+    
+    .media-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+    
+    .media-card {
+        padding: 1.25rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .media-page-header h1 {
+        font-size: 1.75rem;
+    }
+    
+    .media-section h2 {
+        font-size: 1.25rem;
+    }
+    
+    .media-card {
+        padding: 1rem;
+    }
+    
+    .media-title {
+        font-size: 1.1rem;
+    }
+}
+
+.media-card .media-link {
+    display: inline-block;
+    background-color: #9b6b9e;
+    color: white;
+    text-decoration: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 4px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: background-color 0.3s ease;
+    margin-top: 1rem;
+    align-self: flex-end;
+    width: fit-content;
+}
+
+.media-card .media-link:hover {
+    background-color: #b894c7;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(155, 107, 158, 0.3);
+}
+
+.media-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 200px;
+}
+
+.media-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.media-card-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.media-card .media-title {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #2c3e50;
+    margin-bottom: 0.75rem;
+    line-height: 1.4;
+    flex: 1;
+}
+
+.media-card .media-meta {
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+    color: #7f8c8d;
+}
+
+.media-card .media-description {
+    color: #555;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+    flex: 1;
+}
+
+.media-card .media-link {
+    margin-top: auto;
+    align-self: flex-start;
+}

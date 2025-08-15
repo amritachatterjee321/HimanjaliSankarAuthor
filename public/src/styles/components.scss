@@ -585,6 +585,15 @@
           font-weight: 600;
           color: $secondary-color;
           margin-bottom: 10px;
+          
+          &.clickable {
+            cursor: pointer;
+            transition: color 0.3s ease;
+            
+            &:hover {
+              color: $accent-color;
+            }
+          }
         }
         
         .book-genre {
@@ -607,6 +616,25 @@
           line-height: 1.6;
           color: $gray-medium;
           margin-bottom: 25px;
+        }
+
+        .book-description-short {
+          font-size: 0.9rem;
+          color: $gray-medium;
+          line-height: 1.4;
+          margin-bottom: 15px;
+        }
+
+        .book-awards {
+          font-size: 0.85rem;
+          color: $primary-color;
+          font-weight: 600;
+          margin-bottom: 15px;
+          padding: 5px 0;
+          
+          strong {
+            color: $secondary-color;
+          }
         }
         
         .book-actions {

@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Book Detail Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .test-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .test-links {
+            margin-bottom: 30px;
+            padding: 20px;
+            background: #e8f4fd;
+            border-radius: 8px;
+        }
+        .test-links h2 {
+            color: #2c5aa0;
+            margin-top: 0;
+        }
+        .test-links a {
+            display: inline-block;
+            margin: 10px 20px 10px 0;
+            padding: 10px 20px;
+            background: #2c5aa0;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+        .test-links a:hover {
+            background: #1e3f6b;
+        }
+        .feature-list {
+            background: #f0f8ff;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+        }
+        .feature-list h3 {
+            color: #2c5aa0;
+            margin-top: 0;
+        }
+        .feature-list ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+        .feature-list li {
+            margin: 8px 0;
+            color: #333;
+        }
+    </style>
+</head>
+<body>
+    <div class="test-container">
+        <h1>Book Detail Page Test</h1>
+        
+        <div class="test-links">
+            <h2>Test the Book Detail Pages:</h2>
+            <a href="/book-detail.html?id=1" target="_blank">Whispers in the Rain</a>
+            <a href="/book-detail.html?id=2" target="_blank">The Magic Garden</a>
+            <a href="/book-detail.html?id=1754207813848" target="_blank">The Burnings</a>
+            <a href="/book-detail.html?id=latest" target="_blank">Latest Book</a>
+        </div>
+
+        <div class="feature-list">
+            <h3>Features Implemented:</h3>
+            <ul>
+                <li>✅ Book cover images (clickable)</li>
+                <li>✅ Book titles (clickable)</li>
+                <li>✅ Detailed book descriptions</li>
+                <li>✅ Book metadata (publisher, pages, ISBN, etc.)</li>
+                <li>✅ Awards and recognition sections</li>
+                <li>✅ Reviews with clickable links to original sources</li>
+                <li>✅ Star ratings for reviews</li>
+                <li>✅ Carousel of other published books at bottom</li>
+                <li>✅ Navigation between books</li>
+                <li>✅ Responsive design for mobile and desktop</li>
+                <li>✅ Back to books navigation</li>
+                <li>✅ Buy on Amazon buttons</li>
+            </ul>
+        </div>
+
+        <div class="feature-list">
+            <h3>How to Test:</h3>
+            <ul>
+                <li>1. Click on any book cover or title on the main books page</li>
+                <li>2. Navigate to the book detail page</li>
+                <li>3. View the detailed information, reviews, and awards</li>
+                <li>4. Click on review sources to see external links</li>
+                <li>5. Scroll to bottom to see the carousel of other books</li>
+                <li>6. Click on other books in the carousel to navigate between them</li>
+                <li>7. Use the back button to return to the main books page</li>
+            </ul>
+        </div>
+
+        <div class="feature-list">
+            <h3>Technical Details:</h3>
+            <ul>
+                <li>Book detail pages use URL parameters (?id=book_id)</li>
+                <li>Reviews include clickable links to external review sources</li>
+                <li>Carousel automatically excludes the current book</li>
+                <li>Responsive design works on all device sizes</li>
+                <li>All book covers and titles are clickable throughout the site</li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>
+

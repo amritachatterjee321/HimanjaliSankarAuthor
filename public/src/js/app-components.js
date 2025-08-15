@@ -16,6 +16,18 @@ class BooksGrid extends Component {
   async fetchData() {
     try {
       this.booksData = await this.apiService.getBooks();
+      console.log('🔍 Fetched books data:', this.booksData);
+      if (this.booksData.homepageBooks) {
+        console.log('🔍 Homepage books:', this.booksData.homepageBooks);
+        this.booksData.homepageBooks.forEach((book, index) => {
+          console.log(`🔍 Book ${index}:`, {
+            title: book.title,
+            _id: book._id,
+            id: book.id,
+            coverImage: book.coverImage
+          });
+        });
+      }
     } catch (error) {
       console.error('Failed to fetch books:', error);
       // Fallback to static data
@@ -77,16 +89,12 @@ class BooksGrid extends Component {
       className: 'books-categories'
     });
 
-    // Adult Books Section
-    if (this.booksData.adults && this.booksData.adults.length > 0) {
-      const adultSection = this.createCategorySection('Adult Fiction', this.booksData.adults);
-      categoriesContainer.appendChild(adultSection);
-    }
-
-    // Children's Books Section
-    if (this.booksData.children && this.booksData.children.length > 0) {
-      const childrenSection = this.createCategorySection("Children's Books", this.booksData.children);
-      categoriesContainer.appendChild(childrenSection);
+    // Previous Works Section - Books from Homepage Featuring CMS
+    const homepageBooks = this.booksData.homepageBooks || [];
+    
+    if (homepageBooks.length > 0) {
+      const previousWorksSection = this.createCategorySection('', homepageBooks); // Empty title to avoid duplicate
+      categoriesContainer.appendChild(previousWorksSection);
     }
 
     container.appendChild(header);
@@ -97,108 +105,186 @@ class BooksGrid extends Component {
   }
 
   createCategorySection(categoryName, books) {
+    console.log('🔍 Debug: createCategorySection called with', books.length, 'books:', books.map(b => b.title));
+    
+    // Check for duplicate books in the original data
+    const bookTitles = books.map(b => b.title);
+    const uniqueTitles = [...new Set(bookTitles)];
+    if (bookTitles.length !== uniqueTitles.length) {
+      console.warn('⚠️ Warning: Duplicate book titles found in original data!');
+      console.warn('Original titles:', bookTitles);
+      console.warn('Unique titles:', uniqueTitles);
+    }
+    
     const categorySection = Utils.createElement('div', {
       className: 'category-section'
     });
 
-    const categoryTitle = Utils.createElement('h3', {
-      className: 'category-title',
-      innerHTML: categoryName
+    // Only show title if categoryName is not empty
+    if (categoryName) {
+      const categoryTitle = Utils.createElement('h3', {
+        className: 'category-title',
+        innerHTML: categoryName
+      });
+      categorySection.appendChild(categoryTitle);
+    }
+
+    // Create double-line carousel container
+    const carouselContainer = Utils.createElement('div', {
+      className: 'books-carousel-container'
     });
 
-    const booksGrid = Utils.createElement('div', {
-      className: 'books-grid'
+    // Create different book sets for top and bottom rows - ensure uniqueness
+    const uniqueBooks = books.filter((book, index, self) => 
+      index === self.findIndex(b => b.title === book.title)
+    );
+    
+    if (uniqueBooks.length !== books.length) {
+      console.warn('⚠️ Warning: Filtered out duplicate books. Original:', books.length, 'Unique:', uniqueBooks.length);
+    }
+    
+    // Split books into two equal parts for top and bottom rows
+    const midPoint = Math.ceil(uniqueBooks.length / 2);
+    const topRowBooks = uniqueBooks.slice(0, midPoint);
+    const bottomRowBooks = uniqueBooks.slice(midPoint);
+    
+    // Sort top row A-Z, bottom row Z-A
+    topRowBooks.sort((a, b) => a.title.localeCompare(b.title));
+    bottomRowBooks.sort((a, b) => b.title.localeCompare(a.title));
+    
+    console.log('🔍 Debug: Top row books (A-Z):', topRowBooks.map(b => b.title));
+    console.log('🔍 Debug: Bottom row books (Z-A):', bottomRowBooks.map(b => b.title));
+    
+    // Top row - scrolls left to right
+    const topCarouselTrack = Utils.createElement('div', {
+      className: 'books-carousel-track top-track'
     });
-
-    books.forEach(book => {
+    
+    // Bottom row - scrolls right to left
+    const bottomCarouselTrack = Utils.createElement('div', {
+      className: 'books-carousel-track bottom-track'
+    });
+    
+    // Populate top row (left to right)
+    console.log('🔍 Debug: Adding top row books:', topRowBooks.length);
+    topRowBooks.forEach((book, index) => {
       const bookCard = this.createBookCard(book);
-      booksGrid.appendChild(bookCard);
+      topCarouselTrack.appendChild(bookCard);
+    });
+    
+    // Repeat top row books for seamless infinite scrolling
+    topRowBooks.forEach((book, index) => {
+      const bookCard = this.createBookCard(book);
+      topCarouselTrack.appendChild(bookCard);
+    });
+    
+    // Populate bottom row (right to left)
+    console.log('🔍 Debug: Adding bottom row books:', bottomRowBooks.length);
+    bottomRowBooks.forEach((book, index) => {
+      const bookCard = this.createBookCard(book);
+      bottomCarouselTrack.appendChild(bookCard);
+    });
+    
+    // Repeat bottom row books for seamless infinite scrolling
+    bottomRowBooks.forEach((book, index) => {
+      const bookCard = this.createBookCard(book);
+      bottomCarouselTrack.appendChild(bookCard);
     });
 
-    categorySection.appendChild(categoryTitle);
-    categorySection.appendChild(booksGrid);
+    carouselContainer.appendChild(topCarouselTrack);
+    carouselContainer.appendChild(bottomCarouselTrack);
+    
+    console.log('🔍 Debug: Top track has', topCarouselTrack.children.length, 'book cards');
+    console.log('🔍 Debug: Bottom track has', bottomCarouselTrack.children.length, 'book cards');
+    
+    // Start animations for both rows with different directions
+    this.startCarouselAnimation(carouselContainer, topCarouselTrack, topRowBooks.length, 'left-to-right');
+    this.startCarouselAnimation(carouselContainer, bottomCarouselTrack, bottomRowBooks.length, 'right-to-left');
+
+    categorySection.appendChild(carouselContainer);
 
     return categorySection;
+  }
+
+  startCarouselAnimation(container, track, bookCount, direction = 'left-to-right') {
+    // CSS animations are now handled by CSS keyframes
+    // This function now just sets up hover pause functionality
+    
+    // Pause animation on hover
+    track.addEventListener('mouseenter', () => {
+      track.style.animationPlayState = 'paused';
+    });
+    
+    track.addEventListener('mouseleave', () => {
+      track.style.animationPlayState = 'running';
+    });
+    
+    // Set animation duration based on number of books
+    const baseDuration = 60; // base duration in seconds
+    const adjustedDuration = Math.max(baseDuration, bookCount * 8); // adjust based on book count
+    
+    if (direction === 'left-to-right') {
+      track.style.animation = `scrollLeftToRight ${adjustedDuration}s linear infinite`;
+    } else {
+      track.style.animation = `scrollRightToLeft ${adjustedDuration}s linear infinite`;
+    }
+    
+    console.log(`🎬 Started ${direction} animation for ${bookCount} books with ${adjustedDuration}s duration`);
   }
 
   createBookCard(book) {
     const bookCard = Utils.createElement('div', {
       className: 'book-card',
-      onClick: () => this.showBookInfo(book)
+      onClick: () => this.navigateToBookPage(book)
     });
 
     const bookCover = Utils.createElement('div', {
       className: `book-cover ${book.coverClass}`
     });
 
-    const genre = Utils.createElement('div', {
-      className: 'book-genre',
-      innerHTML: book.genre
-    });
-
-    const title = Utils.createElement('h4', {
-      className: 'book-title',
-      innerHTML: book.title
-    });
-
-    const author = Utils.createElement('div', {
-      className: 'book-author',
-      innerHTML: CONFIG.author.name
-    });
-
-    bookCover.appendChild(genre);
-    bookCover.appendChild(title);
-    bookCover.appendChild(author);
-
-    const bookInfo = Utils.createElement('div', {
-      className: 'book-info'
-    });
-
-    const infoTitle = Utils.createElement('h3', {
-      innerHTML: book.title
-    });
-
-    const year = Utils.createElement('div', {
-      className: 'book-year',
-      innerHTML: book.year
-    });
-
-    const description = Utils.createElement('p', {
-      className: 'book-description-short',
-      innerHTML: book.description
-    });
-
-    const link = Utils.createElement('a', {
-      href: book.amazonLink,
-      className: 'book-link',
-      innerHTML: 'View on Amazon',
-      target: '_blank',
-      onClick: (e) => {
-        e.stopPropagation();
-        window.app.notificationSystem.show(
-          `Opening ${book.title} on Amazon...`,
-          'info'
-        );
-      }
-    });
-
-    bookInfo.appendChild(infoTitle);
-    bookInfo.appendChild(year);
-    bookInfo.appendChild(description);
-    bookInfo.appendChild(link);
+    // Add book cover image if available, otherwise show title
+    if (book.coverImage && book.coverImage.url) {
+      const img = Utils.createElement('img', {
+        src: book.coverImage.url,
+        alt: book.title,
+        className: 'book-cover-image'
+      });
+      bookCover.appendChild(img);
+      bookCover.classList.add('has-cover-image');
+    } else {
+      // Fallback: show book title
+      const title = Utils.createElement('h4', {
+        className: 'book-title',
+        innerHTML: book.title
+      });
+      bookCover.appendChild(title);
+    }
 
     bookCard.appendChild(bookCover);
-    bookCard.appendChild(bookInfo);
 
     return bookCard;
   }
 
-  showBookInfo(book) {
-    window.app.notificationSystem.show(
-      `Learn more about "${book.title}" - Published in ${book.year}`,
-      'info',
-      'Book Details'
-    );
+  navigateToBookPage(book) {
+    console.log('🔍 Navigating to book page for:', book.title);
+    console.log('🔍 Book data:', book);
+    console.log('🔍 Book ID (_id):', book._id);
+    console.log('🔍 Book ID (id):', book.id);
+    
+    // Navigate to the individual book page
+    if (book._id || book.id) {
+      const bookId = book._id || book.id;
+      console.log('🔍 Using book ID for navigation:', bookId);
+      window.location.href = `/book/${bookId}`;
+    } else {
+      console.log('❌ No book ID found for navigation');
+      // Fallback: show notification if book ID is not available
+      window.app.notificationSystem.show(
+        `Book page not available for "${book.title}"`,
+        'warning',
+        'Navigation'
+      );
+    }
   }
 
   async mount() {
@@ -256,13 +342,7 @@ class About extends Component {
       innerHTML: 'About'
     });
 
-    const subtitle = Utils.createElement('p', {
-      className: 'section-subtitle',
-      innerHTML: this.authorData?.shortBio || 'Award-winning author crafting heartwarming stories that bridge generations and cultures.'
-    });
-
     header.appendChild(title);
-    header.appendChild(subtitle);
     container.appendChild(header);
 
     // Create about content
@@ -270,30 +350,41 @@ class About extends Component {
       className: 'about-content'
     });
 
-    // Author photo placeholder
+    // Author photo section
     const authorPhoto = Utils.createElement('div', {
       className: 'author-photo'
     });
 
-    const photoPlaceholder = Utils.createElement('div', {
-      className: 'photo-placeholder',
-      innerHTML: '<i class="fas fa-user"></i>'
-    });
+    if (this.authorData?.image?.url) {
+      // Show actual author image from CMS
+      const authorImage = Utils.createElement('img', {
+        src: this.authorData.image.url,
+        alt: 'Himanjali Sankar - Author',
+        className: 'author-image'
+      });
+      authorPhoto.appendChild(authorImage);
+    } else {
+      // Show placeholder if no image
+      const photoPlaceholder = Utils.createElement('div', {
+        className: 'photo-placeholder',
+        innerHTML: '<i class="fas fa-user"></i>'
+      });
+      authorPhoto.appendChild(photoPlaceholder);
+    }
 
-    authorPhoto.appendChild(photoPlaceholder);
-
-    // Author bio
+    // Author bio section
     const authorBio = Utils.createElement('div', {
       className: 'author-bio'
     });
 
-    const bioText = Utils.createElement('p', {
+    const bioText = Utils.createElement('div', {
       className: 'bio-text',
       innerHTML: this.authorData?.bio || 'A passionate author who loves to tell stories that touch the heart and inspire the mind. With a deep appreciation for the power of storytelling, Himanjali creates narratives that resonate with readers of all ages.'
     });
 
-    // Assemble bio section
     authorBio.appendChild(bioText);
+
+    // Awards section removed - no longer displayed
 
     // Assemble about content
     aboutContent.appendChild(authorPhoto);
@@ -311,21 +402,14 @@ class About extends Component {
       this.authorData = await this.loadAuthorData();
     } catch (error) {
       console.error('Error loading author data:', error);
-      // Use fallback data
+      // Use fallback data with simplified fields
       this.authorData = {
-        name: 'Himanjali Sankar',
         bio: 'A passionate author who loves to tell stories that touch the heart and inspire the mind. With a deep appreciation for the power of storytelling, Himanjali creates narratives that resonate with readers of all ages. Her work spans multiple genres, from contemporary fiction to children\'s literature, always with a focus on creating meaningful connections through words.',
-        email: 'himanjali@example.com',
-        website: 'https://himanjali.com',
-        location: 'India',
-        genres: ['Contemporary Fiction', 'Children\'s Literature', 'Short Stories'],
-        writingStyle: 'Heartwarming, Inspirational, Engaging',
-        achievements: [
+        awards: [
           'Multiple published works across different genres',
           'Recognition for storytelling excellence',
           'Growing reader community worldwide'
-        ],
-        inspiration: 'Everyday life, human relationships, and the power of hope and resilience'
+        ]
       };
     }
     
@@ -365,6 +449,49 @@ class About extends Component {
 
 // Footer Component
 class Footer extends Component {
+  constructor(container, eventBus) {
+    super(container, eventBus);
+    this.apiService = new ApiService();
+    this.socialData = null;
+  }
+
+  async mount() {
+    try {
+      // Load social media data from CMS
+      await this.loadSocialData();
+    } catch (error) {
+      console.error('Error loading social media data:', error);
+      // Use fallback data if CMS fails
+      this.socialData = {
+        instagram: '#',
+        facebook: '#'
+      };
+    }
+    
+    // Always mount the component
+    await super.mount();
+  }
+
+  async loadSocialData() {
+    try {
+      // Try to load from CMS API first
+      const response = await this.apiService.getSocialMedia();
+      if (response && response.social) {
+        console.log('Successfully loaded social media data from CMS:', response.social);
+        this.socialData = response.social;
+      } else {
+        throw new Error('Invalid CMS response');
+      }
+    } catch (error) {
+      console.warn('CMS API failed, using fallback data:', error);
+      // Fallback to basic social data
+      this.socialData = {
+        instagram: '#',
+        facebook: '#'
+      };
+    }
+  }
+
   render() {
     const footer = Utils.createElement('footer', {
       className: 'footer'
@@ -426,37 +553,53 @@ class Footer extends Component {
       footerLinks.appendChild(link);
     });
 
-    const socialIcons = Utils.createElement('div', {
-      className: 'social-icons'
+    const socialLinks = Utils.createElement('div', {
+      className: 'social-links'
     });
 
-    CONFIG.social.forEach(social => {
-      const icon = Utils.createElement('a', {
-        href: social.url,
-        className: 'social-icon',
-        'aria-label': social.name,
-        innerHTML: social.icon,
-        target: '_blank',
-        onClick: (e) => {
-          e.preventDefault();
-          window.app.notificationSystem.show(
-            `Visit ${social.name} page coming soon!`,
-            'info',
-            'Social Media'
-          );
-        }
-      });
-      socialIcons.appendChild(icon);
-    });
+    // Create Instagram and Facebook links from CMS data
+    if (this.socialData) {
+      // Instagram link
+      if (this.socialData.instagram && this.socialData.instagram !== '#') {
+        const instagramLink = Utils.createElement('a', {
+          href: this.socialData.instagram,
+          className: 'social-link',
+          'aria-label': 'Instagram',
+          innerHTML: 'Instagram',
+          target: '_blank',
+          rel: 'noopener noreferrer'
+        });
+        socialLinks.appendChild(instagramLink);
+      }
+
+      // Facebook link
+      if (this.socialData.facebook && this.socialData.facebook !== '#') {
+        const facebookLink = Utils.createElement('a', {
+          href: this.socialData.facebook,
+          className: 'social-link',
+          'aria-label': 'Facebook',
+          innerHTML: 'Facebook',
+          target: '_blank',
+          rel: 'noopener noreferrer'
+        });
+        socialLinks.appendChild(facebookLink);
+      }
+    }
 
     const copyright = Utils.createElement('div', {
       className: 'copyright',
       innerHTML: `&copy; 2025 ${CONFIG.author.name}. All rights reserved.`
     });
 
+    const websiteCredit = Utils.createElement('div', {
+      className: 'website-credit',
+      innerHTML: 'Website by Amrita Chatterjee'
+    });
+
     footerContent.appendChild(footerLinks);
-    footerContent.appendChild(socialIcons);
+    footerContent.appendChild(socialLinks);
     footerContent.appendChild(copyright);
+    footerContent.appendChild(websiteCredit);
     footer.appendChild(footerContent);
 
     return footer;

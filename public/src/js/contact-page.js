@@ -3,6 +3,7 @@ import ApiService from './api.js';
 import Utils from './utils.js';
 import { EventEmitter, NotificationSystem } from './services.js';
 import { Header, Component } from './components.js';
+import { Footer } from './app-components.js';
 
 // Contact Page Component
 class ContactPage extends Component {
@@ -437,10 +438,12 @@ class ContactPageApp {
       // Initialize components
       const headerComponent = new Header(header, this.eventBus);
       const contactPageComponent = new ContactPage(main, this.eventBus, this.apiService);
+      const footerComponent = new Footer(footer, this.eventBus);
 
       // Mount components
       await headerComponent.mount();
       await contactPageComponent.mount();
+      await footerComponent.mount();
 
       console.log('✅ Contact page components mounted successfully');
 

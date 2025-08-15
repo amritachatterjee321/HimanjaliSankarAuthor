@@ -3,6 +3,7 @@ import ApiService from './api.js';
 import Utils from './utils.js';
 import { EventEmitter, NotificationSystem } from './services.js';
 import { Header, Component } from './components.js';
+import { Footer } from './app-components.js';
 
 // Media Page Component
 class MediaPage extends Component {
@@ -14,23 +15,24 @@ class MediaPage extends Component {
 
   async fetchData() {
     try {
-      this.mediaData = await this.apiService.getMedia();
+      console.log('🔍 Fetching media data from API...');
+      const response = await this.apiService.getMedia();
+      console.log('📰 API response:', response);
+      
+      if (response && response.media) {
+        this.mediaData = response.media;
+        console.log('✅ Media data loaded from API:', this.mediaData);
+      } else {
+        throw new Error('Invalid API response structure');
+      }
     } catch (error) {
-      console.error('Failed to fetch media:', error);
-      // Fallback to static data
+      console.error('❌ Failed to fetch media from API:', error);
+      console.log('🔄 Using fallback sample data');
+      
+      // Fallback to static data - only reviews and short works
       this.mediaData = [
         {
           id: 1,
-          title: "Author Interview - Literary Magazine",
-          type: "interview",
-          description: "An in-depth conversation about storytelling, inspiration, and the creative process behind 'Whispers in the Rain'.",
-          date: "2024-01-15",
-          source: "Literary Magazine",
-          url: "https://example.com/interview",
-          image: null
-        },
-        {
-          id: 2,
           title: "Book Review - The Daily Reader",
           type: "review",
           description: "A glowing review of 'The Magic Garden' highlighting its appeal to young readers and educational value.",
@@ -40,23 +42,33 @@ class MediaPage extends Component {
           image: null
         },
         {
+          id: 2,
+          title: "Literary Review - Modern Fiction",
+          type: "review",
+          description: "An insightful analysis of 'Whispers in the Rain' exploring themes of hope and resilience.",
+          date: "2024-01-10",
+          source: "Modern Fiction Journal",
+          url: "https://example.com/literary-review",
+          image: null
+        },
+        {
           id: 3,
-          title: "Press Release - New Book Launch",
-          type: "press",
-          description: "Official announcement of the upcoming release of 'Echoes of Tomorrow' and book tour details.",
-          date: "2024-02-01",
-          source: "Publisher Press",
-          url: "https://example.com/press-release",
+          title: "Short Story - 'The Last Leaf'",
+          type: "short-work",
+          description: "A poignant short story about hope and perseverance, published in the Spring 2024 anthology.",
+          date: "2024-03-15",
+          source: "Spring Anthology 2024",
+          url: "https://example.com/short-story",
           image: null
         },
         {
           id: 4,
-          title: "Podcast Appearance - Writers' Corner",
-          type: "podcast",
-          description: "Featured guest on the popular 'Writers' Corner' podcast discussing contemporary fiction and writing techniques.",
-          date: "2023-11-10",
-          source: "Writers' Corner Podcast",
-          url: "https://example.com/podcast",
+          title: "Flash Fiction - 'Morning Coffee'",
+          type: "short-work",
+          description: "A brief but powerful piece capturing the quiet moments of daily life.",
+          date: "2024-02-28",
+          source: "Flash Fiction Weekly",
+          url: "https://example.com/flash-fiction",
           image: null
         }
       ];
@@ -72,12 +84,19 @@ class MediaPage extends Component {
     }
 
     const section = Utils.createElement('section', {
-      className: 'media-page-section'
+      className: 'media-page'
     });
 
-    const container = Utils.createElement('div', {
-      className: 'media-page-container'
+    // Page Header
+    const pageHeader = Utils.createElement('div', {
+      className: 'media-page-header'
     });
+
+    const pageTitle = Utils.createElement('h1', {
+      innerHTML: 'Media & Publications'
+    });
+
+    pageHeader.appendChild(pageTitle);
 
     // Media Categories Container
     const categoriesContainer = Utils.createElement('div', {
@@ -93,39 +112,47 @@ class MediaPage extends Component {
       categoriesContainer.appendChild(typeSection);
     });
 
-    container.appendChild(categoriesContainer);
-    section.appendChild(container);
+    section.appendChild(pageHeader);
+    section.appendChild(categoriesContainer);
 
     return section;
   }
 
   groupMediaByType(mediaData) {
     const grouped = {};
+    console.log('🔍 Grouping media data:', mediaData);
+    
     mediaData.forEach(item => {
-      const type = item.type || 'other';
-      if (!grouped[type]) {
-        grouped[type] = [];
+      // Ensure consistent ID handling
+      const mediaItem = {
+        ...item,
+        id: item._id || item.id
+      };
+      
+      const type = mediaItem.type || 'other';
+      console.log(`📝 Processing media item: ${mediaItem.title} (Type: ${type})`);
+      
+      // Only include reviews and short works
+      if (type === 'review' || type === 'short-work') {
+        if (!grouped[type]) {
+          grouped[type] = [];
+        }
+        grouped[type].push(mediaItem);
       }
-      grouped[type].push(item);
     });
+    
+    console.log('📊 Grouped media data:', grouped);
     return grouped;
   }
 
   createMediaTypeSection(type, mediaItems) {
     const typeSection = Utils.createElement('div', {
-      className: 'media-type-section'
-    });
-
-    const typeHeader = Utils.createElement('div', {
-      className: 'type-header'
+      className: 'media-section'
     });
 
     const typeTitle = Utils.createElement('h2', {
-      className: 'type-title',
       innerHTML: this.formatTypeTitle(type)
     });
-
-    typeHeader.appendChild(typeTitle);
 
     const mediaGrid = Utils.createElement('div', {
       className: 'media-grid'
@@ -136,7 +163,7 @@ class MediaPage extends Component {
       mediaGrid.appendChild(mediaCard);
     });
 
-    typeSection.appendChild(typeHeader);
+    typeSection.appendChild(typeTitle);
     typeSection.appendChild(mediaGrid);
 
     return typeSection;
@@ -144,81 +171,61 @@ class MediaPage extends Component {
 
   formatTypeTitle(type) {
     const titles = {
-      'interview': 'Interviews',
       'review': 'Reviews',
-      'press': 'Press Releases',
-      'podcast': 'Podcasts',
-      'article': 'Articles',
-      'video': 'Videos',
+      'short-work': 'Short Works',
       'other': 'Other Media'
     };
     return titles[type] || 'Media';
   }
 
-  createMediaCard(media) {
-    const mediaCard = Utils.createElement('div', {
-      className: 'media-card'
+  createMediaCard(mediaItem) {
+    const card = Utils.createElement('div', { className: 'media-card' });
+    
+    const title = Utils.createElement('h3', { 
+        className: 'media-title', 
+        innerHTML: mediaItem.title || 'Untitled' 
     });
-
-    const mediaContent = Utils.createElement('div', {
-      className: 'media-content'
+    
+    // Build the media info with conditional fields
+    let mediaInfoHTML = '';
+    
+    if (mediaItem.source && mediaItem.source.trim()) {
+        mediaInfoHTML += `<span class="media-source">${mediaItem.source}</span>`;
+    }
+    
+    if (mediaItem.date) {
+        if (mediaInfoHTML) mediaInfoHTML += ' • ';
+        mediaInfoHTML += `<span class="media-date">${mediaItem.date}</span>`;
+    }
+    
+    const metaInfo = Utils.createElement('div', { 
+        className: 'media-meta', 
+        innerHTML: mediaInfoHTML 
     });
-
-    const mediaHeader = Utils.createElement('div', {
-      className: 'media-header'
-    });
-
-    const mediaTitle = Utils.createElement('h3', {
-      className: 'media-title',
-      innerHTML: media.title
-    });
-
-    const mediaMeta = Utils.createElement('div', {
-      className: 'media-meta'
-    });
-
-    const mediaDate = Utils.createElement('span', {
-      className: 'media-date',
-      innerHTML: this.formatDate(media.date)
-    });
-
-    const mediaSource = Utils.createElement('span', {
-      className: 'media-source',
-      innerHTML: media.source
-    });
-
-    mediaMeta.appendChild(mediaDate);
-    mediaMeta.appendChild(mediaSource);
-
-    mediaHeader.appendChild(mediaTitle);
-    mediaHeader.appendChild(mediaMeta);
-
-    const mediaDescription = Utils.createElement('p', {
-      className: 'media-description',
-      innerHTML: media.description
-    });
-
-    const mediaActions = Utils.createElement('div', {
-      className: 'media-actions'
-    });
-
-    const readMoreButton = Utils.createElement('a', {
-      href: media.url,
-      className: 'media-link',
-      target: '_blank',
-      rel: 'noopener noreferrer',
-      innerHTML: 'Read More'
-    });
-
-    mediaActions.appendChild(readMoreButton);
-
-    mediaContent.appendChild(mediaHeader);
-    mediaContent.appendChild(mediaDescription);
-    mediaContent.appendChild(mediaActions);
-
-    mediaCard.appendChild(mediaContent);
-
-    return mediaCard;
+    
+    card.appendChild(title);
+    card.appendChild(metaInfo);
+    
+    if (mediaItem.description && mediaItem.description.trim()) {
+        const description = Utils.createElement('p', { 
+            className: 'media-description', 
+            innerHTML: mediaItem.description 
+        });
+        card.appendChild(description);
+    }
+    
+    if (mediaItem.url) {
+        const link = Utils.createElement('a', {
+            href: mediaItem.url,
+            className: 'media-link',
+            target: '_blank',
+            rel: 'noopener noreferrer',
+            innerHTML: 'READ MORE'
+        });
+        card.appendChild(link);
+    }
+    
+    return card;
   }
 
   formatDate(dateString) {
@@ -278,10 +285,12 @@ class MediaPageApp {
       // Initialize components
       const headerComponent = new Header(header, this.eventBus);
       const mediaPageComponent = new MediaPage(main, this.eventBus, this.apiService);
+      const footerComponent = new Footer(footer, this.eventBus);
 
       // Mount components
       await headerComponent.mount();
       await mediaPageComponent.mount();
+      await footerComponent.mount();
 
       console.log('✅ Media page components mounted successfully');
 

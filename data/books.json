@@ -1,32 +1,93 @@
 [
   {
-    "id": "1",
+    "id": "whispers-in-rain",
     "title": "Whispers in the Rain",
     "genre": "Stories",
     "year": 2023,
-    "description": "A collection of interconnected short stories.",
+    "description": "A collection of interconnected short stories that weave together themes of love, loss, and redemption. Set against the backdrop of monsoon rains in contemporary India, these narratives explore the human condition with sensitivity and depth. Each story stands alone yet contributes to a larger tapestry of human experience.",
     "amazonLink": "https://amazon.com/whispers-rain",
     "category": "adults",
-    "createdAt": "2023-01-01T00:00:00.000Z"
+    "createdAt": "2023-01-01T00:00:00.000Z",
+    "publisher": "Literary Press",
+    "pages": "280",
+    "isbn": "978-1234567891",
+    "awards": ["Best Short Fiction Collection 2023", "Rising Voice Literary Award Finalist"],
+    "reviews": [
+      {
+        "text": "A masterful collection that captures the complexity of human relationships with poetic precision.",
+        "source": "Publishers Weekly",
+        "rating": 5,
+        "link": "https://www.publishersweekly.com/whispers-rain-review"
+      },
+      {
+        "text": "Sankar's prose flows like the monsoon rains she describes, bringing life and renewal to every page.",
+        "source": "The Hindu Literary Review",
+        "rating": 5,
+        "link": "https://www.thehindu.com/literary-review/whispers-rain"
+      },
+      {
+        "text": "An exceptional debut that establishes Sankar as a voice to watch in contemporary literature.",
+        "source": "BookPage",
+        "rating": 4,
+        "link": "https://www.bookpage.com/reviews/whispers-rain"
+      }
+    ]
   },
   {
-    "id": "2",
+    "id": "magic-garden",
     "title": "The Magic Garden",
     "genre": "Children's Book",
     "year": 2023,
-    "description": "A delightful story about friendship.",
+    "description": "A delightful story about friendship, courage, and the magic that exists in everyday life. When young Maya discovers a hidden garden behind her grandmother's house, she embarks on an adventure that teaches her valuable lessons about trust, kindness, and believing in the impossible. Perfect for children aged 6-10.",
     "amazonLink": "https://amazon.com/magic-garden",
     "category": "children",
-    "createdAt": "2023-01-01T00:00:00.000Z"
+    "createdAt": "2023-01-01T00:00:00.000Z",
+    "publisher": "Children's Literary Press",
+    "pages": "48",
+    "isbn": "978-1234567892",
+    "ageRange": "6-10 years",
+    "awards": ["Best Children's Book 2023", "Parents' Choice Award"],
+    "reviews": [
+      {
+        "text": "A charming tale that will capture the imagination of young readers and remind adults of the wonder in simple things.",
+        "source": "School Library Journal",
+        "rating": 5,
+        "link": "https://www.slj.com/reviews/magic-garden"
+      },
+      {
+        "text": "Sankar's gentle storytelling and vivid descriptions create a world that children will want to visit again and again.",
+        "source": "Kirkus Reviews",
+        "rating": 4,
+        "link": "https://www.kirkusreviews.com/magic-garden"
+      }
+    ]
   },
   {
-    "id": "1754207813848",
+    "id": "the-burnings",
     "title": "The Burnings",
     "genre": "Horror",
     "year": 2024,
-    "description": "dbfdb",
+    "description": "A gothic horror novel that explores the dark corners of human nature and the supernatural. Set in a decaying mansion on the outskirts of a small town, the story follows the investigation of mysterious fires that seem to have a mind of their own. As the protagonist delves deeper into the mystery, they uncover secrets that challenge their understanding of reality.",
     "amazonLink": "https://www.amazon.in/Burnings-Gothic-Stephen-Shirley-Jackson/dp/9395624744/ref=sr_1_1?crid=32DY9A5F8EAL5&dib=eyJ2IjoiMSJ9.Ty5A90v0FG36GIje1qIgkQ.IfQwOCTc0Qpvm2Cjiec1HEH8aPlgckO_8jmv4oG-QSg&dib_tag=se&keywords=himanjali+burning&qid=1754199335&sprefix=himanjali+burnin%2Caps%2C335&sr=8-1",
     "category": "adults",
-    "createdAt": "2025-08-03T07:56:53.848Z"
+    "createdAt": "2025-08-03T07:56:53.848Z",
+    "publisher": "Dark Tales Press",
+    "pages": "320",
+    "isbn": "978-1234567893",
+    "awards": ["Best Horror Novel 2024", "Gothic Fiction Award"],
+    "reviews": [
+      {
+        "text": "A spine-chilling tale that masterfully blends psychological horror with supernatural elements.",
+        "source": "Horror Review Magazine",
+        "rating": 5,
+        "link": "https://www.horrorreview.com/burnings"
+      },
+      {
+        "text": "Sankar proves her versatility with this atmospheric horror novel that keeps readers on the edge of their seats.",
+        "source": "Dark Fiction Weekly",
+        "rating": 4,
+        "link": "https://www.darkfictionweekly.com/burnings-review"
+      }
+    ]
   }
 ]

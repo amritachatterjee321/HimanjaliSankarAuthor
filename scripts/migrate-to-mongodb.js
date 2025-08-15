@@ -27,8 +27,10 @@ async function migrateData() {
     console.log('🔄 Starting migration to MongoDB...');
     
     // Connect to database
+    console.log('📡 Connecting to database...');
     await database.connect();
     await cmsService.init();
+    console.log('✅ Database connected');
     
     // Migrate books
     const booksData = await readJsonFile(path.join(DATA_DIR, 'books.json'));
@@ -37,9 +39,12 @@ async function migrateData() {
       for (const book of booksData) {
         // Remove old id and add MongoDB _id
         const { id, ...bookData } = book;
+        console.log(`  - Migrating book: ${bookData.title}`);
         await cmsService.createBook(bookData);
       }
       console.log('✅ Books migrated successfully');
+    } else {
+      console.log('⚠️ No books data found or invalid format');
     }
     
     // Migrate media
@@ -48,9 +53,12 @@ async function migrateData() {
       console.log(`📷 Migrating ${mediaData.length} media items...`);
       for (const media of mediaData) {
         const { id, ...mediaData } = media;
+        console.log(`  - Migrating media: ${mediaData.title}`);
         await cmsService.createMedia(mediaData);
       }
       console.log('✅ Media migrated successfully');
+    } else {
+      console.log('⚠️ No media data found or invalid format');
     }
     
     // Migrate author
@@ -59,6 +67,8 @@ async function migrateData() {
       console.log('👤 Migrating author data...');
       await cmsService.updateAuthor(authorData);
       console.log('✅ Author data migrated successfully');
+    } else {
+      console.log('⚠️ No author data found');
     }
     
     // Migrate social
@@ -67,6 +77,8 @@ async function migrateData() {
       console.log('🔗 Migrating social links...');
       await cmsService.updateSocial(socialData);
       console.log('✅ Social links migrated successfully');
+    } else {
+      console.log('⚠️ No social data found');
     }
     
     // Migrate settings and create default user
@@ -88,6 +100,8 @@ async function migrateData() {
         });
         console.log('✅ Default user created successfully');
       }
+    } else {
+      console.log('⚠️ No settings data found');
     }
     
     console.log('🎉 Migration completed successfully!');
@@ -97,12 +111,14 @@ async function migrateData() {
     console.error('❌ Migration failed:', error);
     process.exit(1);
   } finally {
+    console.log('🔌 Disconnecting from database...');
     await database.disconnect();
+    console.log('✅ Migration script completed');
   }
 }
 
 // Run migration if this script is executed directly
-if (import.meta.url === `file://${process.argv[1]}`) {
+if (process.argv[1] && process.argv[1].endsWith('migrate-to-mongodb.js')) {
   migrateData();
 }
 
