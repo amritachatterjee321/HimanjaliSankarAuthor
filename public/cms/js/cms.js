@@ -1,7 +1,10 @@
 // CMS Application
 class CMS {
     constructor() {
-        this.apiBaseUrl = 'http://localhost:3000/api/cms';
+        // Use production API endpoints when not on localhost
+        this.apiBaseUrl = window.location.hostname === 'localhost' 
+            ? 'http://localhost:3000/api/cms' 
+            : '/api/cms';
         this.isAuthenticated = false;
         this.currentSection = 'books';
         this.books = [];
@@ -1136,7 +1139,28 @@ class CMS {
 
     async apiRequest(endpoint, method = 'GET', data = null, isFile = false) {
         const token = localStorage.getItem('cms_token');
-        const url = `${this.apiBaseUrl}${endpoint}`;
+        
+        // Map CMS endpoints to the correct API paths
+        let apiPath = endpoint;
+        if (endpoint.startsWith('/books')) {
+            apiPath = endpoint.replace('/books', '/api/cms/books');
+        } else if (endpoint.startsWith('/media')) {
+            apiPath = endpoint.replace('/media', '/api/cms/media');
+        } else if (endpoint.startsWith('/social')) {
+            apiPath = endpoint.replace('/social', '/api/cms/social');
+        } else if (endpoint.startsWith('/auth')) {
+            apiPath = endpoint.replace('/auth', '/api/cms/auth');
+        } else if (endpoint.startsWith('/author')) {
+            apiPath = endpoint.replace('/author', '/api/cms/author');
+        } else if (endpoint.startsWith('/settings')) {
+            apiPath = endpoint.replace('/settings', '/api/cms/settings');
+        } else if (endpoint.startsWith('/homepage-config')) {
+            apiPath = endpoint.replace('/homepage-config', '/api/cms/homepage-config');
+        } else if (endpoint.startsWith('/images')) {
+            apiPath = endpoint.replace('/images', '/api/cms/images');
+        }
+        
+        const url = `${this.apiBaseUrl.replace('/api/cms', '')}${apiPath}`;
         
         const options = {
             method,
