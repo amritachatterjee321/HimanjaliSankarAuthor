@@ -49,6 +49,10 @@
       "destination": "/api/main?endpoint=test"
     },
     {
+      "source": "/api/test-simple",
+      "destination": "/api/test-simple"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }
