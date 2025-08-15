@@ -25,12 +25,16 @@
       "destination": "/book-detail.html"
     },
     {
+      "source": "/api/(.*)",
+      "destination": "/api/main"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }
   ],
   "functions": {
-    "api/*.js": {
+    "api/main.js": {
       "maxDuration": 10
     }
   }

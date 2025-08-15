@@ -1,0 +1,366 @@
+import clientPromise, { isMongoDBAvailable, getDatabaseName } from './lib/mongodb.js';
+
+// Consolidated Vercel serverless function for all API endpoints
+export default async function handler(req, res) {
+  // Enable CORS for cross-origin requests
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
+  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+  res.setHeader('Content-Type', 'application/json');
+
+  if (req.method === 'OPTIONS') {
+    res.status(200).end();
+    return;
+  }
+
+  // Extract the endpoint from the URL path
+  const path = req.url || req.headers['x-vercel-path'] || '';
+  const endpoint = path.split('/').pop() || '';
+
+  try {
+    if (endpoint === 'books') {
+      await handleBooks(req, res);
+    } else if (endpoint === 'media') {
+      await handleMedia(req, res);
+    } else if (endpoint === 'social') {
+      await handleSocial(req, res);
+    } else if (endpoint === 'about') {
+      await handleAbout(req, res);
+    } else if (endpoint === 'contact') {
+      await handleContact(req, res);
+    } else if (endpoint === 'test') {
+      await handleTest(req, res);
+    } else {
+      res.status(404).json({ message: 'Endpoint not found' });
+    }
+  } catch (error) {
+    console.error('API error:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+}
+
+// Books handler
+async function handleBooks(req, res) {
+  if (req.method === 'GET') {
+    try {
+      if (!isMongoDBAvailable()) {
+        console.log('MongoDB not configured, using fallback data');
+        return res.status(200).json(getFallbackBooks());
+      }
+
+      const client = await clientPromise;
+      const db = client.db(getDatabaseName());
+      const booksCollection = db.collection('books');
+
+      const { id, category, latest } = req.query;
+
+      if (id) {
+        const book = await booksCollection.findOne({ _id: id });
+        if (book) {
+          res.status(200).json(book);
+        } else {
+          res.status(404).json({ message: 'Book not found' });
+        }
+      } else if (latest) {
+        const latestBook = await booksCollection
+          .find({})
+          .sort({ year: -1 })
+          .limit(1)
+          .toArray();
+        
+        if (latestBook.length > 0) {
+          res.status(200).json(latestBook[0]);
+        } else {
+          res.status(404).json({ message: 'No books found' });
+        }
+      } else if (category) {
+        const categoryBooks = await booksCollection
+          .find({ category: category })
+          .toArray();
+        res.status(200).json(categoryBooks);
+      } else {
+        const allBooks = await booksCollection.find({}).toArray();
+        const booksByCategory = {
+          adults: allBooks.filter(book => book.category === 'adults'),
+          children: allBooks.filter(book => book.category === 'children')
+        };
+        res.status(200).json(booksByCategory);
+      }
+    } catch (error) {
+      console.error('Books API error:', error);
+      res.status(200).json(getFallbackBooks());
+    }
+  } else {
+    res.status(405).json({ message: 'Method not allowed' });
+  }
+}
+
+// Media handler
+async function handleMedia(req, res) {
+  if (req.method === 'GET') {
+    try {
+      if (!isMongoDBAvailable()) {
+        console.log('MongoDB not configured, using fallback data');
+        return res.status(200).json(getFallbackMedia());
+      }
+
+      const client = await clientPromise;
+      const db = client.db(getDatabaseName());
+      const mediaCollection = db.collection('media');
+
+      const { id, type } = req.query;
+
+      if (id) {
+        const mediaItem = await mediaCollection.findOne({ _id: id });
+        if (mediaItem) {
+          res.status(200).json(mediaItem);
+        } else {
+          res.status(404).json({ message: 'Media item not found' });
+        }
+      } else if (type) {
+        const filteredMedia = await mediaCollection
+          .find({ type: type })
+          .toArray();
+        res.status(200).json(filteredMedia);
+      } else {
+        const allMedia = await mediaCollection.find({}).toArray();
+        res.status(200).json(allMedia);
+      }
+    } catch (error) {
+      console.error('Media API error:', error);
+      res.status(200).json(getFallbackMedia());
+    }
+  } else {
+    res.status(405).json({ message: 'Method not allowed' });
+  }
+}
+
+// Social handler
+async function handleSocial(req, res) {
+  if (req.method === 'GET') {
+    try {
+      const socialMedia = [
+        {
+          _id: "social-1",
+          name: "Instagram",
+          url: "https://instagram.com/himanjalisankar",
+          active: true
+        },
+        {
+          _id: "social-2", 
+          name: "Facebook",
+          url: "https://facebook.com/himanjalisankar",
+          active: true
+        }
+      ];
+
+      const activeSocial = socialMedia.filter(social => social.active);
+      res.status(200).json(activeSocial);
+    } catch (error) {
+      console.error('Social API error:', error);
+      res.status(200).json([
+        {
+          _id: "fallback-social-1",
+          name: "Instagram",
+          url: "https://instagram.com/himanjalisankar",
+          active: true
+        },
+        {
+          _id: "fallback-social-2",
+          name: "Facebook", 
+          url: "https://facebook.com/himanjalisankar",
+          active: true
+        }
+      ]);
+    }
+  } else {
+    res.status(405).json({ message: 'Method not allowed' });
+  }
+}
+
+// About handler
+async function handleAbout(req, res) {
+  if (req.method === 'GET') {
+    try {
+      const authorInfo = {
+        name: "HIMANJALI SANKAR",
+        bio: "A passionate author who writes compelling narratives that explore themes of resilience, hope, and human connection. Her work spans both adult and children's literature, offering readers of all ages meaningful stories that resonate with the human experience.",
+        achievements: [
+          "Published author with works in multiple genres",
+          "Contributor to prestigious anthologies",
+          "Recipient of literary recognition and awards"
+        ],
+        genres: ["Contemporary Fiction", "Children's Literature", "Short Stories"],
+        website: "https://himanjalisankar.com"
+      };
+      
+      res.status(200).json(authorInfo);
+    } catch (error) {
+      console.error('About API error:', error);
+      res.status(200).json({
+        name: "HIMANJALI SANKAR",
+        bio: "A passionate author who writes compelling narratives.",
+        achievements: ["Published author", "Contributor to anthologies"],
+        genres: ["Contemporary Fiction", "Children's Literature"],
+        website: "https://himanjalisankar.com"
+      });
+    }
+  } else {
+    res.status(405).json({ message: 'Method not allowed' });
+  }
+}
+
+// Contact handler
+async function handleContact(req, res) {
+  if (req.method === 'GET') {
+    try {
+      const contactConfig = {
+        title: "Get in Touch",
+        subtitle: "I'd love to hear from you. Send me a message and I'll respond as soon as possible.",
+        fields: [
+          { name: "name", label: "Name", type: "text", required: true },
+          { name: "email", label: "Email", type: "email", required: true },
+          { name: "subject", label: "Subject", type: "text", required: true },
+          { name: "message", label: "Message", type: "textarea", required: true }
+        ],
+        submitText: "Send Message",
+        successMessage: "Thank you! Your message has been sent successfully.",
+        errorMessage: "Sorry, there was an error sending your message. Please try again."
+      };
+      
+      res.status(200).json(contactConfig);
+    } catch (error) {
+      console.error('Contact API error:', error);
+      res.status(500).json({ message: 'Internal server error' });
+    }
+  } else if (req.method === 'POST') {
+    try {
+      const { name, email, subject, message } = req.body;
+
+      if (!name || !email || !subject || !message) {
+        return res.status(400).json({ message: 'All fields are required' });
+      }
+
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        return res.status(400).json({ message: 'Please enter a valid email address' });
+      }
+
+      console.log('Contact form submission:', {
+        name, email, subject, message,
+        timestamp: new Date().toISOString()
+      });
+
+      res.status(200).json({ 
+        message: 'Message sent successfully!',
+        success: true
+      });
+    } catch (error) {
+      console.error('Contact form submission error:', error);
+      res.status(500).json({ 
+        message: 'Failed to send message. Please try again.',
+        success: false
+      });
+    }
+  } else {
+    res.status(405).json({ message: 'Method not allowed' });
+  }
+}
+
+// Test handler
+async function handleTest(req, res) {
+  if (req.method === 'GET') {
+    try {
+      res.status(200).json({
+        message: 'API is working!',
+        timestamp: new Date().toISOString(),
+        environment: process.env.NODE_ENV || 'development',
+        mongodbConfigured: !!process.env.MONGODB_URI,
+        databaseName: process.env.DB_NAME || 'not set'
+      });
+    } catch (error) {
+      console.error('Test API error:', error);
+      res.status(500).json({ 
+        message: 'Test API error',
+        error: error.message 
+      });
+    }
+  } else {
+    res.status(405).json({ message: 'Method not allowed' });
+  }
+}
+
+// Fallback data functions
+function getFallbackBooks() {
+  return {
+    adults: [
+      {
+        _id: "fallback-1",
+        title: "The Burnings",
+        year: "2024",
+        shortDescription: "A compelling narrative that explores themes of resilience and hope in the face of adversity.",
+        coverImage: {
+          url: "https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=400&h=600&fit=crop"
+        },
+        amazonLink: "https://amazon.com/dp/B0C1234567",
+        category: "adults"
+      },
+      {
+        _id: "fallback-2",
+        title: "Echoes of Tomorrow",
+        year: "2023",
+        shortDescription: "A thought-provoking story about the future and human connection.",
+        coverImage: {
+          url: "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=400&h=600&fit=crop"
+        },
+        amazonLink: "https://amazon.com/dp/B0C2345678",
+        category: "adults"
+      }
+    ],
+    children: [
+      {
+        _id: "fallback-3",
+        title: "The Little Explorer",
+        year: "2024",
+        shortDescription: "An adventure story for young readers about discovering the world around them.",
+        coverImage: {
+          url: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=600&fit=crop"
+        },
+        amazonLink: "https://amazon.com/dp/B0C4567890",
+        category: "children"
+      }
+    ]
+  };
+}
+
+function getFallbackMedia() {
+  return [
+    {
+      _id: "fallback-media-1",
+      title: "Short story for BLink",
+      type: "short-work",
+      source: "BLink - The Hindu Business Line",
+      url: "https://www.thehindubusinessline.com/blink/cover/pinky-chadha-is-patriotic/article9490451.ece",
+      date: "2024-02-05",
+      description: "A compelling short story exploring themes of patriotism and identity."
+    },
+    {
+      _id: "fallback-media-2",
+      title: "Sample Book Review - Literary Magazine",
+      type: "review",
+      source: "Literary Magazine",
+      url: "https://example.com/review",
+      date: "2024-01-15",
+      description: "A sample book review for testing purposes."
+    },
+    {
+      _id: "fallback-media-3",
+      title: "Short story for the anthology Behind the Shadows",
+      type: "short-work",
+      source: "Behind the Shadows Anthology",
+      url: "https://example.com/anthology",
+      date: "2022-05-08",
+      description: "A story exploring cultural identity and the human experience across continents."
+    }
+  ];
+}
