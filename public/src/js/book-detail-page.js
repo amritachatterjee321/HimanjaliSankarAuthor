@@ -187,6 +187,52 @@ class BookDetailPage extends Component {
 
     descriptionSection.appendChild(description);
 
+    // Add Amazon Buy Button below description
+    if (this.bookData.amazonLink) {
+      const buyButtonSection = Utils.createElement('div', {
+        className: 'book-detail-buy-section'
+      });
+
+      const buyButton = Utils.createElement('a', {
+        href: this.bookData.amazonLink,
+        className: 'buy-button large',
+        target: '_blank',
+        rel: 'noopener noreferrer',
+        innerHTML: 'Buy Now on Amazon'
+      });
+
+      // Add click tracking
+      buyButton.addEventListener('click', (e) => {
+        console.log('🛒 Amazon buy button clicked for book:', this.bookData.title);
+        console.log('🛒 Redirecting to:', this.bookData.amazonLink);
+        
+        // Track the purchase click
+        if (window.app && window.app.notificationSystem) {
+          window.app.notificationSystem.show(
+            'Redirecting to Amazon...',
+            'info',
+            'Purchase'
+          );
+        }
+      });
+
+      buyButtonSection.appendChild(buyButton);
+      descriptionSection.appendChild(buyButtonSection);
+    } else {
+      // Add a message for books without Amazon links
+      const noLinkSection = Utils.createElement('div', {
+        className: 'book-detail-no-link-section'
+      });
+
+      const noLinkMessage = Utils.createElement('p', {
+        className: 'no-link-message',
+        innerHTML: 'Amazon link coming soon!'
+      });
+
+      noLinkSection.appendChild(noLinkMessage);
+      descriptionSection.appendChild(noLinkSection);
+    }
+
     // Add description to basic info section
     basicInfo.appendChild(descriptionSection);
 
@@ -336,7 +382,9 @@ class BookDetailPage extends Component {
         // Make cover clickable
         bookCover.style.cursor = 'pointer';
         bookCover.addEventListener('click', () => {
-          window.location.href = `/book-detail.html?id=${book.id}`;
+          const bookId = book._id || book.id || 'latest';
+          console.log('🖱️ Carousel book cover clicked, navigating to book ID:', bookId);
+          window.location.href = `/book/${bookId}`;
         });
 
         const bookTitle = Utils.createElement('h4', {
