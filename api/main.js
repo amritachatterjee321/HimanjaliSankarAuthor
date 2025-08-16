@@ -173,23 +173,29 @@ async function handleSocial(req, res) {
       ];
 
       const activeSocial = socialMedia.filter(social => social.active);
-      res.status(200).json(activeSocial);
+      
+      // Return the format expected by the frontend
+      res.status(200).json({
+        social: activeSocial
+      });
     } catch (error) {
       console.error('Social API error:', error);
-      res.status(200).json([
-        {
-          _id: "fallback-social-1",
-          name: "Instagram",
-          url: "https://instagram.com/himanjalisankar",
-          active: true
-        },
-        {
-          _id: "fallback-social-2",
-          name: "Facebook", 
-          url: "https://facebook.com/himanjalisankar",
-          active: true
-        }
-      ]);
+      res.status(200).json({
+        social: [
+          {
+            _id: "fallback-social-1",
+            name: "Instagram",
+            url: "https://instagram.com/himanjalisankar",
+            active: true
+          },
+          {
+            _id: "fallback-social-2",
+            name: "Facebook", 
+            url: "https://facebook.com/himanjalisankar",
+            active: true
+          }
+        ]
+      });
     }
   } else {
     res.status(405).json({ message: 'Method not allowed' });
@@ -212,15 +218,22 @@ async function handleAbout(req, res) {
         website: "https://himanjalisankar.com"
       };
       
-      res.status(200).json(authorInfo);
+      // Return the format expected by the frontend
+      res.status(200).json({
+        success: true,
+        data: authorInfo
+      });
     } catch (error) {
       console.error('About API error:', error);
       res.status(200).json({
-        name: "HIMANJALI SANKAR",
-        bio: "A passionate author who writes compelling narratives.",
-        achievements: ["Published author", "Contributor to anthologies"],
-        genres: ["Contemporary Fiction", "Children's Literature"],
-        website: "https://himanjalisankar.com"
+        success: true,
+        data: {
+          name: "HIMANJALI SANKAR",
+          bio: "A passionate author who writes compelling narratives.",
+          achievements: ["Published author", "Contributor to anthologies"],
+          genres: ["Contemporary Fiction", "Children's Literature"],
+          website: "https://himanjalisankar.com"
+        }
       });
     }
   } else {
