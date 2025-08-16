@@ -137,14 +137,23 @@ async function handleBooks(req, res) {
 async function handleMedia(req, res) {
   if (req.method === 'GET') {
     try {
+      console.log('📰 Media API called - building response...');
+      
       if (!isMongoDBAvailable()) {
-        console.log('MongoDB not configured, using fallback data');
-        return res.status(200).json(getFallbackMedia());
+        console.log('❌ MongoDB not configured, using fallback data');
+        return res.status(200).json({ media: getFallbackMedia() });
       }
 
+      console.log('✅ MongoDB is available, fetching media from database...');
       const client = await clientPromise;
-      const db = client.db(getDatabaseName());
+      console.log('✅ MongoDB client connected');
+      
+      const dbName = getDatabaseName();
+      console.log('📊 Database name:', dbName);
+      
+      const db = client.db(dbName);
       const mediaCollection = db.collection('media');
+      console.log('📰 Media collection accessed');
 
       const { id, type } = req.query;
 
@@ -153,7 +162,7 @@ async function handleMedia(req, res) {
           const objectId = new ObjectId(id);
           const mediaItem = await mediaCollection.findOne({ _id: objectId });
           if (mediaItem) {
-            res.status(200).json(mediaItem);
+            res.status(200).json({ media: [mediaItem] });
           } else {
             res.status(404).json({ message: 'Media item not found' });
           }
@@ -165,14 +174,16 @@ async function handleMedia(req, res) {
         const filteredMedia = await mediaCollection
           .find({ type: type })
           .toArray();
-        res.status(200).json(filteredMedia);
+        console.log(`📰 Found ${filteredMedia.length} media items of type ${type}`);
+        res.status(200).json({ media: filteredMedia });
       } else {
         const allMedia = await mediaCollection.find({}).toArray();
-        res.status(200).json(allMedia);
+        console.log(`📰 Found ${allMedia.length} total media items`);
+        res.status(200).json({ media: allMedia });
       }
     } catch (error) {
       console.error('Media API error:', error);
-      res.status(200).json(getFallbackMedia());
+      res.status(200).json({ media: getFallbackMedia() });
     }
   } else {
     res.status(405).json({ message: 'Method not allowed' });
