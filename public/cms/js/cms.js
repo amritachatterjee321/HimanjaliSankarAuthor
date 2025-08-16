@@ -16,12 +16,14 @@ class CMS {
             homepageBooks: []
         };
         
-        this.init();
+        this.init().catch(error => {
+            console.error('Failed to initialize CMS:', error);
+        });
     }
 
-    init() {
+    async init() {
         this.bindEvents();
-        this.loadSettings();
+        await this.loadSettings();
         this.checkAuth();
     }
 
@@ -995,10 +997,27 @@ class CMS {
 
 
     async saveSettings() {
+        const password = document.getElementById('cms-password').value;
+        const confirmPassword = document.getElementById('cms-confirm-password').value;
+        
+        // Validate password confirmation
+        if (password !== confirmPassword) {
+            this.showNotification('Passwords do not match!', 'error');
+            return;
+        }
+        
+        // Validate password strength
+        if (password.length < 6) {
+            this.showNotification('Password must be at least 6 characters long!', 'error');
+            return;
+        }
+
         const settingsData = {
             username: document.getElementById('cms-username').value,
-            password: document.getElementById('cms-password').value,
-            apiBaseUrl: document.getElementById('api-base-url').value
+            password: password,
+            adminEmail: document.getElementById('admin-email').value,
+            siteTitle: document.getElementById('site-title').value,
+            siteDescription: document.getElementById('site-description').value
         };
 
         try {
@@ -1006,6 +1025,10 @@ class CMS {
             this.settings = settingsData;
             localStorage.setItem('cms_settings', JSON.stringify(settingsData));
             this.showNotification('Settings saved successfully!', 'success');
+            
+            // Clear password fields after successful save
+            document.getElementById('cms-password').value = '';
+            document.getElementById('cms-confirm-password').value = '';
         } catch (error) {
             console.error('Failed to save settings:', error);
             this.showNotification('Failed to save settings', 'error');
@@ -1055,16 +1078,43 @@ class CMS {
         }
     }
 
-    loadSettings() {
-        const saved = localStorage.getItem('cms_settings');
-        if (saved) {
-            this.settings = JSON.parse(saved);
-            this.apiBaseUrl = this.settings.apiBaseUrl || this.apiBaseUrl;
+    async loadSettings() {
+        try {
+            // Try to load settings from API first
+            const response = await this.apiRequest('/settings', 'GET');
+            if (response.settings) {
+                this.settings = response.settings;
+                
+                // Populate settings form
+                document.getElementById('cms-username').value = this.settings.username || '';
+                document.getElementById('admin-email').value = this.settings.adminEmail || '';
+                document.getElementById('site-title').value = this.settings.siteTitle || '';
+                document.getElementById('site-description').value = this.settings.siteDescription || '';
+                
+                // Don't populate password fields for security
+                document.getElementById('cms-password').value = '';
+                document.getElementById('cms-confirm-password').value = '';
+                
+                console.log('✅ Settings loaded from database');
+            }
+        } catch (error) {
+            console.log('⚠️ Failed to load settings from API, using localStorage fallback');
             
-            // Populate settings form
-            document.getElementById('cms-username').value = this.settings.username || '';
-            document.getElementById('cms-password').value = this.settings.password || '';
-            document.getElementById('api-base-url').value = this.apiBaseUrl;
+            // Fallback to localStorage
+            const saved = localStorage.getItem('cms_settings');
+            if (saved) {
+                this.settings = JSON.parse(saved);
+                
+                // Populate settings form
+                document.getElementById('cms-username').value = this.settings.username || '';
+                document.getElementById('admin-email').value = this.settings.adminEmail || '';
+                document.getElementById('site-title').value = this.settings.siteTitle || '';
+                document.getElementById('site-description').value = this.settings.siteDescription || '';
+                
+                // Don't populate password fields for security
+                document.getElementById('cms-password').value = '';
+                document.getElementById('cms-confirm-password').value = '';
+            }
         }
     }
 

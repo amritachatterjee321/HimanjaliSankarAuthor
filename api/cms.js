@@ -72,7 +72,50 @@ async function handleLogin(req, res) {
     const { username, password } = req.body;
     console.log('🔐 Login attempt for username:', username);
     
-    // Development fallback: allow admin/admin123 without database
+    // Try to authenticate against database first
+    if (isMongoDBAvailable()) {
+      try {
+        const client = await clientPromise;
+        const db = client.db(getDatabaseName());
+        const collection = db.collection('settings');
+        
+        const settings = await collection.findOne({ _id: 'cms-settings' });
+        
+        if (settings && settings.username === username) {
+          // Verify password
+          const isValidPassword = await bcrypt.compare(password, settings.password);
+          
+          if (isValidPassword) {
+            const token = jwt.sign(
+              { 
+                userId: 'admin-user', 
+                username: settings.username,
+                email: settings.adminEmail 
+              },
+              process.env.JWT_SECRET || 'your-secret-key',
+              { expiresIn: '24h' }
+            );
+
+            console.log('✅ Login successful for database user:', username);
+            res.json({ 
+              token,
+              user: {
+                id: 'admin-user',
+                username: settings.username,
+                name: 'Admin User',
+                email: settings.adminEmail
+              },
+              message: 'Login successful'
+            });
+            return;
+          }
+        }
+      } catch (dbError) {
+        console.log('⚠️ Database authentication failed, falling back to default:', dbError.message);
+      }
+    }
+    
+    // Fallback to default admin/admin123 for development
     if (username === 'admin' && password === 'admin123') {
       const token = jwt.sign(
         { userId: 'default-admin', username: 'admin' },
@@ -80,21 +123,21 @@ async function handleLogin(req, res) {
         { expiresIn: '24h' }
       );
 
-      console.log('✅ Login successful for admin user');
+      console.log('✅ Login successful for default admin user');
       res.json({ 
         token,
         user: {
           id: 'default-admin',
           username: 'admin',
-          name: 'Admin User'
+          name: 'Default Admin User'
         },
-        message: 'Login successful'
+        message: 'Login successful (using default credentials)'
       });
       return;
     }
     
-    // For now, reject all other login attempts
-    console.log('❌ Login failed: invalid credentials');
+    // All authentication attempts failed
+    console.log('❌ Login failed: invalid credentials for username:', username);
     res.status(401).json({ error: 'Invalid credentials' });
   } catch (error) {
     console.error('Login error:', error);
@@ -918,18 +961,85 @@ async function handleHomepageConfig(req, res) {
 async function handleSettings(req, res) {
   try {
     if (req.method === 'GET') {
-      // Get settings
-      const settings = getMockSettings();
-      res.json({ settings: settings });
+      // Get settings from MongoDB
+      if (!isMongoDBAvailable()) {
+        console.log('⚠️ MongoDB not available, returning mock settings');
+        const settings = getMockSettings();
+        return res.json({ settings: settings });
+      }
+
+      const client = await clientPromise;
+      const db = client.db(getDatabaseName());
+      const collection = db.collection('settings');
+      
+      let settings = await collection.findOne({ _id: 'cms-settings' });
+      
+      if (!settings) {
+        console.log('📝 No settings found in database, creating default settings');
+        settings = getDefaultSettings();
+        await collection.insertOne(settings);
+      }
+      
+      // Don't return password in GET request for security
+      const { password, ...safeSettings } = settings;
+      res.json({ settings: safeSettings });
+      
     } else if (req.method === 'PUT') {
-      // Update settings
+      // Update settings in MongoDB
+      if (!isMongoDBAvailable()) {
+        console.log('⚠️ MongoDB not available, cannot save settings');
+        return res.status(503).json({ error: 'Database not available' });
+      }
+
       const updates = req.body;
-      console.log('⚙️ Updating settings:', updates);
+      console.log('⚙️ Updating settings:', { ...updates, password: updates.password ? '[HIDDEN]' : undefined });
+      
+      // Validate required fields
+      if (!updates.username || !updates.password || !updates.adminEmail) {
+        return res.status(400).json({ error: 'Username, password, and admin email are required' });
+      }
+      
+      // Validate password strength
+      if (updates.password.length < 6) {
+        return res.status(400).json({ error: 'Password must be at least 6 characters long' });
+      }
+      
+      // Hash the password before storing
+      const hashedPassword = await bcrypt.hash(updates.password, 12);
+      
+      const client = await clientPromise;
+      const db = client.db(getDatabaseName());
+      const collection = db.collection('settings');
+      
+      const settingsData = {
+        _id: 'cms-settings',
+        username: updates.username,
+        password: hashedPassword,
+        adminEmail: updates.adminEmail,
+        siteTitle: updates.siteTitle || 'Himanjali Sankar - Author',
+        siteDescription: updates.siteDescription || 'Official website of author Himanjali Sankar',
+        updatedAt: new Date().toISOString()
+      };
+      
+      await collection.updateOne(
+        { _id: 'cms-settings' },
+        { $set: settingsData },
+        { upsert: true }
+      );
+      
+      console.log('✅ Settings updated successfully');
       res.json({
         success: true,
         message: 'Settings updated successfully',
-        updates
+        settings: {
+          username: settingsData.username,
+          adminEmail: settingsData.adminEmail,
+          siteTitle: settingsData.siteTitle,
+          siteDescription: settingsData.siteDescription,
+          updatedAt: settingsData.updatedAt
+        }
       });
+      
     } else {
       res.status(405).json({ error: 'Method not allowed' });
     }
@@ -1036,13 +1146,25 @@ function getMockHomepageConfig() {
   };
 }
 
-function getMockSettings() {
+function getDefaultSettings() {
   return {
+    _id: 'cms-settings',
+    username: 'admin',
+    password: bcrypt.hashSync('admin123', 12), // Default password
+    adminEmail: 'admin@example.com',
     siteTitle: 'Himanjali Sankar - Author',
     siteDescription: 'Official website of author Himanjali Sankar',
-    contactEmail: 'contact@himanjalisankar.com',
-    analyticsEnabled: true,
-    maintenanceMode: false,
+    updatedAt: new Date().toISOString()
+  };
+}
+
+function getMockSettings() {
+  return {
+    _id: 'cms-settings',
+    username: 'admin',
+    adminEmail: 'admin@example.com',
+    siteTitle: 'Himanjali Sankar - Author',
+    siteDescription: 'Official website of author Himanjali Sankar',
     updatedAt: new Date().toISOString()
   };
 }

@@ -189,16 +189,28 @@
                 </div>
                 <form id="settings-form" class="form">
                     <div class="form-group">
-                        <label for="cms-username">CMS Username</label>
-                        <input type="text" id="cms-username" name="username" required>
+                        <label for="cms-username">Admin Username</label>
+                        <input type="text" id="cms-username" name="username" required placeholder="Enter admin username">
                     </div>
                     <div class="form-group">
-                        <label for="cms-password">CMS Password</label>
-                        <input type="password" id="cms-password" name="password" required>
+                        <label for="cms-password">Admin Password</label>
+                        <input type="password" id="cms-password" name="password" required placeholder="Enter admin password">
                     </div>
                     <div class="form-group">
-                        <label for="api-base-url">API Base URL</label>
-                        <input type="url" id="api-base-url" name="apiBaseUrl" value="http://localhost:3001/api/cms">
+                        <label for="cms-confirm-password">Confirm Password</label>
+                        <input type="password" id="cms-confirm-password" name="confirmPassword" required placeholder="Confirm admin password">
+                    </div>
+                    <div class="form-group">
+                        <label for="admin-email">Admin Email</label>
+                        <input type="email" id="admin-email" name="adminEmail" required placeholder="Enter admin email">
+                    </div>
+                    <div class="form-group">
+                        <label for="site-title">Site Title</label>
+                        <input type="text" id="site-title" name="siteTitle" placeholder="Enter site title">
+                    </div>
+                    <div class="form-group">
+                        <label for="site-description">Site Description</label>
+                        <textarea id="site-description" name="siteDescription" rows="3" placeholder="Enter site description"></textarea>
                     </div>
                 </form>
             </section>
