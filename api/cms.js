@@ -222,7 +222,7 @@ async function handleBooks(req, res) {
       // Get books list from MongoDB
       if (!isMongoDBAvailable()) {
         console.log('❌ MongoDB not configured, using fallback data');
-        return res.json(getMockBooks());
+        return res.json({ books: getMockBooks() });
       }
 
       console.log('✅ MongoDB is available, fetching books from database...');
@@ -234,7 +234,8 @@ async function handleBooks(req, res) {
       const books = await booksCollection.find({}).sort({ createdAt: -1 }).toArray();
       console.log(`📚 Found ${books.length} books in database`);
       
-      res.json(books);
+      // Return with 'books' property to match frontend expectation
+      res.json({ books: books });
     } else if (req.method === 'POST') {
       // Create new book in MongoDB
       if (!isMongoDBAvailable()) {
@@ -389,7 +390,7 @@ async function handleMedia(req, res) {
       // Get media list from MongoDB
       if (!isMongoDBAvailable()) {
         console.log('❌ MongoDB not configured, using fallback data');
-        return res.json(getMockMedia());
+        return res.json({ media: getMockMedia() });
       }
 
       console.log('✅ MongoDB is available, fetching media from database...');
@@ -401,7 +402,8 @@ async function handleMedia(req, res) {
       const media = await mediaCollection.find({}).sort({ createdAt: -1 }).toArray();
       console.log(`📰 Found ${media.length} media items in database`);
       
-      res.json(media);
+      // Return with 'media' property to match frontend expectation
+      res.json({ media: media });
     } else if (req.method === 'POST') {
       // Create new media item in MongoDB
       if (!isMongoDBAvailable()) {
@@ -504,7 +506,7 @@ async function handleAuthor(req, res) {
       // Get author info from MongoDB
       if (!isMongoDBAvailable()) {
         console.log('❌ MongoDB not configured, using fallback data');
-        return res.json(getMockAuthor());
+        return res.json({ author: getMockAuthor() });
       }
 
       console.log('✅ MongoDB is available, fetching author info from database...');
@@ -516,10 +518,10 @@ async function handleAuthor(req, res) {
       const author = await authorCollection.findOne({});
       if (author) {
         console.log('✅ Found author info in database');
-        res.json(author);
+        res.json({ author: author });
       } else {
         console.log('⚠️ No author info found in database, using fallback');
-        res.json(getMockAuthor());
+        res.json({ author: getMockAuthor() });
       }
     } else if (req.method === 'PUT') {
       // Update author info in MongoDB
@@ -567,7 +569,7 @@ async function handleSocial(req, res) {
       // Get social media links from MongoDB
       if (!isMongoDBAvailable()) {
         console.log('❌ MongoDB not configured, using fallback data');
-        return res.json(getMockSocial());
+        return res.json({ social: getMockSocial() });
       }
 
       console.log('✅ MongoDB is available, fetching social media from database...');
@@ -579,10 +581,10 @@ async function handleSocial(req, res) {
       const social = await socialCollection.findOne({});
       if (social) {
         console.log('✅ Found social media info in database');
-        res.json(social);
+        res.json({ social: social });
       } else {
         console.log('⚠️ No social media info found in database, using fallback');
-        res.json(getMockSocial());
+        res.json({ social: getMockSocial() });
       }
     } else if (req.method === 'PUT') {
       // Update social media links in MongoDB
@@ -629,7 +631,7 @@ async function handleHomepageConfig(req, res) {
     if (req.method === 'GET') {
       // Get homepage configuration
       const config = getMockHomepageConfig();
-      res.json(config);
+      res.json({ config: config });
     } else if (req.method === 'PUT') {
       // Update homepage configuration
       const updates = req.body;
@@ -654,7 +656,7 @@ async function handleSettings(req, res) {
     if (req.method === 'GET') {
       // Get settings
       const settings = getMockSettings();
-      res.json(settings);
+      res.json({ settings: settings });
     } else if (req.method === 'PUT') {
       // Update settings
       const updates = req.body;
@@ -679,7 +681,7 @@ async function handleImages(req, res) {
     if (req.method === 'GET') {
       // Get images list
       const images = getMockImages();
-      res.json(images);
+      res.json({ images: images });
     } else if (req.method === 'POST') {
       // Upload new image
       console.log('🖼️ Image upload requested');
