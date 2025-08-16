@@ -1,5 +1,6 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import clientPromise, { isMongoDBAvailable, getDatabaseName } from './lib/mongodb.js';
 
 // CMS API handler for Vercel
 export default async function handler(req, res) {
@@ -140,17 +141,72 @@ async function handleDashboard(req, res) {
   }
 
   try {
-    // For now, return basic dashboard data
+    if (!isMongoDBAvailable()) {
+      console.log('❌ MongoDB not configured, using fallback dashboard data');
+      return res.json({
+        stats: {
+          totalBooks: 0,
+          totalMedia: 0,
+          recentActivity: []
+        },
+        message: 'Dashboard endpoint working (fallback mode)'
+      });
+    }
+
+    console.log('✅ MongoDB is available, fetching dashboard statistics...');
+    const client = await clientPromise;
+    const dbName = getDatabaseName();
+    const db = client.db(dbName);
+    
+    // Get books count
+    const booksCollection = db.collection('books');
+    const totalBooks = await booksCollection.countDocuments();
+    
+    // Get media count
+    const mediaCollection = db.collection('media');
+    const totalMedia = await mediaCollection.countDocuments();
+    
+    // Get recent activity (latest books and media)
+    const recentBooks = await booksCollection
+      .find({})
+      .sort({ createdAt: -1 })
+      .limit(5)
+      .toArray();
+    
+    const recentMedia = await mediaCollection
+      .find({})
+      .sort({ createdAt: -1 })
+      .limit(5)
+      .toArray();
+    
+    // Combine and sort recent activity
+    const recentActivity = [
+      ...recentBooks.map(book => ({
+        type: 'book',
+        title: book.title,
+        date: book.createdAt,
+        id: book._id
+      })),
+      ...recentMedia.map(media => ({
+        type: 'media',
+        title: media.title,
+        date: media.createdAt,
+        id: media._id
+      }))
+    ].sort((a, b) => new Date(b.date) - new Date(a.date))
+     .slice(0, 10); // Top 10 most recent items
+    
     const dashboardData = {
       stats: {
-        totalBooks: 0,
-        totalMedia: 0,
-        recentActivity: []
+        totalBooks,
+        totalMedia,
+        recentActivity
       },
-      message: 'Dashboard endpoint working'
+      message: 'Dashboard data loaded from MongoDB',
+      lastUpdated: new Date().toISOString()
     };
     
-    console.log('📊 Dashboard data requested');
+    console.log(`📊 Dashboard stats: ${totalBooks} books, ${totalMedia} media items`);
     res.json(dashboardData);
   } catch (error) {
     console.error('Dashboard error:', error);
@@ -162,23 +218,76 @@ async function handleDashboard(req, res) {
 async function handleBooks(req, res) {
   try {
     if (req.method === 'GET') {
-      // Get books list
-      const books = getMockBooks();
+      // Get books list from MongoDB
+      if (!isMongoDBAvailable()) {
+        console.log('❌ MongoDB not configured, using fallback data');
+        return res.json(getMockBooks());
+      }
+
+      console.log('✅ MongoDB is available, fetching books from database...');
+      const client = await clientPromise;
+      const dbName = getDatabaseName();
+      const db = client.db(dbName);
+      const booksCollection = db.collection('books');
+      
+      const books = await booksCollection.find({}).sort({ createdAt: -1 }).toArray();
+      console.log(`📚 Found ${books.length} books in database`);
+      
       res.json(books);
     } else if (req.method === 'POST') {
-      // Create new book
+      // Create new book in MongoDB
+      if (!isMongoDBAvailable()) {
+        return res.status(500).json({ error: 'MongoDB not available' });
+      }
+
       const newBook = req.body;
       console.log('📚 Creating new book:', newBook.title);
+      
+      const client = await clientPromise;
+      const dbName = getDatabaseName();
+      const db = client.db(dbName);
+      const booksCollection = db.collection('books');
+      
+      // Add creation timestamp
+      newBook.createdAt = new Date();
+      newBook.updatedAt = new Date();
+      
+      const result = await booksCollection.insertOne(newBook);
+      console.log('✅ Book created with ID:', result.insertedId);
+      
       res.json({
         success: true,
         message: 'Book created successfully',
-        book: { ...newBook, _id: `book-${Date.now()}` }
+        book: { ...newBook, _id: result.insertedId }
       });
     } else if (req.method === 'PUT') {
-      // Update book
+      // Update book in MongoDB
+      if (!isMongoDBAvailable()) {
+        return res.status(500).json({ error: 'MongoDB not available' });
+      }
+
       const bookId = req.url.split('/').pop();
       const updates = req.body;
       console.log('📚 Updating book:', bookId, updates);
+      
+      const client = await clientPromise;
+      const dbName = getDatabaseName();
+      const db = client.db(dbName);
+      const booksCollection = db.collection('books');
+      
+      // Add update timestamp
+      updates.updatedAt = new Date();
+      
+      const result = await booksCollection.updateOne(
+        { _id: bookId },
+        { $set: updates }
+      );
+      
+      if (result.matchedCount === 0) {
+        return res.status(404).json({ error: 'Book not found' });
+      }
+      
+      console.log('✅ Book updated successfully');
       res.json({
         success: true,
         message: 'Book updated successfully',
@@ -186,9 +295,26 @@ async function handleBooks(req, res) {
         updates
       });
     } else if (req.method === 'DELETE') {
-      // Delete book
+      // Delete book from MongoDB
+      if (!isMongoDBAvailable()) {
+        return res.status(500).json({ error: 'MongoDB not available' });
+      }
+
       const bookId = req.url.split('/').pop();
       console.log('📚 Deleting book:', bookId);
+      
+      const client = await clientPromise;
+      const dbName = getDatabaseName();
+      const db = client.db(dbName);
+      const booksCollection = db.collection('books');
+      
+      const result = await booksCollection.deleteOne({ _id: bookId });
+      
+      if (result.deletedCount === 0) {
+        return res.status(404).json({ error: 'Book not found' });
+      }
+      
+      console.log('✅ Book deleted successfully');
       res.json({
         success: true,
         message: 'Book deleted successfully',
@@ -259,23 +385,76 @@ async function handleAuthorImageUpload(req, res) {
 async function handleMedia(req, res) {
   try {
     if (req.method === 'GET') {
-      // Get media list
-      const media = getMockMedia();
+      // Get media list from MongoDB
+      if (!isMongoDBAvailable()) {
+        console.log('❌ MongoDB not configured, using fallback data');
+        return res.json(getMockMedia());
+      }
+
+      console.log('✅ MongoDB is available, fetching media from database...');
+      const client = await clientPromise;
+      const dbName = getDatabaseName();
+      const db = client.db(dbName);
+      const mediaCollection = db.collection('media');
+      
+      const media = await mediaCollection.find({}).sort({ createdAt: -1 }).toArray();
+      console.log(`📰 Found ${media.length} media items in database`);
+      
       res.json(media);
     } else if (req.method === 'POST') {
-      // Create new media item
+      // Create new media item in MongoDB
+      if (!isMongoDBAvailable()) {
+        return res.status(500).json({ error: 'MongoDB not available' });
+      }
+
       const newMedia = req.body;
       console.log('📰 Creating new media item:', newMedia.title);
+      
+      const client = await clientPromise;
+      const dbName = getDatabaseName();
+      const db = client.db(dbName);
+      const mediaCollection = db.collection('media');
+      
+      // Add creation timestamp
+      newMedia.createdAt = new Date();
+      newMedia.updatedAt = new Date();
+      
+      const result = await mediaCollection.insertOne(newMedia);
+      console.log('✅ Media item created with ID:', result.insertedId);
+      
       res.json({
         success: true,
         message: 'Media item created successfully',
-        media: { ...newMedia, _id: `media-${Date.now()}` }
+        media: { ...newMedia, _id: result.insertedId }
       });
     } else if (req.method === 'PUT') {
-      // Update media item
+      // Update media item in MongoDB
+      if (!isMongoDBAvailable()) {
+        return res.status(500).json({ error: 'MongoDB not available' });
+      }
+
       const mediaId = req.url.split('/').pop();
       const updates = req.body;
       console.log('📰 Updating media item:', mediaId, updates);
+      
+      const client = await clientPromise;
+      const dbName = getDatabaseName();
+      const db = client.db(dbName);
+      const mediaCollection = db.collection('media');
+      
+      // Add update timestamp
+      updates.updatedAt = new Date();
+      
+      const result = await mediaCollection.updateOne(
+        { _id: mediaId },
+        { $set: updates }
+      );
+      
+      if (result.matchedCount === 0) {
+        return res.status(404).json({ error: 'Media item not found' });
+      }
+      
+      console.log('✅ Media item updated successfully');
       res.json({
         success: true,
         message: 'Media item updated successfully',
@@ -283,9 +462,26 @@ async function handleMedia(req, res) {
         updates
       });
     } else if (req.method === 'DELETE') {
-      // Delete media item
+      // Delete media item from MongoDB
+      if (!isMongoDBAvailable()) {
+        return res.status(500).json({ error: 'MongoDB not available' });
+      }
+
       const mediaId = req.url.split('/').pop();
       console.log('📰 Deleting media item:', mediaId);
+      
+      const client = await clientPromise;
+      const dbName = getDatabaseName();
+      const db = client.db(dbName);
+      const mediaCollection = db.collection('media');
+      
+      const result = await mediaCollection.deleteOne({ _id: mediaId });
+      
+      if (result.deletedCount === 0) {
+        return res.status(404).json({ error: 'Media item not found' });
+      }
+      
+      console.log('✅ Media item deleted successfully');
       res.json({
         success: true,
         message: 'Media item deleted successfully',
@@ -304,13 +500,51 @@ async function handleMedia(req, res) {
 async function handleAuthor(req, res) {
   try {
     if (req.method === 'GET') {
-      // Get author info
-      const author = getMockAuthor();
-      res.json(author);
+      // Get author info from MongoDB
+      if (!isMongoDBAvailable()) {
+        console.log('❌ MongoDB not configured, using fallback data');
+        return res.json(getMockAuthor());
+      }
+
+      console.log('✅ MongoDB is available, fetching author info from database...');
+      const client = await clientPromise;
+      const dbName = getDatabaseName();
+      const db = client.db(dbName);
+      const authorCollection = db.collection('author');
+      
+      const author = await authorCollection.findOne({});
+      if (author) {
+        console.log('✅ Found author info in database');
+        res.json(author);
+      } else {
+        console.log('⚠️ No author info found in database, using fallback');
+        res.json(getMockAuthor());
+      }
     } else if (req.method === 'PUT') {
-      // Update author info
+      // Update author info in MongoDB
+      if (!isMongoDBAvailable()) {
+        return res.status(500).json({ error: 'MongoDB not available' });
+      }
+
       const updates = req.body;
       console.log('👤 Updating author info:', updates);
+      
+      const client = await clientPromise;
+      const dbName = getDatabaseName();
+      const db = client.db(dbName);
+      const authorCollection = db.collection('author');
+      
+      // Add update timestamp
+      updates.updatedAt = new Date();
+      
+      // Use upsert to create if doesn't exist, update if it does
+      const result = await authorCollection.updateOne(
+        {}, // Empty filter to match any document
+        { $set: updates },
+        { upsert: true }
+      );
+      
+      console.log('✅ Author info updated successfully');
       res.json({
         success: true,
         message: 'Author information updated successfully',
@@ -329,13 +563,51 @@ async function handleAuthor(req, res) {
 async function handleSocial(req, res) {
   try {
     if (req.method === 'GET') {
-      // Get social media links
-      const social = getMockSocial();
-      res.json(social);
+      // Get social media links from MongoDB
+      if (!isMongoDBAvailable()) {
+        console.log('❌ MongoDB not configured, using fallback data');
+        return res.json(getMockSocial());
+      }
+
+      console.log('✅ MongoDB is available, fetching social media from database...');
+      const client = await clientPromise;
+      const dbName = getDatabaseName();
+      const db = client.db(dbName);
+      const socialCollection = db.collection('social');
+      
+      const social = await socialCollection.findOne({});
+      if (social) {
+        console.log('✅ Found social media info in database');
+        res.json(social);
+      } else {
+        console.log('⚠️ No social media info found in database, using fallback');
+        res.json(getMockSocial());
+      }
     } else if (req.method === 'PUT') {
-      // Update social media links
+      // Update social media links in MongoDB
+      if (!isMongoDBAvailable()) {
+        return res.status(500).json({ error: 'MongoDB not available' });
+      }
+
       const updates = req.body;
       console.log('🔗 Updating social media links:', updates);
+      
+      const client = await clientPromise;
+      const dbName = getDatabaseName();
+      const db = client.db(dbName);
+      const socialCollection = db.collection('social');
+      
+      // Add update timestamp
+      updates.updatedAt = new Date();
+      
+      // Use upsert to create if doesn't exist, update if it does
+      const result = await socialCollection.updateOne(
+        {}, // Empty filter to match any document
+        { $set: updates },
+        { upsert: true }
+      );
+      
+      console.log('✅ Social media links updated successfully');
       res.json({
         success: true,
         message: 'Social media links updated successfully',
