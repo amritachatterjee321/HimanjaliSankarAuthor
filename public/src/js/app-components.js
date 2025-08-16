@@ -542,18 +542,35 @@ class Footer extends Component {
     try {
       // Try to load from CMS API first
       const response = await this.apiService.getSocialMedia();
-      if (response && response.social) {
-        console.log('Successfully loaded social media data from CMS:', response.social);
-        this.socialData = response.social;
+      console.log('🔄 Footer: CMS API response:', response);
+      
+      if (response && response.social && Array.isArray(response.social)) {
+        console.log('✅ Footer: Successfully loaded social media data from CMS:', response.social);
+        
+        // Transform the CMS data to match our expected format
+        const socialData = {};
+        response.social.forEach(item => {
+          if (item.name && item.url) {
+            const name = item.name.toLowerCase();
+            if (name.includes('instagram')) {
+              socialData.instagram = item.url;
+            } else if (name.includes('facebook')) {
+              socialData.facebook = item.url;
+            }
+          }
+        });
+        
+        this.socialData = socialData;
+        console.log('✅ Footer: Transformed social data:', this.socialData);
       } else {
-        throw new Error('Invalid CMS response');
+        throw new Error('Invalid CMS response format');
       }
     } catch (error) {
-      console.warn('CMS API failed, using fallback data:', error);
-      // Fallback to basic social data
+      console.warn('⚠️ Footer: CMS API failed, using fallback data:', error);
+      // Fallback to working social data
       this.socialData = {
-        instagram: '#',
-        facebook: '#'
+        instagram: 'https://instagram.com/himanjalisankar',
+        facebook: 'https://facebook.com/himanjali.author'
       };
     }
   }
@@ -578,7 +595,7 @@ class Footer extends Component {
         innerHTML: item.name,
         onClick: (e) => {
           e.preventDefault();
-          if (item.href === '#home') {
+          if (item.href === '/') {
             // If we're on the homepage, scroll to top
             if (window.location.pathname === '/' || window.location.pathname === '/index.html') {
               window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -623,33 +640,56 @@ class Footer extends Component {
       className: 'social-links'
     });
 
+    // Debug social data
+    console.log('🔄 Footer: Rendering social links with data:', this.socialData);
+
     // Create Instagram and Facebook links from CMS data
     if (this.socialData) {
       // Instagram link
       if (this.socialData.instagram && this.socialData.instagram !== '#') {
         const instagramLink = Utils.createElement('a', {
           href: this.socialData.instagram,
-          className: 'social-link',
+          className: 'social-link instagram',
           'aria-label': 'Instagram',
-          innerHTML: 'Instagram',
+          innerHTML: '<i class="fab fa-instagram"></i>',
           target: '_blank',
           rel: 'noopener noreferrer'
         });
         socialLinks.appendChild(instagramLink);
+        console.log('✅ Footer: Instagram link added:', this.socialData.instagram);
+      } else {
+        console.log('⚠️ Footer: Instagram link not available or invalid');
       }
 
       // Facebook link
       if (this.socialData.facebook && this.socialData.facebook !== '#') {
         const facebookLink = Utils.createElement('a', {
           href: this.socialData.facebook,
-          className: 'social-link',
+          className: 'social-link facebook',
           'aria-label': 'Facebook',
-          innerHTML: 'Facebook',
+          innerHTML: '<i class="fab fa-facebook-f"></i>',
           target: '_blank',
           rel: 'noopener noreferrer'
         });
         socialLinks.appendChild(facebookLink);
+        console.log('✅ Footer: Facebook link added:', this.socialData.facebook);
+      } else {
+        console.log('⚠️ Footer: Facebook link not available or invalid');
       }
+    } else {
+      console.log('❌ Footer: No social data available');
+    }
+
+    // Always add at least one social link for debugging
+    if (socialLinks.children.length === 0) {
+      console.log('⚠️ Footer: No social links rendered, adding fallback');
+      const fallbackLink = Utils.createElement('a', {
+        href: '#',
+        className: 'social-link fallback',
+        innerHTML: 'Social Links (CMS Data Loading...)',
+        style: 'color: #999; font-style: italic;'
+      });
+      socialLinks.appendChild(fallbackLink);
     }
 
     const copyright = Utils.createElement('div', {
