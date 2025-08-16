@@ -37,6 +37,19 @@ export default async function handler(req, res) {
       await handleContact(req, res);
     } else if (endpoint === 'test') {
       await handleTest(req, res);
+    } else if (endpoint === 'debug') {
+      // Simple debug endpoint to test response format
+      console.log('🔍 Debug endpoint called');
+      res.status(200).json({
+        success: true,
+        data: {
+          message: 'Debug endpoint working',
+          timestamp: new Date().toISOString(),
+          endpoint: endpoint,
+          method: req.method,
+          url: req.url
+        }
+      });
     } else {
       // If endpoint not found, try to handle as books (fallback)
       console.log('Endpoint not found, falling back to books:', endpoint);

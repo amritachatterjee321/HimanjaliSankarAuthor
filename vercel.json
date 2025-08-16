@@ -65,6 +65,10 @@
       "destination": "/api/main?endpoint=test"
     },
     {
+      "source": "/api/debug",
+      "destination": "/api/main?endpoint=debug"
+    },
+    {
       "source": "/api/test-simple",
       "destination": "/api/test-simple"
     }
