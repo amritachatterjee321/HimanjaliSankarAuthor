@@ -49,6 +49,13 @@ class BookDetailPage extends Component {
       console.log('🔍 Calling API service for book:', this.bookId);
       this.bookData = await this.apiService.getBook(this.bookId);
       console.log('🔍 Book data received:', this.bookData);
+      console.log('🔍 Complete book data structure:', JSON.stringify(this.bookData, null, 2));
+      console.log('🔍 Amazon link field:', {
+        amazonLink: this.bookData.amazonLink,
+        hasAmazonLink: !!this.bookData.amazonLink,
+        amazonLinkType: typeof this.bookData.amazonLink,
+        allFields: Object.keys(this.bookData)
+      });
       
       // Update page title with book title
       if (this.bookData && this.bookData.title) {
@@ -188,23 +195,57 @@ class BookDetailPage extends Component {
     descriptionSection.appendChild(description);
 
     // Add Amazon Buy Button below description
-    if (this.bookData.amazonLink) {
+    console.log('🛒 Book Amazon link data:', {
+      hasAmazonLink: !!this.bookData.amazonLink,
+      amazonLink: this.bookData.amazonLink,
+      bookTitle: this.bookData.title
+    });
+
+    // Check for Amazon link in various possible field names
+    const amazonLink = this.bookData.amazonLink || 
+                      this.bookData.amazon_link || 
+                      this.bookData.amazonUrl || 
+                      this.bookData.amazon_url ||
+                      this.bookData.purchaseLink ||
+                      this.bookData.purchase_link;
+
+    console.log('🛒 Resolved Amazon link:', {
+      amazonLink: amazonLink,
+      hasLink: !!amazonLink,
+      fieldNames: {
+        amazonLink: this.bookData.amazonLink,
+        amazon_link: this.bookData.amazon_link,
+        amazonUrl: this.bookData.amazonUrl,
+        amazon_url: this.bookData.amazon_url,
+        purchaseLink: this.bookData.purchaseLink,
+        purchase_link: this.bookData.purchase_link
+      }
+    });
+
+    if (amazonLink) {
       const buyButtonSection = Utils.createElement('div', {
         className: 'book-detail-buy-section'
       });
 
       const buyButton = Utils.createElement('a', {
-        href: this.bookData.amazonLink,
+        href: amazonLink,
         className: 'buy-button large',
         target: '_blank',
         rel: 'noopener noreferrer',
         innerHTML: 'Buy Now on Amazon'
       });
 
+      // Verify button href is set correctly
+      console.log('🛒 Button created with href:', buyButton.href);
+      console.log('🛒 Expected Amazon link:', amazonLink);
+      console.log('🛒 Button element:', buyButton);
+
       // Add click tracking
       buyButton.addEventListener('click', (e) => {
         console.log('🛒 Amazon buy button clicked for book:', this.bookData.title);
-        console.log('🛒 Redirecting to:', this.bookData.amazonLink);
+        console.log('🛒 Redirecting to:', amazonLink);
+        console.log('🛒 Button href attribute:', buyButton.href);
+        console.log('🛒 Current button href:', buyButton.getAttribute('href'));
         
         // Track the purchase click
         if (window.app && window.app.notificationSystem) {
@@ -214,6 +255,20 @@ class BookDetailPage extends Component {
             'Purchase'
           );
         }
+      });
+
+      // Add a simple test to ensure button is working
+      buyButton.addEventListener('mouseenter', () => {
+        console.log('🛒 Button hover detected');
+      });
+
+      // Test button accessibility
+      console.log('🛒 Button accessibility test:', {
+        hasHref: !!buyButton.href,
+        hrefValue: buyButton.href,
+        isClickable: buyButton.style.pointerEvents !== 'none',
+        tabIndex: buyButton.tabIndex,
+        role: buyButton.getAttribute('role')
       });
 
       buyButtonSection.appendChild(buyButton);
