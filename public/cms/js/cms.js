@@ -1,10 +1,6 @@
 // CMS Application
 class CMS {
     constructor() {
-        // Use production API endpoints when not on localhost
-        this.apiBaseUrl = window.location.hostname === 'localhost' 
-            ? 'http://localhost:3000/api/cms' 
-            : '/api/cms';
         this.isAuthenticated = false;
         this.currentSection = 'books';
         this.books = [];
@@ -120,27 +116,34 @@ class CMS {
 
     async checkAuth() {
         const token = localStorage.getItem('cms_token');
-        if (token) {
-            try {
-                const response = await fetch(`${this.apiBaseUrl}/auth/verify`, {
-                    headers: {
-                        'Authorization': `Bearer ${token}`
-                    }
-                });
-                
-                if (response.ok) {
-                    this.isAuthenticated = true;
-                    this.showDashboard();
-                    this.loadData();
-                } else {
-                    this.showLogin();
+        if (!token) {
+            this.showLoginScreen();
+            return;
+        }
+
+        try {
+            const response = await fetch('/api/cms/auth/verify', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
                 }
-            } catch (error) {
-                console.error('Auth check failed:', error);
-                this.showLogin();
+            });
+
+            if (response.ok) {
+                const data = await response.json();
+                this.isAuthenticated = true;
+                this.currentUser = data.user;
+                this.showDashboard();
+                this.loadData();
+            } else {
+                localStorage.removeItem('cms_token');
+                this.showLoginScreen();
             }
-        } else {
-            this.showLogin();
+        } catch (error) {
+            console.error('Auth check failed:', error);
+            localStorage.removeItem('cms_token');
+            this.showLoginScreen();
         }
     }
 
@@ -149,7 +152,7 @@ class CMS {
         const password = document.getElementById('password').value;
 
         try {
-            const response = await fetch(`${this.apiBaseUrl}/auth/login`, {
+            const response = await fetch('/api/cms/auth/login', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -161,16 +164,16 @@ class CMS {
                 const data = await response.json();
                 localStorage.setItem('cms_token', data.token);
                 this.isAuthenticated = true;
+                this.currentUser = data.user;
                 this.showDashboard();
                 this.loadData();
-                this.showNotification('Login successful!', 'success');
             } else {
-                const error = await response.json();
-                this.showLoginError(error.message || 'Login failed');
+                const errorData = await response.json();
+                this.showNotification(errorData.error || 'Login failed', 'error');
             }
         } catch (error) {
             console.error('Login error:', error);
-            this.showLoginError('Network error. Please try again.');
+            this.showNotification('Login error: ' + error.message, 'error');
         }
     }
 
@@ -255,56 +258,23 @@ class CMS {
 
     async loadMedia() {
         try {
-            console.log('🔍 Loading media data...');
-            console.log('🔍 API Base URL:', this.apiBaseUrl);
-            console.log('🔍 Full endpoint:', `${this.apiBaseUrl}/media`);
+            console.log('🔍 Loading media from API...');
+            const response = await this.apiRequest('/media', 'GET');
             
-            const response = await this.apiRequest('/media');
-            console.log('📰 Media API response:', response);
-            console.log('📰 Response type:', typeof response);
-            console.log('📰 Response keys:', Object.keys(response));
-            
-            if (response && response.media) {
-            this.media = (response.media || []).map(media => ({
-                ...media,
-                id: media._id || media.id
-            }));
-                console.log('📰 Processed media data:', this.media);
-                console.log('📰 Media count:', this.media.length);
+            if (response.media) {
+                this.media = response.media;
+                this.renderMedia();
+                console.log('✅ Media loaded from API:', this.media.length, 'items');
             } else {
-                console.log('📰 No media property in response, using empty array');
+                console.log('⚠️ No media property in response, using empty array');
                 this.media = [];
+                this.renderMedia();
             }
-            
-            this.renderMedia();
         } catch (error) {
-            console.error('❌ Failed to load media:', error);
-            console.log('🔄 Using fallback sample media data');
-            
-            // Fallback to sample data if API fails
-            this.media = [
-                {
-                    id: 'sample-1',
-                    title: 'Sample Book Review - Literary Magazine',
-                    type: 'review',
-                    source: 'Literary Magazine',
-                    url: 'https://example.com/review',
-                    date: '2024-01-15',
-                    description: 'A sample book review for testing purposes.'
-                },
-                {
-                    id: 'sample-2',
-                    title: 'Sample Short Story - Spring Anthology',
-                    type: 'short-work',
-                    source: 'Spring Anthology 2024',
-                    url: 'https://example.com/short-story',
-                    date: '2024-03-15',
-                    description: 'A sample short story for testing purposes.'
-                }
-            ];
-            
+            console.error('Failed to load media:', error);
+            this.showNotification('Failed to load media', 'error');
+            this.media = [];
             this.renderMedia();
-            this.showNotification('Using sample media data (API unavailable)', 'warning');
         }
     }
 
@@ -1137,45 +1107,37 @@ class CMS {
             apiPath = endpoint.replace('/settings', '/api/cms/settings');
         } else if (endpoint.startsWith('/homepage-config')) {
             apiPath = endpoint.replace('/homepage-config', '/api/cms/homepage-config');
-        } else if (endpoint.startsWith('/images')) {
-            apiPath = endpoint.replace('/images', '/api/cms/images');
+        } else {
+            apiPath = `/api/cms${endpoint}`;
         }
         
-        const url = `${this.apiBaseUrl.replace('/api/cms', '')}${apiPath}`;
+        const url = apiPath;
+        console.log('🔍 Making API request to:', url);
         
         const options = {
-            method,
+            method: method,
             headers: {
-                'Authorization': `Bearer ${token}`
+                'Content-Type': 'application/json'
             }
         };
-
-        if (data && method !== 'GET') {
-            if (isFile) {
-                // Don't set Content-Type for file uploads - let the browser set it
-                options.body = data;
-            } else {
-                options.headers['Content-Type'] = 'application/json';
-                options.body = JSON.stringify(data);
-            }
+        
+        if (token) {
+            options.headers['Authorization'] = `Bearer ${token}`;
         }
-
+        
+        if (data && method !== 'GET') {
+            options.body = JSON.stringify(data);
+        }
+        
         try {
             const response = await fetch(url, options);
             
             if (!response.ok) {
-                let errorMessage = 'Request failed';
-                try {
-                    const errorData = await response.json();
-                    errorMessage = errorData.error || errorData.message || `HTTP ${response.status}: ${response.statusText}`;
-                } catch (parseError) {
-                    errorMessage = `HTTP ${response.status}: ${response.statusText}`;
-                }
-                console.error('API response error:', response.status, errorMessage);
-                throw new Error(errorMessage);
+                throw new Error(`HTTP ${response.status}: ${response.statusText}`);
             }
             
-            return await response.json();
+            const responseData = await response.json();
+            return responseData;
         } catch (error) {
             console.error('API request failed:', error);
             throw error;
