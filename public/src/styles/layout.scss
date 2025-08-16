@@ -9,6 +9,17 @@
   transition: $transition;
   box-shadow: $shadow-light;
 
+  /* Ensure header stays fixed on mobile */
+  @media (max-width: $tablet) {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    z-index: 9999 !important;
+    background: $white !important;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1) !important;
+  }
+
   &.scrolled {
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(10px);
@@ -35,6 +46,27 @@
           transform: rotate(-45deg) translate(7px, -6px);
         }
       }
+    }
+  }
+
+  /* Additional mobile header fixes */
+  @media (max-width: $tablet) {
+    /* Ensure header content is properly positioned */
+    .header-content {
+      position: relative;
+      z-index: 10000;
+    }
+
+    /* Ensure logo stays visible */
+    .logo {
+      position: relative;
+      z-index: 10001;
+    }
+
+    /* Ensure mobile menu button stays visible */
+    .mobile-menu-button {
+      position: relative;
+      z-index: 10002;
     }
   }
 }
@@ -239,6 +271,12 @@
 
   @media (max-width: $tablet) {
     margin-top: 140px;
+  }
+
+  /* Ensure proper spacing for fixed header on mobile */
+  @media (max-width: $mobile) {
+    margin-top: 120px;
+    padding-top: 20px;
   }
 }
 
