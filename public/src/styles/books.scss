@@ -6,8 +6,14 @@
   display: flex;
   align-items: center;
 
+  @media (max-width: $tablet) {
+    padding: 60px 20px;
+    min-height: 60vh;
+  }
+
   @media (max-width: $mobile) {
-    padding: 50px 15px;
+    padding: 40px 15px;
+    min-height: 50vh;
   }
 }
 
@@ -24,10 +30,20 @@
     gap: 50px;
     text-align: center;
   }
+
+  @media (max-width: $mobile) {
+    gap: 30px;
+  }
 }
 
 .latest-book-image {
   position: relative;
+
+  @media (max-width: $mobile) {
+    order: -1; // Move image to top on mobile
+    display: flex;
+    justify-content: center;
+  }
 }
 
 .book-cover-large {
@@ -47,6 +63,19 @@
   position: relative;
   overflow: hidden;
 
+  @media (max-width: $tablet) {
+    max-width: 350px;
+    height: 525px;
+    margin: 0 auto;
+  }
+
+  @media (max-width: $mobile) {
+    max-width: 280px;
+    height: 420px;
+    padding: 20px;
+    margin: 0 auto;
+  }
+
   // Remove the overlay gradient
   // &::before {
   //   content: '';
@@ -62,6 +91,10 @@
   &:hover {
     transform: scale(1.02) rotate(-1deg);
     box-shadow: 0 25px 60px rgba(0,0,0,0.3);
+
+    @media (max-width: $tablet) {
+      transform: scale(1.01);
+    }
   }
 
   &.clickable {
@@ -70,6 +103,10 @@
     &:hover {
       transform: scale(1.02) rotate(-1deg);
       box-shadow: 0 25px 60px rgba(0,0,0,0.3);
+
+      @media (max-width: $tablet) {
+        transform: scale(1.01);
+      }
     }
   }
 
@@ -102,50 +139,40 @@
     // }
   }
 
-  @media (max-width: $tablet) {
-    max-width: 350px;
-    height: 525px;
-  }
+  // Remove the text overlay styles since they're no longer used
+  // .book-genre-large {
+  //   font-family: $font-sans;
+  //   font-size: 14px;
+  //   text-transform: uppercase;
+  //   letter-spacing: 2px;
+  //   opacity: 0.9;
+  //   margin-bottom: 20px;
+  //   position: relative;
+  //   z-index: 1;
+  // }
 
-  @media (max-width: $mobile) {
-    max-width: 300px;
-    height: 450px;
-  }
+  // .book-title-large {
+  //   font-size: 3.2em;
+  //   font-weight: 700;
+  //   margin-bottom: 20px;
+  //   line-height: 1.1;
+  //   position: relative;
+  //   z-index: 1;
+
+  //   @media (max-width: $tablet) {
+  //     font-size: 2.2em;
+  //   }
+  // }
+
+  // .book-author-large {
+  //   font-family: $font-sans;
+  //   font-size: 1.4em;
+  //   font-weight: 600;
+  //   margin-top: auto;
+  //   position: relative;
+  //   z-index: 1;
+  // }
 }
-
-// Remove the text overlay styles since they're no longer used
-// .book-genre-large {
-//   font-family: $font-sans;
-//   font-size: 14px;
-//   text-transform: uppercase;
-//   letter-spacing: 2px;
-//   opacity: 0.9;
-//   margin-bottom: 20px;
-//   position: relative;
-//   z-index: 1;
-// }
-
-// .book-title-large {
-//   font-size: 3.2em;
-//   font-weight: 700;
-//   margin-bottom: 20px;
-//   line-height: 1.1;
-//   position: relative;
-//   z-index: 1;
-
-//   @media (max-width: $tablet) {
-//     font-size: 2.2em;
-//   }
-// }
-
-// .book-author-large {
-//   font-family: $font-sans;
-//   font-size: 1.4em;
-//   font-weight: 600;
-//   margin-top: auto;
-//   position: relative;
-//   z-index: 1;
-// }
 
 .latest-book-content {
   h2 {
@@ -172,6 +199,11 @@
   letter-spacing: 2px;
   margin-bottom: 30px;
   font-weight: 600;
+
+  @media (max-width: $mobile) {
+    font-size: 14px;
+    margin-bottom: 20px;
+  }
 }
 
 .book-description {
@@ -179,10 +211,25 @@
   line-height: 1.7;
   color: $text-color;
   margin-bottom: 40px;
+
+  @media (max-width: $tablet) {
+    font-size: 1.1em;
+    margin-bottom: 30px;
+  }
+
+  @media (max-width: $mobile) {
+    font-size: 1em;
+    margin-bottom: 25px;
+    line-height: 1.6;
+  }
 }
 
 .book-meta {
   margin-bottom: 40px;
+
+  @media (max-width: $mobile) {
+    margin-bottom: 30px;
+  }
 }
 
 .book-meta-item {
@@ -190,6 +237,11 @@
   font-size: 14px;
   color: $gray-medium;
   margin-bottom: 10px;
+
+  @media (max-width: $mobile) {
+    font-size: 13px;
+    margin-bottom: 8px;
+  }
 
   strong {
     color: $secondary-color;
@@ -231,11 +283,20 @@
   color: $gray-medium;
   max-width: 600px;
   margin: 0 auto;
+
+  @media (max-width: $mobile) {
+    font-size: 1.1em;
+    max-width: 100%;
+  }
 }
 
 .books-categories {
   display: grid;
   gap: 60px;
+
+  @media (max-width: $mobile) {
+    gap: 40px;
+  }
 }
 
 .category-section {
@@ -247,6 +308,10 @@
   @media (max-width: $tablet) {
     padding: 30px 20px;
   }
+
+  @media (max-width: $mobile) {
+    padding: 25px 15px;
+  }
 }
 
 .category-title {
@@ -255,6 +320,11 @@
   margin-bottom: 40px;
   text-align: center;
   position: relative;
+
+  @media (max-width: $mobile) {
+    font-size: 1.8em;
+    margin-bottom: 30px;
+  }
 
   &::after {
     content: '';
@@ -265,6 +335,11 @@
     width: 80px;
     height: 3px;
     background: $primary-color;
+
+    @media (max-width: $mobile) {
+      width: 60px;
+      bottom: -10px;
+    }
   }
 }
 
@@ -277,10 +352,13 @@
   @media (max-width: $tablet) {
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
     gap: 30px;
+    margin-top: 30px;
   }
 
   @media (max-width: $mobile) {
     grid-template-columns: 1fr;
+    gap: 25px;
+    margin-top: 25px;
   }
 }
 
@@ -479,27 +557,27 @@
       }
     }
   }
+}
 
-  .book-detail-no-link-section {
-    margin-top: 30px;
-    text-align: center;
+.book-detail-no-link-section {
+  margin-top: 30px;
+  text-align: center;
 
-    .no-link-message {
-      font-size: 1rem;
-      color: $gray-medium;
-      font-style: italic;
-      padding: 15px;
-      background: $gray-light;
-      border-radius: $border-radius;
-      border: 1px solid $gray-light;
-      max-width: 300px;
-      margin: 0 auto;
+  .no-link-message {
+    font-size: 1rem;
+    color: $gray-medium;
+    font-style: italic;
+    padding: 15px;
+    background: $gray-light;
+    border-radius: $border-radius;
+    border: 1px solid $gray-light;
+    max-width: 300px;
+    margin: 0 auto;
 
-      @media (max-width: $mobile) {
-        font-size: 0.9rem;
-        padding: 12px;
-        max-width: 100%;
-      }
+    @media (max-width: $mobile) {
+      font-size: 0.9rem;
+      padding: 12px;
+      max-width: 100%;
     }
   }
 }
