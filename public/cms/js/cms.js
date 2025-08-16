@@ -123,50 +123,13 @@ class CMS {
         });
 
         // Image preview functionality
-        this.bindImagePreviewEvents();
+        // Removed bindImagePreviewEvents function - now using URL-based image management
         
         // Latest Release cover image preview
 
     }
 
-    bindImagePreviewEvents() {
-        // Book cover image preview
-        const bookCoverInput = document.getElementById('book-cover-image');
-        if (bookCoverInput) {
-            bookCoverInput.addEventListener('change', (e) => {
-                this.handleImagePreview(e, 'book-cover-preview');
-            });
-        }
-
-        // Media image preview
-        const mediaImageInput = document.getElementById('media-image');
-        if (mediaImageInput) {
-            mediaImageInput.addEventListener('change', (e) => {
-                this.handleImagePreview(e, 'media-image-preview');
-            });
-        }
-
-        // Image upload preview
-        const imageUploadInput = document.getElementById('image-file');
-        if (imageUploadInput) {
-            imageUploadInput.addEventListener('change', (e) => {
-                this.handleImagePreview(e, 'image-upload-preview');
-            });
-        }
-    }
-
-    handleImagePreview(event, previewId) {
-        const file = event.target.files[0];
-        const preview = document.getElementById(previewId);
-        
-        if (file && preview) {
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                preview.innerHTML = `<img src="${e.target.result}" alt="Preview">`;
-            };
-            reader.readAsDataURL(file);
-        }
-    }
+    // Removed bindImagePreviewEvents function - now using URL-based image management
 
     async checkAuth() {
         const token = localStorage.getItem('cms_token');
@@ -528,14 +491,16 @@ class CMS {
             
             // Show current cover image if it exists
             if (book.coverImage && book.coverImage.url) {
+                document.getElementById('book-cover-image').value = book.coverImage.url;
                 coverImagePreview.innerHTML = `
                     <div class="current-cover">
                         <p><strong>Current Cover:</strong></p>
                         <img src="${book.coverImage.url}" alt="Current cover" style="max-width: 200px; max-height: 300px; border: 1px solid #ddd; border-radius: 4px;">
-                        <p><small>Upload a new image to replace this cover</small></p>
+                        <p><small>Enter a new image URL to replace this cover</small></p>
                     </div>
                 `;
             } else {
+                document.getElementById('book-cover-image').value = '';
                 coverImagePreview.innerHTML = '<p><em>No cover image set</em></p>';
             }
         } else {
@@ -570,6 +535,12 @@ class CMS {
             document.getElementById('media-url').value = media.url;
             document.getElementById('media-date').value = media.date;
             document.getElementById('media-description').value = media.description || '';
+            // Populate image URL if it exists
+            if (media.image && media.image.url) {
+                document.getElementById('media-image').value = media.image.url;
+            } else {
+                document.getElementById('media-image').value = '';
+            }
         } else {
             title.textContent = 'Add New Media Item';
         }
@@ -594,8 +565,8 @@ class CMS {
         console.log('Form dataset:', form.dataset);
         console.log('Book ID from form:', bookId);
         
-        // Get the cover image file
-        const coverImageFile = document.getElementById('book-cover-image').files[0];
+        // Get the cover image URL
+        const coverImageUrl = document.getElementById('book-cover-image').value.trim();
         
         const bookData = {
             title: document.getElementById('book-title').value,
@@ -608,31 +579,26 @@ class CMS {
             reviews: document.getElementById('book-reviews').value.split('\n').filter(review => review.trim())
         };
 
+        // Add cover image URL if provided
+        if (coverImageUrl) {
+            bookData.coverImage = {
+                url: coverImageUrl,
+                altText: `Cover image for ${bookData.title}`
+            };
+        }
+
         try {
             if (bookId) {
                 console.log('Updating book with ID:', bookId);
                 console.log('Book data being sent:', bookData);
                 
-                // First update the book data
+                // Update the book data (including cover image)
                 await this.apiRequest(`/books/${bookId}`, 'PUT', bookData);
-                
-                // Then upload cover image if provided
-                if (coverImageFile) {
-                    console.log('Uploading cover image for book:', bookId);
-                    console.log('Cover image file details:', coverImageFile.name, 'Size:', coverImageFile.size);
-                    await this.uploadBookCover(bookId, coverImageFile);
-                }
                 
                 this.showNotification('Book updated successfully!', 'success');
             } else {
                 console.log('Creating new book with data:', bookData);
                 const newBook = await this.apiRequest('/books', 'POST', bookData);
-                
-                // Upload cover image if provided
-                if (coverImageFile && newBook.book && newBook.book._id) {
-                    console.log('Uploading cover image for new book:', newBook.book._id);
-                    await this.uploadBookCover(newBook.book._id, coverImageFile);
-                }
                 
                 this.showNotification('Book added successfully!', 'success');
             }
@@ -645,22 +611,7 @@ class CMS {
         }
     }
 
-    async uploadBookCover(bookId, coverImageFile) {
-        try {
-            console.log('Starting cover upload for book ID:', bookId);
-            console.log('Cover image file:', coverImageFile.name, 'Size:', coverImageFile.size);
-            
-            const formData = new FormData();
-            formData.append('coverImage', coverImageFile);
-            
-            console.log('Uploading to endpoint:', `/books/${bookId}/cover`);
-            await this.apiRequest(`/books/${bookId}/cover`, 'POST', formData, true);
-            console.log('Cover image uploaded successfully for book:', bookId);
-        } catch (error) {
-            console.error('Failed to upload cover image for book ID:', bookId, error);
-            throw new Error('Cover image upload failed');
-        }
-    }
+    // Removed uploadBookCover function - now using URL-based image management
 
     initRichTextEditor() {
         const editor = document.getElementById('author-bio-editor');
@@ -951,22 +902,6 @@ class CMS {
         });
     }
 
-    async uploadAuthorImage(authorImageFile) {
-        try {
-            console.log('Starting author image upload:', authorImageFile.name, 'Size:', authorImageFile.size);
-            
-            const formData = new FormData();
-            formData.append('authorImage', authorImageFile);
-            
-            console.log('Uploading to endpoint:', '/author/image');
-            await this.apiRequest('/author/image', 'POST', formData, true);
-            console.log('Author image uploaded successfully');
-        } catch (error) {
-            console.error('Failed to upload author image:', error);
-            throw new Error('Author image upload failed');
-        }
-    }
-
     async handleMediaSubmit(e) {
         e.preventDefault();
         
@@ -981,6 +916,15 @@ class CMS {
             date: document.getElementById('media-date').value,
             description: document.getElementById('media-description').value.trim() || null
         };
+
+        // Add image URL if provided
+        const imageUrl = document.getElementById('media-image').value.trim();
+        if (imageUrl) {
+            mediaData.image = {
+                url: imageUrl,
+                altText: `Image for ${mediaData.title}`
+            };
+        }
 
         try {
             if (mediaId) {
@@ -1003,33 +947,35 @@ class CMS {
 
     async saveAuthor() {
         const form = document.getElementById('author-form');
-           const authorImageFile = document.getElementById('author-image').files[0];
+        const authorImageUrl = document.getElementById('author-image').value.trim();
 
-           // Get form values - handle rich text editor
-           const bioEditor = document.getElementById('author-bio-editor');
-           const bio = bioEditor ? bioEditor.innerHTML.trim() : document.getElementById('author-bio').value.trim();
-           const awards = document.getElementById('author-awards').value.split('\n').map(a => a.trim()).filter(a => a);
+        // Get form values - handle rich text editor
+        const bioEditor = document.getElementById('author-bio-editor');
+        const bio = bioEditor ? bioEditor.innerHTML.trim() : document.getElementById('author-bio').value.trim();
+        const awards = document.getElementById('author-awards').value.split('\n').map(a => a.trim()).filter(a => a);
 
-           // Validate required fields
-           if (!bio) {
-               this.showNotification('Full bio is required', 'error');
-               return;
-           }
+        // Validate required fields
+        if (!bio) {
+            this.showNotification('Full bio is required', 'error');
+            return;
+        }
         
         const authorData = {
-               bio: bio,
-               awards: awards
+            bio: bio,
+            awards: awards
         };
 
+        // Add image URL if provided
+        if (authorImageUrl) {
+            authorData.image = {
+                url: authorImageUrl,
+                altText: 'Author portrait'
+            };
+        }
+
         try {
-            // First save the author data
+            // Save the author data (including image URL)
             await this.apiRequest('/author', 'PUT', authorData);
-            
-            // Then upload author image if provided
-            if (authorImageFile) {
-                console.log('Uploading author image:', authorImageFile.name);
-                await this.uploadAuthorImage(authorImageFile);
-            }
             
             this.showNotification('Author information saved successfully!', 'success');
             this.loadAuthor();
@@ -1226,16 +1172,28 @@ class CMS {
 
     async handleImageUpload() {
         const form = document.getElementById('image-upload-form');
-        const formData = new FormData(form);
         
+        const imageData = {
+            title: document.getElementById('image-title').value,
+            category: document.getElementById('image-category').value,
+            url: document.getElementById('image-file').value.trim(),
+            description: document.getElementById('image-description').value.trim() || ''
+        };
+
+        // Validate required fields
+        if (!imageData.title || !imageData.url) {
+            this.showNotification('Image title and URL are required', 'error');
+            return;
+        }
+
         try {
-            await this.apiRequest('/images', 'POST', formData, true);
-            this.showNotification('Image uploaded successfully!', 'success');
+            await this.apiRequest('/images', 'POST', imageData);
+            this.showNotification('Image added successfully!', 'success');
             this.hideImageUploadModal();
             this.loadImages();
         } catch (error) {
             console.error('Image upload failed:', error);
-            this.showNotification('Failed to upload image', 'error');
+            this.showNotification('Failed to add image', 'error');
         }
     }
 

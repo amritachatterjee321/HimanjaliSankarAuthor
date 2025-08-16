@@ -112,8 +112,8 @@
                 <form id="author-form" class="form">
                     <!-- Author Image Upload -->
                     <div class="form-group">
-                        <label for="author-image">Author Image</label>
-                        <input type="file" id="author-image" name="authorImage" accept="image/*">
+                        <label for="author-image">Author Image URL</label>
+                        <input type="url" id="author-image" name="authorImageUrl" placeholder="https://example.com/author-photo.jpg">
                         <div id="author-image-preview" class="image-preview">
                             <!-- Current author image will be shown here -->
                         </div>
@@ -263,8 +263,8 @@
                     <input type="url" id="book-amazon-link" name="amazonLink">
                 </div>
                 <div class="form-group">
-                    <label for="book-cover-image">Cover Image</label>
-                    <input type="file" id="book-cover-image" name="coverImage" accept="image/*">
+                    <label for="book-cover-image">Cover Image URL</label>
+                    <input type="url" id="book-cover-image" name="coverImageUrl" placeholder="https://example.com/book-cover.jpg">
                     <div class="image-preview" id="book-cover-preview"></div>
                 </div>
                 <div class="form-actions">
@@ -313,8 +313,8 @@
                         <input type="date" id="media-date" name="date" required>
                     </div>
                     <div class="form-group">
-                        <label for="media-image">Media Image</label>
-                        <input type="file" id="media-image" name="image" accept="image/*">
+                        <label for="media-image">Media Image URL</label>
+                        <input type="url" id="media-image" name="imageUrl" placeholder="https://example.com/media-image.jpg">
                         <div class="image-preview" id="media-image-preview"></div>
                     </div>
                 </div>
@@ -352,8 +352,8 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <label for="image-file">Image File</label>
-                    <input type="file" id="image-file" name="image" accept="image/*" required>
+                    <label for="image-file">Image URL</label>
+                    <input type="url" id="image-file" name="imageUrl" placeholder="https://example.com/image.jpg" required>
                     <div class="image-preview" id="image-upload-preview"></div>
                 </div>
                 <div class="form-group">
