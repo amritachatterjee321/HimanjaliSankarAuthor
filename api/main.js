@@ -170,31 +170,11 @@ async function handleMedia(req, res) {
 async function handleSocial(req, res) {
   if (req.method === 'GET') {
     try {
-      const socialMedia = [
-        {
-          _id: "social-1",
-          name: "Instagram",
-          url: "https://instagram.com/himanjalisankar",
-          active: true
-        },
-        {
-          _id: "social-2", 
-          name: "Facebook",
-          url: "https://facebook.com/himanjalisankar",
-          active: true
-        }
-      ];
-
-      const activeSocial = socialMedia.filter(social => social.active);
+      console.log('📱 Social API called - building response...');
       
-      // Return the format expected by the frontend
-      res.status(200).json({
-        social: activeSocial
-      });
-    } catch (error) {
-      console.error('Social API error:', error);
-      res.status(200).json({
-        social: [
+      if (!isMongoDBAvailable()) {
+        console.log('❌ MongoDB not configured, using fallback data');
+        const fallbackSocial = [
           {
             _id: "fallback-social-1",
             name: "Instagram",
@@ -202,12 +182,125 @@ async function handleSocial(req, res) {
             active: true
           },
           {
-            _id: "fallback-social-2",
-            name: "Facebook", 
+            _id: "fallback-social-2", 
+            name: "Facebook",
             url: "https://facebook.com/himanjalisankar",
             active: true
           }
-        ]
+        ];
+        
+        console.log('📱 Social API using fallback data');
+        return res.status(200).json({
+          social: fallbackSocial
+        });
+      }
+
+      console.log('✅ MongoDB is available, fetching social data from database...');
+      const client = await clientPromise;
+      console.log('✅ MongoDB client connected');
+      
+      const dbName = getDatabaseName();
+      console.log('📊 Database name:', dbName);
+      
+      const db = client.db(dbName);
+      const socialCollection = db.collection('social');
+      console.log('📱 Social collection accessed');
+
+      // Fetch social media data from MongoDB
+      const socialData = await socialCollection.findOne({});
+      
+      if (socialData) {
+        console.log('✅ Found social data in database:', socialData);
+        
+        // Transform the data to match the expected format
+        const activeSocial = [];
+        
+        // Add Instagram if available
+        if (socialData.instagram && socialData.instagram !== '#') {
+          activeSocial.push({
+            _id: "social-instagram",
+            name: "Instagram",
+            url: socialData.instagram,
+            active: true
+          });
+        }
+        
+        // Add Facebook if available
+        if (socialData.facebook && socialData.facebook !== '#') {
+          activeSocial.push({
+            _id: "social-facebook",
+            name: "Facebook",
+            url: socialData.facebook,
+            active: true
+          });
+        }
+        
+        // Add Twitter if available
+        if (socialData.twitter && socialData.twitter !== '#') {
+          activeSocial.push({
+            _id: "social-twitter",
+            name: "Twitter",
+            url: socialData.twitter,
+            active: true
+          });
+        }
+        
+        // Add LinkedIn if available
+        if (socialData.linkedin && socialData.linkedin !== '#') {
+          activeSocial.push({
+            _id: "social-linkedin",
+            name: "LinkedIn",
+            url: socialData.linkedin,
+            active: true
+          });
+        }
+        
+        console.log('📱 Social API sending response from database:', { social: activeSocial });
+        res.status(200).json({
+          social: activeSocial
+        });
+      } else {
+        console.log('⚠️ No social data found in database, using fallback');
+        const fallbackSocial = [
+          {
+            _id: "fallback-social-1",
+            name: "Instagram",
+            url: "https://instagram.com/himanjalisankar",
+            active: true
+          },
+          {
+            _id: "fallback-social-2", 
+            name: "Facebook",
+            url: "https://facebook.com/himanjalisankar",
+            active: true
+          }
+        ];
+        
+        console.log('📱 Social API sending fallback response:', { social: fallbackSocial });
+        res.status(200).json({
+          social: fallbackSocial
+        });
+      }
+    } catch (error) {
+      console.error('Social API error:', error);
+      const fallbackSocial = [
+        {
+          _id: "fallback-social-1",
+          name: "Instagram",
+          url: "https://instagram.com/himanjalisankar",
+          active: true
+        },
+        {
+          _id: "fallback-social-2", 
+          name: "Facebook",
+          url: "https://facebook.com/himanjalisankar",
+          active: true
+        }
+      ];
+      
+      console.log('📱 Social API sending fallback response due to error:', { social: fallbackSocial });
+      res.status(200).json({
+        social: fallbackSocial
       });
     }
   } else {
@@ -221,34 +314,100 @@ async function handleAbout(req, res) {
     try {
       console.log('🏠 About API called - building response...');
       
-      const authorInfo = {
-        name: "HIMANJALI SANKAR",
-        bio: "A passionate author who writes compelling narratives that explore themes of resilience, hope, and human connection. Her work spans both adult and children's literature, offering readers of all ages meaningful stories that resonate with the human experience.",
-        achievements: [
-          "Published author with works in multiple genres",
-          "Contributor to prestigious anthologies",
-          "Recipient of literary recognition and awards"
-        ],
-        genres: ["Contemporary Fiction", "Children's Literature", "Short Stories"],
-        website: "https://himanjalisankar.com"
-      };
+      if (!isMongoDBAvailable()) {
+        console.log('❌ MongoDB not configured, using fallback data');
+        const fallbackAuthorInfo = {
+          name: "HIMANJALI SANKAR",
+          bio: "A passionate author who writes compelling narratives that explore themes of resilience, hope, and human connection. Her work spans both adult and children's literature, offering readers of all ages meaningful stories that resonate with the human experience.",
+          achievements: [
+            "Published author with works in multiple genres",
+            "Contributor to prestigious anthologies",
+            "Recipient of literary recognition and awards"
+          ],
+          genres: ["Contemporary Fiction", "Children's Literature", "Short Stories"],
+          website: "https://himanjalisankar.com"
+        };
+        
+        const response = {
+          success: true,
+          data: fallbackAuthorInfo
+        };
+        
+        console.log('🏠 About API using fallback data');
+        return res.status(200).json(response);
+      }
+
+      console.log('✅ MongoDB is available, fetching author data from database...');
+      const client = await clientPromise;
+      console.log('✅ MongoDB client connected');
       
-      const response = {
-        success: true,
-        data: authorInfo
-      };
+      const dbName = getDatabaseName();
+      console.log('📊 Database name:', dbName);
       
-      console.log('🏠 About API response structure:', {
-        hasSuccess: 'success' in response,
-        hasData: 'data' in response,
-        successValue: response.success,
-        dataKeys: Object.keys(response.data)
-      });
+      const db = client.db(dbName);
+      const authorCollection = db.collection('author');
+      console.log('👤 Author collection accessed');
+
+      // Fetch author data from MongoDB
+      const authorData = await authorCollection.findOne({});
       
-      console.log('🏠 About API sending response:', response);
-      
-      // Return the format expected by the frontend
-      res.status(200).json(response);
+      if (authorData) {
+        console.log('✅ Found author data in database:', authorData);
+        
+        // Transform the data to match the expected format
+        const authorInfo = {
+          name: authorData.name || "HIMANJALI SANKAR",
+          bio: authorData.bio || "A passionate author who writes compelling narratives that explore themes of resilience, hope, and human connection. Her work spans both adult and children's literature, offering readers of all ages meaningful stories that resonate with the human experience.",
+          achievements: authorData.awards || [
+            "Published author with works in multiple genres",
+            "Contributor to prestigious anthologies",
+            "Recipient of literary recognition and awards"
+          ],
+          genres: authorData.genres || ["Contemporary Fiction", "Children's Literature", "Short Stories"],
+          website: authorData.website || "https://himanjalisankar.com"
+        };
+        
+        // Add image if available
+        if (authorData.image && authorData.image.url) {
+          authorInfo.image = authorData.image;
+        }
+        
+        const response = {
+          success: true,
+          data: authorInfo
+        };
+        
+        console.log('🏠 About API response structure:', {
+          hasSuccess: 'success' in response,
+          hasData: 'data' in response,
+          successValue: response.success,
+          dataKeys: Object.keys(response.data)
+        });
+        
+        console.log('🏠 About API sending response from database:', response);
+        res.status(200).json(response);
+      } else {
+        console.log('⚠️ No author data found in database, using fallback');
+        const fallbackAuthorInfo = {
+          name: "HIMANJALI SANKAR",
+          bio: "A passionate author who writes compelling narratives that explore themes of resilience, hope, and human connection. Her work spans both adult and children's literature, offering readers of all ages meaningful stories that resonate with the human experience.",
+          achievements: [
+            "Published author with works in multiple genres",
+            "Contributor to prestigious anthologies",
+            "Recipient of literary recognition and awards"
+          ],
+          genres: ["Contemporary Fiction", "Children's Literature", "Short Stories"],
+          website: "https://himanjalisankar.com"
+        };
+        
+        const response = {
+          success: true,
+          data: fallbackAuthorInfo
+        };
+        
+        console.log('🏠 About API sending fallback response:', response);
+        res.status(200).json(response);
+      }
     } catch (error) {
       console.error('About API error:', error);
       const fallbackResponse = {
@@ -262,7 +421,7 @@ async function handleAbout(req, res) {
         }
       };
       
-      console.log('🏠 About API sending fallback response:', fallbackResponse);
+      console.log('🏠 About API sending fallback response due to error:', fallbackResponse);
       res.status(200).json(fallbackResponse);
     }
   } else {
