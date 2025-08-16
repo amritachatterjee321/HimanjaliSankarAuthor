@@ -235,6 +235,33 @@ class BookDetailPage extends Component {
         innerHTML: 'Buy Now on Amazon'
       });
 
+      // Add inline styles to ensure button is visible
+      buyButton.style.cssText = `
+        padding: 20px 45px !important;
+        font-size: 1.1rem !important;
+        font-weight: 700 !important;
+        text-transform: uppercase !important;
+        letter-spacing: 1.5px !important;
+        background: #9b6b9e !important;
+        color: #ffffff !important;
+        border: 2px solid #9b6b9e !important;
+        border-radius: 8px !important;
+        text-decoration: none !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 15px !important;
+        transition: all 0.3s ease !important;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.08) !important;
+        cursor: pointer !important;
+        min-width: 200px !important;
+        justify-content: center !important;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+        line-height: 1.2 !important;
+        position: relative !important;
+        z-index: 10 !important;
+        outline: 2px solid rgba(255, 0, 0, 0.3) !important;
+      `;
+
       // Verify button href is set correctly
       console.log('🛒 Button created with href:', buyButton.href);
       console.log('🛒 Expected Amazon link:', amazonLink);
@@ -273,6 +300,24 @@ class BookDetailPage extends Component {
 
       buyButtonSection.appendChild(buyButton);
       descriptionSection.appendChild(buyButtonSection);
+      
+      // Add debugging info
+      console.log('🛒 Button section added to DOM');
+      console.log('🛒 Button element in DOM:', document.querySelector('.book-detail-buy-section .buy-button.large'));
+      console.log('🛒 Button computed styles:', window.getComputedStyle(buyButton));
+      
+      // Add a test to ensure button is visible
+      setTimeout(() => {
+        const buttonInDOM = document.querySelector('.book-detail-buy-section .buy-button.large');
+        if (buttonInDOM) {
+          console.log('✅ Button found in DOM after timeout');
+          console.log('✅ Button visibility:', buttonInDOM.style.display);
+          console.log('✅ Button background:', buttonInDOM.style.background);
+          console.log('✅ Button color:', buttonInDOM.style.color);
+        } else {
+          console.log('❌ Button not found in DOM after timeout');
+        }
+      }, 1000);
     } else {
       // Add a message for books without Amazon links
       const noLinkSection = Utils.createElement('div', {

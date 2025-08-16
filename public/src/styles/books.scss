@@ -403,63 +403,79 @@
   }
 
   .book-detail-buy-section {
-    margin-top: 30px;
-    text-align: center;
+    margin-top: 30px !important;
+    text-align: center !important;
+    padding: 20px 0 !important;
+    background: rgba(255, 255, 255, 0.1) !important;
+    border-radius: 8px !important;
+    position: relative !important;
+    z-index: 5 !important;
+
+    // Debug outline to ensure section is visible
+    border: 1px solid rgba(155, 107, 158, 0.2) !important;
 
     .buy-button.large {
-      padding: 20px 45px;
-      font-size: 1.1rem;
-      font-weight: 700;
-      text-transform: uppercase;
-      letter-spacing: 1.5px;
-      background: $primary-color;
-      color: $white;
-      border: 2px solid $primary-color;
-      border-radius: $border-radius;
-      text-decoration: none;
-      display: inline-flex;
-      align-items: center;
-      gap: 15px;
-      transition: all 0.3s ease;
-      box-shadow: $shadow-light;
-      cursor: pointer;
-      min-width: 200px;
-      justify-content: center;
+      padding: 20px 45px !important;
+      font-size: 1.1rem !important;
+      font-weight: 700 !important;
+      text-transform: uppercase !important;
+      letter-spacing: 1.5px !important;
+      background: #9b6b9e !important;
+      color: #ffffff !important;
+      border: 2px solid #9b6b9e !important;
+      border-radius: 8px !important;
+      text-decoration: none !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      gap: 15px !important;
+      transition: all 0.3s ease !important;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.08) !important;
+      cursor: pointer !important;
+      min-width: 200px !important;
+      justify-content: center !important;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif !important;
+      line-height: 1.2 !important;
+      position: relative !important;
+      z-index: 10 !important;
+
+      // Debug outline to ensure button is visible
+      outline: 2px solid rgba(255, 0, 0, 0.3) !important;
 
       &:hover {
-        background: $accent-color;
-        border-color: $accent-color;
-        transform: translateY(-3px);
-        box-shadow: $shadow-medium;
+        background: #8a5a8d !important;
+        border-color: #8a5a8d !important;
+        transform: translateY(-3px) !important;
+        box-shadow: 0 4px 20px rgba(0,0,0,0.15) !important;
       }
 
       &:active {
-        transform: translateY(-1px);
-        box-shadow: $shadow-light;
+        transform: translateY(-1px) !important;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.08) !important;
       }
 
       &::after {
-        content: '→';
-        font-size: 18px;
-        transition: transform 0.3s ease;
+        content: '→' !important;
+        font-size: 18px !important;
+        transition: transform 0.3s ease !important;
+        margin-left: 5px !important;
       }
 
       &:hover::after {
-        transform: translateX(5px);
+        transform: translateX(5px) !important;
       }
 
       @media (max-width: $tablet) {
-        padding: 18px 40px;
-        font-size: 1rem;
-        min-width: 180px;
+        padding: 18px 40px !important;
+        font-size: 1rem !important;
+        min-width: 180px !important;
       }
 
       @media (max-width: $mobile) {
-        padding: 16px 35px;
-        font-size: 0.95rem;
-        min-width: 160px;
-        width: 100%;
-        max-width: 300px;
+        padding: 16px 35px !important;
+        font-size: 0.95rem !important;
+        min-width: 160px !important;
+        width: 100% !important;
+        max-width: 300px !important;
       }
     }
   }
