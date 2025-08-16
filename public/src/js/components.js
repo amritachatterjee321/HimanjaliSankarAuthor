@@ -64,7 +64,7 @@ class Header extends Component {
     });
 
     const nav = Utils.createElement('nav', {
-      className: 'nav'
+      className: 'nav mobile-nav'
     });
     
     const navMenu = Utils.createElement('ul', {
