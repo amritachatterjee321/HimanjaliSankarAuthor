@@ -69,12 +69,19 @@
       "destination": "/api/main?endpoint=debug"
     },
     {
+      "source": "/api/cms/:path*",
+      "destination": "/api/cms"
+    },
+    {
       "source": "/api/test-simple",
       "destination": "/api/test-simple"
     }
   ],
   "functions": {
     "api/main.js": {
+      "maxDuration": 10
+    },
+    "api/cms.js": {
       "maxDuration": 10
     }
   },
