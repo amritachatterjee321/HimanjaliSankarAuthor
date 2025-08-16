@@ -814,13 +814,96 @@ async function handleSocial(req, res) {
 async function handleHomepageConfig(req, res) {
   try {
     if (req.method === 'GET') {
-      // Get homepage configuration
-      const config = getMockHomepageConfig();
-      res.json({ config: config });
+      // Get homepage configuration from MongoDB
+      if (!isMongoDBAvailable()) {
+        console.log('❌ MongoDB not configured, using fallback data');
+        const fallbackConfig = getMockHomepageConfig();
+        return res.json({ config: fallbackConfig });
+      }
+
+      console.log('✅ MongoDB is available, fetching homepage config from database...');
+      const client = await clientPromise;
+      const dbName = getDatabaseName();
+      const db = client.db(dbName);
+      const configCollection = db.collection('homepage-config');
+      console.log('🏠 Homepage config collection accessed');
+
+      // Get homepage configuration from MongoDB
+      const configData = await configCollection.findOne({});
+      
+      if (configData) {
+        console.log('✅ Found homepage config in database:', configData);
+        res.json({ config: configData });
+      } else {
+        console.log('⚠️ No homepage config found in database, using fallback');
+        const fallbackConfig = getMockHomepageConfig();
+        res.json({ config: fallbackConfig });
+      }
     } else if (req.method === 'PUT') {
-      // Update homepage configuration
+      // Update homepage configuration in MongoDB
+      if (!isMongoDBAvailable()) {
+        return res.status(500).json({ error: 'MongoDB not available' });
+      }
+
       const updates = req.body;
       console.log('🏠 Updating homepage config:', updates);
+      
+      // Validate featured book if updating
+      if (updates.featuredBook) {
+        // Check if the featured book exists in books collection
+        try {
+          const client = await clientPromise;
+          const dbName = getDatabaseName();
+          const db = client.db(dbName);
+          const booksCollection = db.collection('books');
+          
+          const bookExists = await booksCollection.findOne({ _id: new ObjectId(updates.featuredBook) });
+          if (!bookExists) {
+            return res.status(400).json({ error: 'Featured book not found in database' });
+          }
+        } catch (error) {
+          console.error('Error validating featured book:', error);
+          return res.status(400).json({ error: 'Invalid featured book ID format' });
+        }
+      }
+      
+      // Validate homepage books if updating
+      if (updates.homepageBooks && Array.isArray(updates.homepageBooks)) {
+        try {
+          const client = await clientPromise;
+          const dbName = getDatabaseName();
+          const db = client.db(dbName);
+          const booksCollection = db.collection('books');
+          
+          // Check if all homepage books exist
+          for (const bookId of updates.homepageBooks) {
+            const bookExists = await booksCollection.findOne({ _id: new ObjectId(bookId) });
+            if (!bookExists) {
+              return res.status(400).json({ error: `Homepage book with ID ${bookId} not found` });
+            }
+          }
+        } catch (error) {
+          console.error('Error validating homepage books:', error);
+          return res.status(400).json({ error: 'Invalid homepage book ID format' });
+        }
+      }
+      
+      const client = await clientPromise;
+      const dbName = getDatabaseName();
+      const db = client.db(dbName);
+      const configCollection = db.collection('homepage-config');
+      
+      // Add update timestamp
+      updates.updatedAt = new Date();
+      
+      // Upsert the configuration (create if doesn't exist, update if it does)
+      const result = await configCollection.updateOne(
+        {}, // Empty filter to match any document
+        { $set: updates },
+        { upsert: true }
+      );
+      
+      console.log('✅ Homepage config updated successfully in database');
       res.json({
         success: true,
         message: 'Homepage configuration updated successfully',
