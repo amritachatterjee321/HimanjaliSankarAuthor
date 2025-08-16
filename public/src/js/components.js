@@ -52,11 +52,7 @@ class Header extends Component {
     const logo = Utils.createElement('a', {
       href: '/',
       className: 'logo',
-      innerHTML: CONFIG.author.name,
-      onClick: (e) => {
-        e.preventDefault();
-        this.navigateTo('/');
-      }
+      innerHTML: CONFIG.author.name
     });
 
     const nav = Utils.createElement('nav');
@@ -69,15 +65,27 @@ class Header extends Component {
         className: 'nav-item'
       });
 
-      const navLink = Utils.createElement('a', {
-        href: item.href,
-        className: 'nav-link',
-        innerHTML: item.name,
-        onClick: (e) => {
-          e.preventDefault();
-          this.handleNavigation(item.href);
-        }
-      });
+      let navLink;
+      
+      if (item.href === '#home') {
+        // Special handling for home - scroll to top
+        navLink = Utils.createElement('a', {
+          href: item.href,
+          className: 'nav-link',
+          innerHTML: item.name,
+          onClick: (e) => {
+            e.preventDefault();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+          }
+        });
+      } else {
+        // Regular navigation - let browser handle it
+        navLink = Utils.createElement('a', {
+          href: item.href,
+          className: 'nav-link',
+          innerHTML: item.name
+        });
+      }
 
       navItem.appendChild(navLink);
       navMenu.appendChild(navItem);
@@ -91,39 +99,7 @@ class Header extends Component {
     return header;
   }
 
-  handleNavigation(href) {
-    if (href === '#home') {
-      // If we're on the homepage, scroll to top
-      if (window.location.pathname === '/' || window.location.pathname === '/index.html') {
-        window.scrollTo({ top: 0, behavior: 'smooth' });
-      } else {
-        // If we're on another page, navigate to homepage
-        this.navigateTo('/');
-      }
-    } else if (href.startsWith('/')) {
-      // Handle page navigation
-      this.navigateTo(href);
-    } else if (href.startsWith('#')) {
-      // Handle anchor links
-      if (window.location.pathname === '/' || window.location.pathname === '/index.html') {
-        // If we're on the homepage, scroll to the section
-        const target = document.querySelector(href);
-        if (target) {
-          target.scrollIntoView({ behavior: 'smooth' });
-        }
-      } else {
-        // If we're on another page, navigate to homepage and then scroll
-        this.navigateTo(`/${href}`);
-      }
-    }
-    
-    this.setActiveLink(href);
-  }
-
-  navigateTo(url) {
-    // Simple navigation - let the browser handle it naturally
-    window.location.href = url;
-  }
+  // Navigation methods removed - let browser handle navigation naturally
 
   bindEvents() {
     window.addEventListener('scroll', Utils.debounce(() => {
