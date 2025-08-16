@@ -291,6 +291,7 @@ class BooksPage extends Component {
   }
 
   createBookCard(book) {
+    console.log('🎨 Creating book card for:', book);
     const bookCard = Utils.createElement('div', {
       className: 'book-card'
     });
@@ -326,10 +327,17 @@ class BooksPage extends Component {
 
     // Make cover clickable
     bookCover.style.cursor = 'pointer';
-    bookCover.addEventListener('click', () => {
+    bookCover.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
       const bookId = book._id || book.id || 'latest';
-      console.log('🖱️ Book cover clicked, navigating to book ID:', bookId);
-      window.location.href = `/book-detail.html?id=${bookId}`;
+      console.log('🖱️ Book cover clicked!', {
+        book: book.title,
+        bookId: bookId,
+        originalId: book._id,
+        transformedId: book.id
+      });
+      window.location.href = `/book/${bookId}`;
     });
 
     const bookInfo = Utils.createElement('div', {
@@ -343,10 +351,17 @@ class BooksPage extends Component {
 
     // Make title clickable
     bookTitle.style.cursor = 'pointer';
-    bookTitle.addEventListener('click', () => {
+    bookTitle.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
       const bookId = book._id || book.id || 'latest';
-      console.log('🖱️ Book title clicked, navigating to book ID:', bookId);
-      window.location.href = `/book-detail.html?id=${bookId}`;
+      console.log('🖱️ Book title clicked!', {
+        book: book.title,
+        bookId: bookId,
+        originalId: book._id,
+        transformedId: book.id
+      });
+      window.location.href = `/book/${bookId}`;
     });
 
     const bookYear = Utils.createElement('p', {

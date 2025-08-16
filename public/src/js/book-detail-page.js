@@ -33,7 +33,14 @@ class BookDetailPage extends Component {
     const urlParams = new URLSearchParams(window.location.search);
     const queryId = urlParams.get('id');
     console.log('🔍 Query parameter ID:', queryId);
-    return queryId || 'latest';
+    
+    if (queryId) {
+      console.log('🔍 Using query parameter ID:', queryId);
+      return queryId;
+    }
+    
+    console.log('🔍 No book ID found, using default: latest');
+    return 'latest';
   }
 
   async fetchData() {
