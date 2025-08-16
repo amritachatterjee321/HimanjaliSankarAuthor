@@ -42,18 +42,14 @@ export default async function handler(req, res) {
       await handleHomepageConfig(req, res);
     } else if (endpoint === 'settings' || req.url?.includes('/settings')) {
       await handleSettings(req, res);
-    } else if (endpoint === 'images' || req.url?.includes('/images')) {
-      await handleImages(req, res);
     } else {
-      // For now, return a basic response for other endpoints
-      res.status(200).json({
-        message: 'CMS endpoint not yet implemented',
-        endpoint: endpoint,
-        url: req.url,
-        method: req.method,
+      // Basic response for unknown endpoints
+      res.json({
+        success: true,
+        message: 'CMS API endpoint not found',
         availableEndpoints: [
           'login', 'verify', 'dashboard', 'books', 'media', 
-          'author', 'social', 'homepage-config', 'settings', 'images'
+          'author', 'social', 'homepage-config', 'settings'
         ]
       });
     }
@@ -943,178 +939,6 @@ async function handleSettings(req, res) {
   }
 }
 
-// Handle images
-async function handleImages(req, res) {
-  try {
-    if (req.method === 'GET') {
-      // Get images list
-      const images = getMockImages();
-      res.json({ images: images });
-    } else if (req.method === 'POST') {
-      // Add new image with URL
-      const { title, category, url, description, altText } = req.body;
-      
-      console.log('🖼️ Adding new image:', title, 'with URL:', url);
-      
-      if (!url || !title) {
-        return res.status(400).json({ error: 'Image URL and title are required' });
-      }
-      
-      // Validate URL format
-      try {
-        new URL(url);
-      } catch (error) {
-        return res.status(400).json({ error: 'Invalid URL format' });
-      }
-      
-      const newImage = {
-        title,
-        category: category || 'general',
-        url,
-        description: description || '',
-        altText: altText || '',
-        createdAt: new Date(),
-        updatedAt: new Date()
-      };
-      
-      // Store image in MongoDB if available
-      if (isMongoDBAvailable()) {
-        try {
-          const client = await clientPromise;
-          const dbName = getDatabaseName();
-          const db = client.db(dbName);
-          const imagesCollection = db.collection('images');
-          
-          const result = await imagesCollection.insertOne(newImage);
-          newImage._id = result.insertedId;
-          
-          console.log('✅ Image added successfully to database with ID:', result.insertedId);
-        } catch (dbError) {
-          console.error('Database insert error:', dbError);
-          // Continue with response even if DB insert fails
-          newImage._id = `img-${Date.now()}`;
-        }
-      } else {
-        newImage._id = `img-${Date.now()}`;
-      }
-      
-      res.json({
-        success: true,
-        message: 'Image added successfully',
-        image: newImage
-      });
-    } else if (req.method === 'PUT') {
-      // Update image
-      const imageId = req.query.id;
-      const updates = req.body;
-      
-      console.log('🖼️ Updating image:', imageId, updates);
-      
-      if (!imageId) {
-        return res.status(400).json({ error: 'Image ID is required' });
-      }
-      
-      // Convert string ID to ObjectId
-      let objectId;
-      try {
-        objectId = new ObjectId(imageId);
-      } catch (error) {
-        return res.status(400).json({ error: 'Invalid image ID format' });
-      }
-      
-      if (updates.url) {
-        // Validate URL format if updating URL
-        try {
-          new URL(updates.url);
-        } catch (error) {
-          return res.status(400).json({ error: 'Invalid URL format' });
-        }
-      }
-      
-      // Update image in MongoDB if available
-      if (isMongoDBAvailable()) {
-        try {
-          const client = await clientPromise;
-          const dbName = getDatabaseName();
-          const db = client.db(dbName);
-          const imagesCollection = db.collection('images');
-          
-          updates.updatedAt = new Date();
-          
-          const result = await imagesCollection.updateOne(
-            { _id: objectId },
-            { $set: updates }
-          );
-          
-          if (result.matchedCount === 0) {
-            return res.status(404).json({ error: 'Image not found' });
-          }
-          
-          console.log('✅ Image updated successfully in database');
-        } catch (dbError) {
-          console.error('Database update error:', dbError);
-          // Continue with response even if DB update fails
-        }
-      }
-      
-      res.json({
-        success: true,
-        message: 'Image updated successfully',
-        imageId,
-        updates
-      });
-    } else if (req.method === 'DELETE') {
-      // Delete image
-      const imageId = req.query.id;
-      console.log('🖼️ Deleting image:', imageId);
-      
-      if (!imageId) {
-        return res.status(400).json({ error: 'Image ID is required' });
-      }
-      
-      // Convert string ID to ObjectId
-      let objectId;
-      try {
-        objectId = new ObjectId(imageId);
-      } catch (error) {
-        return res.status(400).json({ error: 'Invalid image ID format' });
-      }
-      
-      // Delete image from MongoDB if available
-      if (isMongoDBAvailable()) {
-        try {
-          const client = await clientPromise;
-          const dbName = getDatabaseName();
-          const db = client.db(dbName);
-          const imagesCollection = db.collection('images');
-          
-          const result = await imagesCollection.deleteOne({ _id: objectId });
-          
-          if (result.deletedCount === 0) {
-            return res.status(404).json({ error: 'Image not found' });
-          }
-          
-          console.log('✅ Image deleted successfully in database');
-        } catch (dbError) {
-          console.error('Database delete error:', dbError);
-          // Continue with response even if DB update fails
-        }
-      }
-      
-      res.json({
-        success: true,
-        message: 'Image deleted successfully',
-        imageId
-      });
-    } else {
-      res.status(405).json({ error: 'Method not allowed' });
-    }
-  } catch (error) {
-    console.error('Images API error:', error);
-    res.status(500).json({ error: 'Image operation failed' });
-  }
-}
-
 // Mock data functions
 function getMockBooks() {
   return [
@@ -1221,25 +1045,4 @@ function getMockSettings() {
     maintenanceMode: false,
     updatedAt: new Date().toISOString()
   };
-}
-
-function getMockImages() {
-  return [
-    {
-      _id: 'img-1',
-      title: 'Author Portrait',
-      category: 'author',
-      url: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=400&h=400&fit=crop',
-      description: 'Professional author portrait',
-      createdAt: new Date().toISOString()
-    },
-    {
-      _id: 'img-2',
-      title: 'Book Cover - Whispers in the Rain',
-      category: 'book-covers',
-      url: 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=400&h=600&fit=crop',
-      description: 'Cover image for the short story collection',
-      createdAt: new Date().toISOString()
-    }
-  ];
 }

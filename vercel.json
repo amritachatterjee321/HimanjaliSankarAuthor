@@ -29,8 +29,6 @@
     { "source": "/api/cms/social", "destination": "/api/cms?endpoint=social" },
     { "source": "/api/cms/homepage-config", "destination": "/api/cms?endpoint=homepage-config" },
     { "source": "/api/cms/settings", "destination": "/api/cms?endpoint=settings" },
-    { "source": "/api/cms/images", "destination": "/api/cms?endpoint=images" },
-    { "source": "/api/cms/images/:id", "destination": "/api/cms?endpoint=images&id=:id" },
     { "source": "/api/cms/:path*", "destination": "/api/cms" }
   ],
   "functions": {

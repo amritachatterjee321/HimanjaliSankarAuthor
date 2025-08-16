@@ -11,7 +11,6 @@ class CMS {
         this.media = [];
         this.author = {};
         this.settings = {};
-        this.images = [];
         this.homepageConfig = {
             featuredBook: null,
             homepageBooks: []
@@ -71,20 +70,6 @@ class CMS {
 
         document.getElementById('cancel-media').addEventListener('click', () => {
             this.hideMediaModal();
-        });
-
-        // Image management
-        document.getElementById('upload-image-btn').addEventListener('click', () => {
-            this.showImageUploadModal();
-        });
-
-        document.getElementById('image-upload-form').addEventListener('submit', (e) => {
-            e.preventDefault();
-            this.handleImageUpload();
-        });
-
-        document.getElementById('cancel-image-upload').addEventListener('click', () => {
-            this.hideImageUploadModal();
         });
 
         // Form submissions
@@ -1158,56 +1143,6 @@ class CMS {
         }, 3000);
     }
 
-    hideImageUploadModal() {
-        document.getElementById('image-upload-modal').classList.add('hidden');
-    }
-
-    showImageUploadModal() {
-        const modal = document.getElementById('image-upload-modal');
-        const form = document.getElementById('image-upload-form');
-        form.reset();
-        document.getElementById('image-upload-preview').innerHTML = '';
-        modal.classList.remove('hidden');
-    }
-
-    async handleImageUpload() {
-        const form = document.getElementById('image-upload-form');
-        
-        const imageData = {
-            title: document.getElementById('image-title').value,
-            category: document.getElementById('image-category').value,
-            url: document.getElementById('image-file').value.trim(),
-            description: document.getElementById('image-description').value.trim() || ''
-        };
-
-        // Validate required fields
-        if (!imageData.title || !imageData.url) {
-            this.showNotification('Image title and URL are required', 'error');
-            return;
-        }
-
-        try {
-            await this.apiRequest('/images', 'POST', imageData);
-            this.showNotification('Image added successfully!', 'success');
-            this.hideImageUploadModal();
-            this.loadImages();
-        } catch (error) {
-            console.error('Image upload failed:', error);
-            this.showNotification('Failed to add image', 'error');
-        }
-    }
-
-    async loadImages() {
-        try {
-            const response = await this.apiRequest('/images');
-            this.images = response.images || [];
-            this.renderImages();
-        } catch (error) {
-            console.error('Failed to load images:', error);
-            this.showNotification('Failed to load images', 'error');
-        }
-    }
-
     async loadHomepageConfig() {
         try {
             const response = await this.apiRequest('/homepage-config');
@@ -1225,34 +1160,6 @@ class CMS {
             };
             this.renderHomepageConfig();
         }
-    }
-
-    renderImages() {
-        const container = document.getElementById('images-grid');
-        if (!container) return;
-
-        if (this.images.length === 0) {
-            container.innerHTML = '<p class="no-data">No images uploaded yet.</p>';
-            return;
-        }
-
-        container.innerHTML = this.images.map(image => `
-            <div class="image-card" data-image-id="${image._id || image.id}" data-image-url="${image.url}">
-                <img src="${image.url}" alt="${image.title}">
-                <div class="image-card-content">
-                    <h4>${image.title}</h4>
-                    <p><strong>Category:</strong> ${image.category}</p>
-                    ${image.description ? `<p>${image.description}</p>` : ''}
-                    <div class="image-card-actions">
-                        <button class="btn btn-secondary copy-image-url-btn">Copy URL</button>
-                        <button class="btn btn-danger delete-image-btn">Delete</button>
-                    </div>
-                </div>
-            </div>
-        `).join('');
-
-        // Add event listeners for the new buttons
-        this.bindImageEvents();
     }
 
     renderHomepageConfig() {
@@ -1544,22 +1451,6 @@ class CMS {
             button.addEventListener('click', (e) => {
                 const mediaId = e.currentTarget.closest('.media-item').dataset.mediaId;
                 this.deleteMedia(mediaId);
-            });
-        });
-    }
-
-    bindImageEvents() {
-        document.querySelectorAll('.copy-image-url-btn').forEach(button => {
-            button.addEventListener('click', (e) => {
-                const imageUrl = e.currentTarget.closest('.image-card').dataset.imageUrl;
-                this.copyImageUrl(imageUrl);
-            });
-        });
-
-        document.querySelectorAll('.delete-image-btn').forEach(button => {
-            button.addEventListener('click', (e) => {
-                const imageId = e.currentTarget.closest('.image-card').dataset.imageId;
-                this.deleteImage(imageId);
             });
         });
     }
