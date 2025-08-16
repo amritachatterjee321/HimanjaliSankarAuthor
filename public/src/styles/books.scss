@@ -399,20 +399,20 @@
     font-size: 1.1rem;
     line-height: 1.7;
     color: $gray-medium;
-    margin-bottom: 30px;
+    margin-bottom: 20px;
   }
 
   .book-detail-buy-section {
-    margin-top: 30px !important;
+    margin-top: 20px !important;
     text-align: center !important;
-    padding: 20px 0 !important;
-    background: rgba(255, 255, 255, 0.1) !important;
+    padding: 15px 0 !important;
+    background: transparent !important;
     border-radius: 8px !important;
     position: relative !important;
     z-index: 5 !important;
 
-    // Debug outline to ensure section is visible
-    border: 1px solid rgba(155, 107, 158, 0.2) !important;
+    // Remove debug outline
+    border: none !important;
 
     .buy-button.large {
       padding: 20px 45px !important;
@@ -438,8 +438,8 @@
       position: relative !important;
       z-index: 10 !important;
 
-      // Debug outline to ensure button is visible
-      outline: 2px solid rgba(255, 0, 0, 0.3) !important;
+      // Remove debug outline
+      outline: none !important;
 
       &:hover {
         background: #8a5a8d !important;
