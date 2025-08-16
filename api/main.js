@@ -206,6 +206,8 @@ async function handleSocial(req, res) {
 async function handleAbout(req, res) {
   if (req.method === 'GET') {
     try {
+      console.log('🏠 About API called - building response...');
+      
       const authorInfo = {
         name: "HIMANJALI SANKAR",
         bio: "A passionate author who writes compelling narratives that explore themes of resilience, hope, and human connection. Her work spans both adult and children's literature, offering readers of all ages meaningful stories that resonate with the human experience.",
@@ -218,14 +220,25 @@ async function handleAbout(req, res) {
         website: "https://himanjalisankar.com"
       };
       
-      // Return the format expected by the frontend
-      res.status(200).json({
+      const response = {
         success: true,
         data: authorInfo
+      };
+      
+      console.log('🏠 About API response structure:', {
+        hasSuccess: 'success' in response,
+        hasData: 'data' in response,
+        successValue: response.success,
+        dataKeys: Object.keys(response.data)
       });
+      
+      console.log('🏠 About API sending response:', response);
+      
+      // Return the format expected by the frontend
+      res.status(200).json(response);
     } catch (error) {
       console.error('About API error:', error);
-      res.status(200).json({
+      const fallbackResponse = {
         success: true,
         data: {
           name: "HIMANJALI SANKAR",
@@ -234,7 +247,10 @@ async function handleAbout(req, res) {
           genres: ["Contemporary Fiction", "Children's Literature"],
           website: "https://himanjalisankar.com"
         }
-      });
+      };
+      
+      console.log('🏠 About API sending fallback response:', fallbackResponse);
+      res.status(200).json(fallbackResponse);
     }
   } else {
     res.status(405).json({ message: 'Method not allowed' });
