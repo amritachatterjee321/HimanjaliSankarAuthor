@@ -1,9 +1,24 @@
+console.log('🔄 Books page: Starting to load modules...');
+
 import CONFIG from './config.js';
+console.log('✅ CONFIG loaded');
+
 import ApiService from './api.js';
+console.log('✅ ApiService loaded');
+
 import Utils from './utils.js';
+console.log('✅ Utils loaded');
+
 import { EventEmitter, NotificationSystem } from './services.js';
+console.log('✅ Services loaded');
+
 import { Header, Component } from './components.js';
+console.log('✅ Components loaded');
+
 import { Footer } from './app-components.js';
+console.log('✅ App components loaded');
+
+console.log('🔄 Books page: All modules loaded successfully');
 
 // Books Page Component
 class BooksPage extends Component {
@@ -15,6 +30,7 @@ class BooksPage extends Component {
 
   async fetchData() {
     try {
+      console.log('🔄 Books page: Starting to fetch data...');
       const response = await this.apiService.getBooks();
       console.log('📚 Books data from API:', response);
       console.log('📚 Response type:', typeof response);

@@ -1,9 +1,24 @@
+console.log('🔄 Media page: Starting to load modules...');
+
 import CONFIG from './config.js';
+console.log('✅ CONFIG loaded');
+
 import ApiService from './api.js';
+console.log('✅ ApiService loaded');
+
 import Utils from './utils.js';
+console.log('✅ Utils loaded');
+
 import { EventEmitter, NotificationSystem } from './services.js';
+console.log('✅ Services loaded');
+
 import { Header, Component } from './components.js';
+console.log('✅ Components loaded');
+
 import { Footer } from './app-components.js';
+console.log('✅ App components loaded');
+
+console.log('🔄 Media page: All modules loaded successfully');
 
 // Media Page Component
 class MediaPage extends Component {
@@ -15,6 +30,7 @@ class MediaPage extends Component {
 
   async fetchData() {
     try {
+      console.log('🔄 Media page: Starting to fetch data...');
       console.log('🔍 Fetching media data from API...');
       const response = await this.apiService.getMedia();
       console.log('📰 API response:', response);
