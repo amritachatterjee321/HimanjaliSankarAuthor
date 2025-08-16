@@ -10,7 +10,6 @@ class LatestBook extends Component {
     super(container, eventBus);
     this.apiService = apiService;
     this.bookData = null;
-    this.refreshInterval = null;
     this.lastUpdateTime = null;
   }
 
@@ -78,21 +77,13 @@ class LatestBook extends Component {
     return hasChanges;
   }
 
+  // Auto-refresh disabled - data only loads on page refresh
   startAutoRefresh() {
-    // Refresh every 30 seconds to check for CMS updates
-    this.refreshInterval = setInterval(async () => {
-      await this.fetchData();
-    }, 30000); // 30 seconds
-    
-    console.log('🔄 Auto-refresh enabled: checking for CMS updates every 30 seconds');
+    console.log('🔄 Auto-refresh disabled - data only loads on page refresh');
   }
 
   stopAutoRefresh() {
-    if (this.refreshInterval) {
-      clearInterval(this.refreshInterval);
-      this.refreshInterval = null;
-      console.log('🔄 Auto-refresh disabled');
-    }
+    console.log('🔄 Auto-refresh disabled');
   }
 
   fixCoverImageUrl(url) {
