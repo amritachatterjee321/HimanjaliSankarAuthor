@@ -65,27 +65,11 @@ class Header extends Component {
         className: 'nav-item'
       });
 
-      let navLink;
-      
-      if (item.href === '#home') {
-        // Special handling for home - scroll to top
-        navLink = Utils.createElement('a', {
-          href: item.href,
-          className: 'nav-link',
-          innerHTML: item.name,
-          onClick: (e) => {
-            e.preventDefault();
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-          }
-        });
-      } else {
-        // Regular navigation - let browser handle it
-        navLink = Utils.createElement('a', {
-          href: item.href,
-          className: 'nav-link',
-          innerHTML: item.name
-        });
-      }
+      const navLink = Utils.createElement('a', {
+        href: item.href,
+        className: 'nav-link',
+        innerHTML: item.name
+      });
 
       navItem.appendChild(navLink);
       navMenu.appendChild(navItem);
@@ -124,7 +108,7 @@ class Header extends Component {
     navLinks.forEach(link => {
       const linkHref = link.getAttribute('href');
       const isActive = (href === linkHref) || 
-                      (href === '/' && linkHref === '#home') ||
+                      (href === '/' && linkHref === '/') ||
                       (href.startsWith('/') && linkHref === href);
       link.classList.toggle('active', isActive);
     });

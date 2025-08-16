@@ -14,7 +14,7 @@ const CONFIG = {
     }
   },
   navigation: [
-    { name: "HOME", href: "#home" },
+    { name: "HOME", href: "/" },
     { name: "ABOUT", href: "/about" },
     { name: "BOOKS", href: "/books" },
     { name: "MEDIA", href: "/media" },
