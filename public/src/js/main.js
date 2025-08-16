@@ -88,57 +88,18 @@ class App {
     console.log(`🔄 Route changed to: ${path}`);
     this.currentRoute = path;
     
-    // Update active navigation
+    // Update active navigation only - no page redirects
     const header = this.components.get('header');
     if (header && header.setActiveLink) {
       header.setActiveLink(path);
     }
     
-    // Handle specific routes
-    if (path === '/about') {
-      this.loadAboutPage();
-    } else if (path === '/books') {
-      this.loadBooksPage();
-    } else if (path === '/media') {
-      this.loadMediaPage();
-    } else if (path === '/contact') {
-      this.loadContactPage();
-    } else if (path.startsWith('/book/')) {
-      this.loadBookDetailPage(path);
-    } else if (path === '/' || path === '/index.html') {
-      this.loadHomePage();
-    }
+    // Don't handle page navigation here - each page has its own HTML file
+    // The navigation is handled by the browser's default behavior
   }
 
-  async loadHomePage() {
-    console.log('🏠 Loading home page');
-    // Home page is already loaded by default
-  }
-
-  async loadAboutPage() {
-    console.log('ℹ️ Loading about page');
-    window.location.href = '/about';
-  }
-
-  async loadBooksPage() {
-    console.log('📚 Loading books page');
-    window.location.href = '/books';
-  }
-
-  async loadMediaPage() {
-    console.log('📰 Loading media page');
-    window.location.href = '/media';
-  }
-
-  async loadContactPage() {
-    console.log('📧 Loading contact page');
-    window.location.href = '/contact';
-  }
-
-  async loadBookDetailPage(path) {
-    console.log('📖 Loading book detail page:', path);
-    window.location.href = path;
-  }
+  // Page loading methods removed - each page has its own HTML file
+  // Navigation is handled by the browser's default behavior
 
   bindGlobalEvents() {
     // Global error handler

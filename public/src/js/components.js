@@ -121,15 +121,8 @@ class Header extends Component {
   }
 
   navigateTo(url) {
-    // Use pushState for better navigation experience
-    if (window.history && window.history.pushState) {
-      window.history.pushState({}, '', url);
-      // Trigger a custom event to notify the app about the route change
-      window.dispatchEvent(new CustomEvent('routechange', { detail: { url } }));
-    } else {
-      // Fallback for older browsers
-      window.location.href = url;
-    }
+    // Simple navigation - let the browser handle it naturally
+    window.location.href = url;
   }
 
   bindEvents() {
@@ -137,31 +130,10 @@ class Header extends Component {
       this.handleScroll();
     }, 10));
 
-    // Listen for browser back/forward buttons
-    window.addEventListener('popstate', () => {
-      this.handleRouteChange();
-    });
-
-    // Listen for custom route change events
-    window.addEventListener('routechange', () => {
-      this.handleRouteChange();
-    });
+    // Simple navigation - no complex routing events
   }
 
-  handleRouteChange() {
-    const currentPath = window.location.pathname;
-    this.setActiveLink(currentPath);
-    
-    // Update the page content based on the route
-    this.updatePageContent(currentPath);
-  }
-
-  updatePageContent(path) {
-    // This will be handled by the main app router
-    if (window.app && window.app.handleRouteChange) {
-      window.app.handleRouteChange(path);
-    }
-  }
+  // Route change handling removed - simple navigation only
 
   handleScroll() {
     const scrolled = window.scrollY > 50;
