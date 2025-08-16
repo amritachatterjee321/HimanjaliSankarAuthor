@@ -28,7 +28,7 @@ class App {
       const app = document.getElementById('app');
       app.innerHTML = '';
 
-      // Create components
+      // Create components based on current page
       await this.createComponents(app);
 
       // Mount components
@@ -66,11 +66,29 @@ class App {
     app.appendChild(main);
     app.appendChild(footer);
 
-    // Initialize components
+    // Initialize header and footer for all pages
     this.components.set('header', new Header(header, this.eventBus));
-    this.components.set('latestBook', new LatestBook(main, this.eventBus, this.apiService));
-    this.components.set('booksGrid', new BooksGrid(main, this.eventBus, this.apiService));
     this.components.set('footer', new Footer(footer, this.eventBus));
+
+    // Only create homepage-specific components on the homepage
+    if (this.isHomepage()) {
+      console.log('🏠 Homepage detected - creating homepage components');
+      this.components.set('latestBook', new LatestBook(main, this.eventBus, this.apiService));
+      this.components.set('booksGrid', new BooksGrid(main, this.eventBus, this.apiService));
+    } else {
+      console.log('📄 Non-homepage detected - skipping homepage components');
+      // For non-homepage pages, create a placeholder or let the page-specific JS handle content
+      const pageContent = document.createElement('div');
+      pageContent.className = 'page-content-placeholder';
+      pageContent.innerHTML = '<div class="loading">Page content loading...</div>';
+      main.appendChild(pageContent);
+    }
+  }
+
+  isHomepage() {
+    // Check if current page is the homepage
+    const homepagePaths = ['/', '/index.html', '/index'];
+    return homepagePaths.includes(this.currentRoute);
   }
 
   async mountComponents() {

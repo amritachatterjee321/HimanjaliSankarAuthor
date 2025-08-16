@@ -216,9 +216,8 @@ app.get('/contact', (req, res) => {
 if (process.env.NODE_ENV === 'production') {
   app.use(express.static(join(__dirname, 'dist')));
   
-  app.get('*', (req, res) => {
-    res.sendFile(join(__dirname, 'dist', 'index.html'));
-  });
+  // Remove catch-all route for multi-page application
+  // Each page should be served by its specific route
 } else {
   // Development route - serve the main index.html
   app.get('/', (req, res) => {
