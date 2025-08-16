@@ -186,6 +186,9 @@ class BooksPage extends Component {
     const section = Utils.createElement('section', {
       className: 'books-page-section'
     });
+    
+    console.log('🎨 Section element created:', section);
+    console.log('🎨 Section className:', section.className);
 
     const container = Utils.createElement('div', {
       className: 'books-page-container'
@@ -389,10 +392,16 @@ class BooksPage extends Component {
 
   async mount() {
     try {
+      console.log('🔧 BooksPage: Starting mount...');
       await this.fetchData();
+      console.log('🔧 BooksPage: Data fetched, rendering...');
       const element = this.render();
+      console.log('🔧 BooksPage: Element rendered:', element);
+      console.log('🔧 BooksPage: Container:', this.container);
       this.container.appendChild(element);
+      console.log('🔧 BooksPage: Element appended to container');
       this.bindEvents();
+      console.log('🔧 BooksPage: Mount completed successfully');
     } catch (error) {
       console.error('Error mounting BooksPage:', error);
     }
