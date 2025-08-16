@@ -26,6 +26,13 @@ class BooksGrid extends Component {
           ...(this.booksData.children || [])
         ];
         
+        // Fix cover image URLs for Vercel deployment
+        allBooks.forEach(book => {
+          if (book.coverImage && book.coverImage.url) {
+            book.coverImage.url = this.fixCoverImageUrl(book.coverImage.url);
+          }
+        });
+        
         // Add homepageBooks property for the carousel
         this.booksData.homepageBooks = allBooks;
         
@@ -300,6 +307,28 @@ class BooksGrid extends Component {
       }, 0);
       return `book-${Math.abs(hash) % 5 + 1}`;
     }
+  }
+
+  fixCoverImageUrl(url) {
+    // If it's already an absolute URL, return as is
+    if (url.startsWith('http://') || url.startsWith('https://')) {
+      return url;
+    }
+    
+    // If it's a relative path starting with /uploads/, convert to a placeholder
+    if (url.startsWith('/uploads/')) {
+      // For now, use a placeholder image since Vercel can't serve /uploads/
+      // You can replace this with your actual image hosting service URL
+      return 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=400&h=600&fit=crop';
+    }
+    
+    // If it's a relative path without /uploads/, try to make it absolute
+    if (url.startsWith('/')) {
+      return `${window.location.origin}${url}`;
+    }
+    
+    // If it's a relative path without leading slash, add origin
+    return `${window.location.origin}/${url}`;
   }
 
   navigateToBookPage(book) {

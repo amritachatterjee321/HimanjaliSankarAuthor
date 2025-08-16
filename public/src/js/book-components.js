@@ -23,6 +23,11 @@ class LatestBook extends Component {
       console.log('📖 Awards:', newData.awards);
       console.log('📖 Reviews:', newData.reviews);
       
+      // Fix cover image URL for Vercel deployment
+      if (newData.coverImage && newData.coverImage.url) {
+        newData.coverImage.url = this.fixCoverImageUrl(newData.coverImage.url);
+      }
+      
       // Check if data has actually changed
       if (this.hasDataChanged(newData)) {
         console.log('🔄 New book data detected, updating display...');
@@ -88,6 +93,28 @@ class LatestBook extends Component {
       this.refreshInterval = null;
       console.log('🔄 Auto-refresh disabled');
     }
+  }
+
+  fixCoverImageUrl(url) {
+    // If it's already an absolute URL, return as is
+    if (url.startsWith('http://') || url.startsWith('https://')) {
+      return url;
+    }
+    
+    // If it's a relative path starting with /uploads/, convert to a placeholder
+    if (url.startsWith('/uploads/')) {
+      // For now, use a placeholder image since Vercel can't serve /uploads/
+      // You can replace this with your actual image hosting service URL
+      return 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=400&h=600&fit=crop';
+    }
+    
+    // If it's a relative path without /uploads/, try to make it absolute
+    if (url.startsWith('/')) {
+      return `${window.location.origin}${url}`;
+    }
+    
+    // If it's a relative path without leading slash, add origin
+    return `${window.location.origin}/${url}`;
   }
 
   render() {
