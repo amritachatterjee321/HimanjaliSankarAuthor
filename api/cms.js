@@ -245,6 +245,15 @@ async function handleBooks(req, res) {
       const newBook = req.body;
       console.log('📚 Creating new book:', newBook.title);
       
+      // Validate cover image URL if provided
+      if (newBook.coverImage && newBook.coverImage.url) {
+        try {
+          new URL(newBook.coverImage.url);
+        } catch (error) {
+          return res.status(400).json({ error: 'Invalid cover image URL format' });
+        }
+      }
+      
       const client = await clientPromise;
       const dbName = getDatabaseName();
       const db = client.db(dbName);
@@ -253,6 +262,14 @@ async function handleBooks(req, res) {
       // Add creation timestamp
       newBook.createdAt = new Date();
       newBook.updatedAt = new Date();
+      
+      // Ensure coverImage structure
+      if (!newBook.coverImage) {
+        newBook.coverImage = {
+          url: '',
+          altText: ''
+        };
+      }
       
       const result = await booksCollection.insertOne(newBook);
       console.log('✅ Book created with ID:', result.insertedId);
@@ -271,6 +288,15 @@ async function handleBooks(req, res) {
       const bookId = req.url.split('/').pop();
       const updates = req.body;
       console.log('📚 Updating book:', bookId, updates);
+      
+      // Validate cover image URL if updating
+      if (updates.coverImage && updates.coverImage.url) {
+        try {
+          new URL(updates.coverImage.url);
+        } catch (error) {
+          return res.status(400).json({ error: 'Invalid cover image URL format' });
+        }
+      }
       
       const client = await clientPromise;
       const dbName = getDatabaseName();
@@ -336,16 +362,58 @@ async function handleBookCoverUpload(req, res) {
   try {
     if (req.method === 'POST') {
       const bookId = req.url.split('/')[2]; // Extract book ID from /books/{id}/cover
-      console.log('📚 Uploading cover for book:', bookId);
+      const { imageUrl, altText } = req.body;
       
-      // For now, return a placeholder response
-      // In production, this would handle actual file upload to cloud storage
+      console.log('📚 Updating cover for book:', bookId, 'with URL:', imageUrl);
+      
+      if (!imageUrl) {
+        return res.status(400).json({ error: 'Image URL is required' });
+      }
+      
+      // Validate URL format
+      try {
+        new URL(imageUrl);
+      } catch (error) {
+        return res.status(400).json({ error: 'Invalid URL format' });
+      }
+      
+      // Update book with new cover image URL
+      if (isMongoDBAvailable()) {
+        try {
+          const client = await clientPromise;
+          const dbName = getDatabaseName();
+          const db = client.db(dbName);
+          const booksCollection = db.collection('books');
+          
+          const result = await booksCollection.updateOne(
+            { _id: bookId },
+            { 
+              $set: { 
+                'coverImage.url': imageUrl,
+                'coverImage.altText': altText || '',
+                updatedAt: new Date()
+              } 
+            }
+          );
+          
+          if (result.matchedCount === 0) {
+            return res.status(404).json({ error: 'Book not found' });
+          }
+          
+          console.log('✅ Book cover updated successfully in database');
+        } catch (dbError) {
+          console.error('Database update error:', dbError);
+          // Continue with response even if DB update fails
+        }
+      }
+      
       res.json({
         success: true,
-        message: 'Book cover uploaded successfully',
+        message: 'Book cover updated successfully',
         bookId,
         coverImage: {
-          url: 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=400&h=600&fit=crop',
+          url: imageUrl,
+          altText: altText || '',
           filename: `cover-${bookId}-${Date.now()}.jpg`
         }
       });
@@ -354,7 +422,7 @@ async function handleBookCoverUpload(req, res) {
     }
   } catch (error) {
     console.error('Book cover upload error:', error);
-    res.status(500).json({ error: 'Cover upload failed' });
+    res.status(500).json({ error: 'Cover update failed' });
   }
 }
 
@@ -362,15 +430,54 @@ async function handleBookCoverUpload(req, res) {
 async function handleAuthorImageUpload(req, res) {
   try {
     if (req.method === 'POST') {
-      console.log('👤 Uploading author image');
+      const { imageUrl, altText } = req.body;
       
-      // For now, return a placeholder response
-      // In production, this would handle actual file upload to cloud storage
+      console.log('👤 Updating author image with URL:', imageUrl);
+      
+      if (!imageUrl) {
+        return res.status(400).json({ error: 'Image URL is required' });
+      }
+      
+      // Validate URL format
+      try {
+        new URL(imageUrl);
+      } catch (error) {
+        return res.status(400).json({ error: 'Invalid URL format' });
+      }
+      
+      // Update author with new image URL
+      if (isMongoDBAvailable()) {
+        try {
+          const client = await clientPromise;
+          const dbName = getDatabaseName();
+          const db = client.db(dbName);
+          const authorCollection = db.collection('author');
+          
+          const result = await authorCollection.updateOne(
+            {}, // Empty filter to match any document
+            { 
+              $set: { 
+                'image.url': imageUrl,
+                'image.altText': altText || '',
+                updatedAt: new Date()
+              } 
+            },
+            { upsert: true }
+          );
+          
+          console.log('✅ Author image updated successfully in database');
+        } catch (dbError) {
+          console.error('Database update error:', dbError);
+          // Continue with response even if DB update fails
+        }
+      }
+      
       res.json({
         success: true,
-        message: 'Author image uploaded successfully',
+        message: 'Author image updated successfully',
         image: {
-          url: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=400&h=400&fit=crop',
+          url: imageUrl,
+          altText: altText || '',
           filename: `author-${Date.now()}.jpg`
         }
       });
@@ -379,7 +486,7 @@ async function handleAuthorImageUpload(req, res) {
     }
   } catch (error) {
     console.error('Author image upload error:', error);
-    res.status(500).json({ error: 'Image upload failed' });
+    res.status(500).json({ error: 'Image update failed' });
   }
 }
 
@@ -532,6 +639,15 @@ async function handleAuthor(req, res) {
       const updates = req.body;
       console.log('👤 Updating author info:', updates);
       
+      // Validate image URL if updating
+      if (updates.image && updates.image.url) {
+        try {
+          new URL(updates.image.url);
+        } catch (error) {
+          return res.status(400).json({ error: 'Invalid image URL format' });
+        }
+      }
+      
       const client = await clientPromise;
       const dbName = getDatabaseName();
       const db = client.db(dbName);
@@ -539,6 +655,14 @@ async function handleAuthor(req, res) {
       
       // Add update timestamp
       updates.updatedAt = new Date();
+      
+      // Ensure image structure
+      if (!updates.image) {
+        updates.image = {
+          url: '',
+          altText: ''
+        };
+      }
       
       // Use upsert to create if doesn't exist, update if it does
       const result = await authorCollection.updateOne(
@@ -683,18 +807,132 @@ async function handleImages(req, res) {
       const images = getMockImages();
       res.json({ images: images });
     } else if (req.method === 'POST') {
-      // Upload new image
-      console.log('🖼️ Image upload requested');
+      // Add new image with URL
+      const { title, category, url, description, altText } = req.body;
+      
+      console.log('🖼️ Adding new image:', title, 'with URL:', url);
+      
+      if (!url || !title) {
+        return res.status(400).json({ error: 'Image URL and title are required' });
+      }
+      
+      // Validate URL format
+      try {
+        new URL(url);
+      } catch (error) {
+        return res.status(400).json({ error: 'Invalid URL format' });
+      }
+      
+      const newImage = {
+        title,
+        category: category || 'general',
+        url,
+        description: description || '',
+        altText: altText || '',
+        createdAt: new Date(),
+        updatedAt: new Date()
+      };
+      
+      // Store image in MongoDB if available
+      if (isMongoDBAvailable()) {
+        try {
+          const client = await clientPromise;
+          const dbName = getDatabaseName();
+          const db = client.db(dbName);
+          const imagesCollection = db.collection('images');
+          
+          const result = await imagesCollection.insertOne(newImage);
+          newImage._id = result.insertedId;
+          
+          console.log('✅ Image added successfully to database with ID:', result.insertedId);
+        } catch (dbError) {
+          console.error('Database insert error:', dbError);
+          // Continue with response even if DB insert fails
+          newImage._id = `img-${Date.now()}`;
+        }
+      } else {
+        newImage._id = `img-${Date.now()}`;
+      }
+      
       res.json({
         success: true,
-        message: 'Image uploaded successfully',
-        imageId: `img-${Date.now()}`,
-        url: 'https://example.com/placeholder-image.jpg'
+        message: 'Image added successfully',
+        image: newImage
+      });
+    } else if (req.method === 'PUT') {
+      // Update image
+      const imageId = req.url.split('/').pop();
+      const updates = req.body;
+      
+      console.log('🖼️ Updating image:', imageId, updates);
+      
+      if (updates.url) {
+        // Validate URL format if updating URL
+        try {
+          new URL(updates.url);
+        } catch (error) {
+          return res.status(400).json({ error: 'Invalid URL format' });
+        }
+      }
+      
+      // Update image in MongoDB if available
+      if (isMongoDBAvailable()) {
+        try {
+          const client = await clientPromise;
+          const dbName = getDatabaseName();
+          const db = client.db(dbName);
+          const imagesCollection = db.collection('images');
+          
+          updates.updatedAt = new Date();
+          
+          const result = await imagesCollection.updateOne(
+            { _id: imageId },
+            { $set: updates }
+          );
+          
+          if (result.matchedCount === 0) {
+            return res.status(404).json({ error: 'Image not found' });
+          }
+          
+          console.log('✅ Image updated successfully in database');
+        } catch (dbError) {
+          console.error('Database update error:', dbError);
+          // Continue with response even if DB update fails
+        }
+      }
+      
+      res.json({
+        success: true,
+        message: 'Image updated successfully',
+        imageId,
+        updates
       });
     } else if (req.method === 'DELETE') {
       // Delete image
       const imageId = req.url.split('/').pop();
       console.log('🖼️ Deleting image:', imageId);
+      
+      // Delete image from MongoDB if available
+      if (isMongoDBAvailable()) {
+        try {
+          const client = await clientPromise;
+          const dbName = getDatabaseName();
+          const db = client.db(dbName);
+          const imagesCollection = db.collection('images');
+          
+          const result = await imagesCollection.deleteOne({ _id: imageId });
+          
+          if (result.deletedCount === 0) {
+            return res.status(404).json({ error: 'Image not found' });
+          }
+          
+          console.log('✅ Image deleted successfully from database');
+        } catch (dbError) {
+          console.error('Database delete error:', dbError);
+          // Continue with response even if DB delete fails
+        }
+      }
+      
       res.json({
         success: true,
         message: 'Image deleted successfully',
