@@ -17,14 +17,26 @@ class BooksGrid extends Component {
     try {
       this.booksData = await this.apiService.getBooks();
       console.log('🔍 Fetched books data:', this.booksData);
-      if (this.booksData.homepageBooks) {
-        console.log('🔍 Homepage books:', this.booksData.homepageBooks);
+      
+      // Transform the API response to include homepageBooks for the carousel
+      if (this.booksData.adults || this.booksData.children) {
+        // Combine adults and children books for the homepage carousel
+        const allBooks = [
+          ...(this.booksData.adults || []),
+          ...(this.booksData.children || [])
+        ];
+        
+        // Add homepageBooks property for the carousel
+        this.booksData.homepageBooks = allBooks;
+        
+        console.log('🔍 Transformed homepage books:', this.booksData.homepageBooks);
         this.booksData.homepageBooks.forEach((book, index) => {
           console.log(`🔍 Book ${index}:`, {
             title: book.title,
             _id: book._id,
             id: book.id,
-            coverImage: book.coverImage
+            coverImage: book.coverImage,
+            coverClass: book.coverClass
           });
         });
       }
@@ -55,6 +67,12 @@ class BooksGrid extends Component {
           }
         ]
       };
+      
+      // Add homepageBooks for fallback data too
+      this.booksData.homepageBooks = [
+        ...this.booksData.adults,
+        ...this.booksData.children
+      ];
     }
   }
 
@@ -238,8 +256,11 @@ class BooksGrid extends Component {
       onClick: () => this.navigateToBookPage(book)
     });
 
+    // Generate a cover class if none exists
+    const coverClass = book.coverClass || this.generateCoverClass(book);
+    
     const bookCover = Utils.createElement('div', {
-      className: `book-cover ${book.coverClass}`
+      className: `book-cover ${coverClass}`
     });
 
     // Add book cover image if available, otherwise show title
@@ -263,6 +284,22 @@ class BooksGrid extends Component {
     bookCard.appendChild(bookCover);
 
     return bookCard;
+  }
+
+  generateCoverClass(book) {
+    // Generate a cover class based on book title or category
+    if (book.category === 'adults') {
+      return 'adult-1';
+    } else if (book.category === 'children') {
+      return 'children-1';
+    } else {
+      // Generate a hash-based class for consistent styling
+      const hash = book.title.split('').reduce((a, b) => {
+        a = ((a << 5) - a) + b.charCodeAt(0);
+        return a & a;
+      }, 0);
+      return `book-${Math.abs(hash) % 5 + 1}`;
+    }
   }
 
   navigateToBookPage(book) {
