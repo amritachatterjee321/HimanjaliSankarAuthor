@@ -15,44 +15,45 @@ export default async function handler(req, res) {
     return;
   }
 
-  // Get the endpoint from the URL path
-  const path = req.url;
-  console.log('🔍 CMS API called with path:', path);
+  // Get the endpoint from the URL path - use query parameter for endpoint
+  const endpoint = req.query.endpoint || req.url?.split('/').pop() || '';
+  console.log('🔍 CMS API called with endpoint:', endpoint);
+  console.log('🔍 Full URL:', req.url);
+  console.log('🔍 Query params:', req.query);
 
   try {
     // Handle authentication endpoints
-    if (path.includes('/auth/login')) {
+    if (endpoint === 'login' || req.url?.includes('/auth/login')) {
       await handleLogin(req, res);
-    } else if (path.includes('/auth/verify')) {
+    } else if (endpoint === 'verify' || req.url?.includes('/auth/verify')) {
       await handleVerifyToken(req, res);
-    } else if (path.includes('/dashboard')) {
+    } else if (endpoint === 'dashboard' || req.url?.includes('/dashboard')) {
       await handleDashboard(req, res);
-    } else if (path.includes('/books') && path.includes('/cover')) {
-      // Handle book cover uploads specifically
-      await handleBookCoverUpload(req, res);
-    } else if (path.includes('/books')) {
+    } else if (endpoint === 'books' || req.url?.includes('/books')) {
       await handleBooks(req, res);
-    } else if (path.includes('/media')) {
+    } else if (endpoint === 'media' || req.url?.includes('/media')) {
       await handleMedia(req, res);
-    } else if (path.includes('/author') && path.includes('/image')) {
-      // Handle author image uploads specifically
-      await handleAuthorImageUpload(req, res);
-    } else if (path.includes('/author')) {
+    } else if (endpoint === 'author' || req.url?.includes('/author')) {
       await handleAuthor(req, res);
-    } else if (path.includes('/social')) {
+    } else if (endpoint === 'social' || req.url?.includes('/social')) {
       await handleSocial(req, res);
-    } else if (path.includes('/homepage-config')) {
+    } else if (endpoint === 'homepage-config' || req.url?.includes('/homepage-config')) {
       await handleHomepageConfig(req, res);
-    } else if (path.includes('/settings')) {
+    } else if (endpoint === 'settings' || req.url?.includes('/settings')) {
       await handleSettings(req, res);
-    } else if (path.includes('/images')) {
+    } else if (endpoint === 'images' || req.url?.includes('/images')) {
       await handleImages(req, res);
     } else {
       // For now, return a basic response for other endpoints
       res.status(200).json({
         message: 'CMS endpoint not yet implemented',
-        path: path,
-        method: req.method
+        endpoint: endpoint,
+        url: req.url,
+        method: req.method,
+        availableEndpoints: [
+          'login', 'verify', 'dashboard', 'books', 'media', 
+          'author', 'social', 'homepage-config', 'settings', 'images'
+        ]
       });
     }
   } catch (error) {
