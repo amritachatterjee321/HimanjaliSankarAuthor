@@ -29,6 +29,18 @@
       "destination": "/api/main?endpoint=books"
     },
     {
+      "source": "/api/books/latest",
+      "destination": "/api/main?endpoint=books&latest=true"
+    },
+    {
+      "source": "/api/books/:id",
+      "destination": "/api/main?endpoint=books&id=:id"
+    },
+    {
+      "source": "/api/books/category/:category",
+      "destination": "/api/main?endpoint=books&category=:category"
+    },
+    {
       "source": "/api/media",
       "destination": "/api/main?endpoint=media"
     },
