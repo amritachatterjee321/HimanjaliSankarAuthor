@@ -1,5 +1,6 @@
 import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
+import { ObjectId } from 'mongodb';
 import clientPromise, { isMongoDBAvailable, getDatabaseName } from './lib/mongodb.js';
 
 // CMS API handler for Vercel
@@ -285,9 +286,13 @@ async function handleBooks(req, res) {
         return res.status(500).json({ error: 'MongoDB not available' });
       }
 
-      const bookId = req.url.split('/').pop();
+      const bookId = req.query.id;
       const updates = req.body;
       console.log('📚 Updating book:', bookId, updates);
+      
+      if (!bookId) {
+        return res.status(400).json({ error: 'Book ID is required' });
+      }
       
       // Validate cover image URL if updating
       if (updates.coverImage && updates.coverImage.url) {
@@ -306,8 +311,16 @@ async function handleBooks(req, res) {
       // Add update timestamp
       updates.updatedAt = new Date();
       
+      // Convert string ID to ObjectId
+      let objectId;
+      try {
+        objectId = new ObjectId(bookId);
+      } catch (error) {
+        return res.status(400).json({ error: 'Invalid book ID format' });
+      }
+      
       const result = await booksCollection.updateOne(
-        { _id: bookId },
+        { _id: objectId },
         { $set: updates }
       );
       
@@ -328,15 +341,27 @@ async function handleBooks(req, res) {
         return res.status(500).json({ error: 'MongoDB not available' });
       }
 
-      const bookId = req.url.split('/').pop();
+      const bookId = req.query.id;
       console.log('📚 Deleting book:', bookId);
+      
+      if (!bookId) {
+        return res.status(400).json({ error: 'Book ID is required' });
+      }
+      
+      // Convert string ID to ObjectId
+      let objectId;
+      try {
+        objectId = new ObjectId(bookId);
+      } catch (error) {
+        return res.status(400).json({ error: 'Invalid book ID format' });
+      }
       
       const client = await clientPromise;
       const dbName = getDatabaseName();
       const db = client.db(dbName);
       const booksCollection = db.collection('books');
       
-      const result = await booksCollection.deleteOne({ _id: bookId });
+      const result = await booksCollection.deleteOne({ _id: objectId });
       
       if (result.deletedCount === 0) {
         return res.status(404).json({ error: 'Book not found' });
@@ -361,10 +386,14 @@ async function handleBooks(req, res) {
 async function handleBookCoverUpload(req, res) {
   try {
     if (req.method === 'POST') {
-      const bookId = req.url.split('/')[2]; // Extract book ID from /books/{id}/cover
+      const bookId = req.query.id; // Extract book ID from query parameter
       const { imageUrl, altText } = req.body;
       
       console.log('📚 Updating cover for book:', bookId, 'with URL:', imageUrl);
+      
+      if (!bookId) {
+        return res.status(400).json({ error: 'Book ID is required' });
+      }
       
       if (!imageUrl) {
         return res.status(400).json({ error: 'Image URL is required' });
@@ -380,13 +409,21 @@ async function handleBookCoverUpload(req, res) {
       // Update book with new cover image URL
       if (isMongoDBAvailable()) {
         try {
+          // Convert string ID to ObjectId
+          let objectId;
+          try {
+            objectId = new ObjectId(bookId);
+          } catch (error) {
+            return res.status(400).json({ error: 'Invalid book ID format' });
+          }
+          
           const client = await clientPromise;
           const dbName = getDatabaseName();
           const db = client.db(dbName);
           const booksCollection = db.collection('books');
           
           const result = await booksCollection.updateOne(
-            { _id: bookId },
+            { _id: objectId },
             { 
               $set: { 
                 'coverImage.url': imageUrl,
@@ -422,7 +459,7 @@ async function handleBookCoverUpload(req, res) {
     }
   } catch (error) {
     console.error('Book cover upload error:', error);
-    res.status(500).json({ error: 'Cover update failed' });
+    res.status(500).json({ error: 'Book cover update failed' });
   }
 }
 
@@ -543,9 +580,21 @@ async function handleMedia(req, res) {
         return res.status(500).json({ error: 'MongoDB not available' });
       }
 
-      const mediaId = req.url.split('/').pop();
+      const mediaId = req.query.id;
       const updates = req.body;
       console.log('📰 Updating media item:', mediaId, updates);
+      
+      if (!mediaId) {
+        return res.status(400).json({ error: 'Media ID is required' });
+      }
+      
+      // Convert string ID to ObjectId
+      let objectId;
+      try {
+        objectId = new ObjectId(mediaId);
+      } catch (error) {
+        return res.status(400).json({ error: 'Invalid media ID format' });
+      }
       
       const client = await clientPromise;
       const dbName = getDatabaseName();
@@ -556,7 +605,7 @@ async function handleMedia(req, res) {
       updates.updatedAt = new Date();
       
       const result = await mediaCollection.updateOne(
-        { _id: mediaId },
+        { _id: objectId },
         { $set: updates }
       );
       
@@ -577,15 +626,27 @@ async function handleMedia(req, res) {
         return res.status(500).json({ error: 'MongoDB not available' });
       }
 
-      const mediaId = req.url.split('/').pop();
+      const mediaId = req.query.id;
       console.log('📰 Deleting media item:', mediaId);
+      
+      if (!mediaId) {
+        return res.status(400).json({ error: 'Media ID is required' });
+      }
+      
+      // Convert string ID to ObjectId
+      let objectId;
+      try {
+        objectId = new ObjectId(mediaId);
+      } catch (error) {
+        return res.status(400).json({ error: 'Invalid media ID format' });
+      }
       
       const client = await clientPromise;
       const dbName = getDatabaseName();
       const db = client.db(dbName);
       const mediaCollection = db.collection('media');
       
-      const result = await mediaCollection.deleteOne({ _id: mediaId });
+      const result = await mediaCollection.deleteOne({ _id: objectId });
       
       if (result.deletedCount === 0) {
         return res.status(404).json({ error: 'Media item not found' });
@@ -861,10 +922,22 @@ async function handleImages(req, res) {
       });
     } else if (req.method === 'PUT') {
       // Update image
-      const imageId = req.url.split('/').pop();
+      const imageId = req.query.id;
       const updates = req.body;
       
       console.log('🖼️ Updating image:', imageId, updates);
+      
+      if (!imageId) {
+        return res.status(400).json({ error: 'Image ID is required' });
+      }
+      
+      // Convert string ID to ObjectId
+      let objectId;
+      try {
+        objectId = new ObjectId(imageId);
+      } catch (error) {
+        return res.status(400).json({ error: 'Invalid image ID format' });
+      }
       
       if (updates.url) {
         // Validate URL format if updating URL
@@ -886,7 +959,7 @@ async function handleImages(req, res) {
           updates.updatedAt = new Date();
           
           const result = await imagesCollection.updateOne(
-            { _id: imageId },
+            { _id: objectId },
             { $set: updates }
           );
           
@@ -909,8 +982,20 @@ async function handleImages(req, res) {
       });
     } else if (req.method === 'DELETE') {
       // Delete image
-      const imageId = req.url.split('/').pop();
+      const imageId = req.query.id;
       console.log('🖼️ Deleting image:', imageId);
+      
+      if (!imageId) {
+        return res.status(400).json({ error: 'Image ID is required' });
+      }
+      
+      // Convert string ID to ObjectId
+      let objectId;
+      try {
+        objectId = new ObjectId(imageId);
+      } catch (error) {
+        return res.status(400).json({ error: 'Invalid image ID format' });
+      }
       
       // Delete image from MongoDB if available
       if (isMongoDBAvailable()) {
@@ -920,16 +1005,16 @@ async function handleImages(req, res) {
           const db = client.db(dbName);
           const imagesCollection = db.collection('images');
           
-          const result = await imagesCollection.deleteOne({ _id: imageId });
+          const result = await imagesCollection.deleteOne({ _id: objectId });
           
           if (result.deletedCount === 0) {
             return res.status(404).json({ error: 'Image not found' });
           }
           
-          console.log('✅ Image deleted successfully from database');
+          console.log('✅ Image deleted successfully in database');
         } catch (dbError) {
           console.error('Database delete error:', dbError);
-          // Continue with response even if DB delete fails
+          // Continue with response even if DB update fails
         }
       }
       
