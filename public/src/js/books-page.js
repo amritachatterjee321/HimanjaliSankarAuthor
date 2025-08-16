@@ -144,6 +144,7 @@ class BooksPage extends Component {
       
       const transformedBook = {
         id: book._id || book.id || `book-${index}`,
+        _id: book._id, // Preserve original MongoDB ID
         title: book.title || 'Untitled',
         year: book.year || 'Unknown Year',
         description: book.shortDescription || book.description || 'No description available',
@@ -326,7 +327,8 @@ class BooksPage extends Component {
     // Make cover clickable
     bookCover.style.cursor = 'pointer';
     bookCover.addEventListener('click', () => {
-      const bookId = book.id || 'latest';
+      const bookId = book._id || book.id || 'latest';
+      console.log('🖱️ Book cover clicked, navigating to book ID:', bookId);
       window.location.href = `/book-detail.html?id=${bookId}`;
     });
 
@@ -342,7 +344,8 @@ class BooksPage extends Component {
     // Make title clickable
     bookTitle.style.cursor = 'pointer';
     bookTitle.addEventListener('click', () => {
-      const bookId = book.id || 'latest';
+      const bookId = book._id || book.id || 'latest';
+      console.log('🖱️ Book title clicked, navigating to book ID:', bookId);
       window.location.href = `/book-detail.html?id=${bookId}`;
     });
 
