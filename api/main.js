@@ -1,4 +1,5 @@
 import clientPromise, { isMongoDBAvailable, getDatabaseName } from './lib/mongodb.js';
+import { ObjectId } from 'mongodb';
 
 // Consolidated Vercel serverless function for all API endpoints
 export default async function handler(req, res) {
@@ -86,11 +87,17 @@ async function handleBooks(req, res) {
       const { id, category, latest } = req.query;
 
       if (id) {
-        const book = await booksCollection.findOne({ _id: id });
-        if (book) {
-          res.status(200).json(book);
-        } else {
-          res.status(404).json({ message: 'Book not found' });
+        try {
+          const objectId = new ObjectId(id);
+          const book = await booksCollection.findOne({ _id: objectId });
+          if (book) {
+            res.status(200).json(book);
+          } else {
+            res.status(404).json({ message: 'Book not found' });
+          }
+        } catch (error) {
+          console.error('Invalid book ID format:', id, error);
+          res.status(400).json({ message: 'Invalid book ID format' });
         }
       } else if (latest) {
         const latestBook = await booksCollection
@@ -142,11 +149,17 @@ async function handleMedia(req, res) {
       const { id, type } = req.query;
 
       if (id) {
-        const mediaItem = await mediaCollection.findOne({ _id: id });
-        if (mediaItem) {
-          res.status(200).json(mediaItem);
-        } else {
-          res.status(404).json({ message: 'Media item not found' });
+        try {
+          const objectId = new ObjectId(id);
+          const mediaItem = await mediaCollection.findOne({ _id: objectId });
+          if (mediaItem) {
+            res.status(200).json(mediaItem);
+          } else {
+            res.status(404).json({ message: 'Media item not found' });
+          }
+        } catch (error) {
+          console.error('Invalid media ID format:', id, error);
+          res.status(400).json({ message: 'Invalid media ID format' });
         }
       } else if (type) {
         const filteredMedia = await mediaCollection
