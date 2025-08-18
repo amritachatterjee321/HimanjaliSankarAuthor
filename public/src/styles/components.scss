@@ -171,7 +171,7 @@
     }
 
     .bio-text {
-      font-family: $font-sans;
+      font-family: $font-serif;
       font-size: 1.1rem;
       line-height: 1.8;
       color: $text-color;
@@ -311,7 +311,7 @@
 
       .social-links {
         display: flex;
-        gap: 15px;
+        gap: 50px; /* Increased from 30px to 50px for much better spacing */
         flex-wrap: wrap;
 
         .social-link {
@@ -655,6 +655,154 @@
 }
 
 /* Media Page Specific Styles */
+.media-page {
+  padding: 80px 0;
+  background: linear-gradient(135deg, $white 0%, $gray-light 100%);
+  min-height: 100vh;
+  
+  .media-page-header {
+    text-align: center;
+    margin-bottom: 60px;
+    
+    h1 {
+      font-family: $font-serif;
+      font-size: 2.5rem;
+      color: $primary-color;
+      margin-bottom: 20px;
+      position: relative;
+      
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 60px;
+        height: 3px;
+        background: $accent-color;
+        border-radius: 2px;
+      }
+      
+      @media (max-width: 768px) {
+        font-size: 2rem;
+      }
+    }
+  }
+  
+  .media-categories-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 80px;
+  }
+  
+  .media-section {
+    .media-section h2 {
+      margin-bottom: 40px;
+      text-align: center;
+      font-family: $font-serif;
+      font-size: 2.5rem;
+      color: $primary-color;
+      margin-bottom: 20px;
+      position: relative;
+      
+      &::after {
+        content: '';
+        position: absolute;
+        bottom: -10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 60px;
+        height: 3px;
+        background: $accent-color;
+        border-radius: 2px;
+      }
+      
+      @media (max-width: 768px) {
+        font-size: 2rem;
+      }
+    }
+    
+    .media-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+      gap: 30px;
+      
+      @media (max-width: 768px) {
+        grid-template-columns: 1fr;
+        gap: 20px;
+      }
+    }
+    
+    .media-card {
+      background: $white;
+      border-radius: $border-radius;
+      box-shadow: $shadow-light;
+      overflow: hidden;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      padding: 30px;
+      
+      &:hover {
+        transform: translateY(-5px);
+        box-shadow: $shadow-medium;
+      }
+      
+      .media-title {
+        font-family: $font-serif;
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: $secondary-color;
+        margin-bottom: 15px;
+        line-height: 1.3;
+      }
+      
+      .media-meta {
+        display: flex;
+        gap: 20px;
+        align-items: center;
+        flex-wrap: wrap;
+        margin-bottom: 15px;
+        
+        .media-date {
+          font-size: 0.9rem;
+          color: $primary-color;
+          font-weight: 500;
+        }
+        
+        .media-source {
+          font-size: 0.9rem;
+          color: $gray-medium;
+          font-style: italic;
+        }
+      }
+      
+      .media-description {
+        font-size: 1rem;
+        color: $text-color;
+        line-height: 1.6;
+        margin-bottom: 20px;
+      }
+      
+      .media-link {
+        display: inline-block;
+        color: $accent-color;
+        text-decoration: none;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        font-size: 0.9rem;
+        transition: color 0.3s ease;
+        
+        &:hover {
+          color: darken($accent-color, 10%);
+        }
+      }
+    }
+  }
+}
+
 .media-page-section {
   padding: 80px 0;
   background: linear-gradient(135deg, $white 0%, $gray-light 100%);

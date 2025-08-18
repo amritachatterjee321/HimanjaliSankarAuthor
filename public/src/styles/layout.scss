@@ -166,6 +166,20 @@
   margin: 0;
   padding: 0;
 
+  /* Ensure navigation is visible on desktop */
+  @media (min-width: 769px) {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    transform: none !important;
+    position: static !important;
+    width: auto !important;
+    height: auto !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+  }
+
   @media (max-width: $tablet) {
     position: absolute;
     top: 0;

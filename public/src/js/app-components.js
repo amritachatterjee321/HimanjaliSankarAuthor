@@ -144,7 +144,7 @@ class BooksGrid extends Component {
     const categorySection = Utils.createElement('div', {
       className: 'category-section'
     });
-
+    
     // Only show title if categoryName is not empty
     if (categoryName) {
       const categoryTitle = Utils.createElement('h3', {
@@ -153,81 +153,82 @@ class BooksGrid extends Component {
       });
       categorySection.appendChild(categoryTitle);
     }
-
-    // Create double-line carousel container
+    
+    // Create double-line carousel container (desktop)
     const carouselContainer = Utils.createElement('div', {
       className: 'books-carousel-container'
     });
-
-    // Create different book sets for top and bottom rows - ensure uniqueness
+    
+    // Create a de-duplicated list of books
     const uniqueBooks = books.filter((book, index, self) => 
-      index === self.findIndex(b => b.title === book.title)
+      index === self.findIndex(b => (b._id || b.id || b.title) === (book._id || book.id || book.title))
     );
     
-    if (uniqueBooks.length !== books.length) {
-      console.warn('⚠️ Warning: Filtered out duplicate books. Original:', books.length, 'Unique:', uniqueBooks.length);
-    }
+    // Use the full set of books for EACH row to ensure all books show at least once per row
+    const topRowBooks = [...uniqueBooks];
+    const bottomRowBooks = [...uniqueBooks].reverse();
     
-    // Split books into two equal parts for top and bottom rows
-    const midPoint = Math.ceil(uniqueBooks.length / 2);
-    const topRowBooks = uniqueBooks.slice(0, midPoint);
-    const bottomRowBooks = uniqueBooks.slice(midPoint);
+    // Tracks
+    const topCarouselTrack = Utils.createElement('div', { className: 'books-carousel-track top-track' });
+    const bottomCarouselTrack = Utils.createElement('div', { className: 'books-carousel-track bottom-track' });
     
-    // Sort top row A-Z, bottom row Z-A
-    topRowBooks.sort((a, b) => a.title.localeCompare(b.title));
-    bottomRowBooks.sort((a, b) => b.title.localeCompare(a.title));
+    // Helper to append one full cycle of books to a track
+    const appendCycle = (track, list) => {
+      list.forEach(book => {
+        const bookCard = this.createBookCard(book);
+        track.appendChild(bookCard);
+      });
+    };
     
-    console.log('🔍 Debug: Top row books (A-Z):', topRowBooks.map(b => b.title));
-    console.log('🔍 Debug: Bottom row books (Z-A):', bottomRowBooks.map(b => b.title));
+    // Helper to fill the track to at least the container width (desktop only)
+    const fillTrackToWidth = (track, list, containerEl) => {
+      if (window.innerWidth < 769) {
+        // Skip on mobile; desktop-only carousel behavior
+        appendCycle(track, list);
+        appendCycle(track, list);
+        return 2; // cycles appended
+      }
+      let cycles = 0;
+      appendCycle(track, list); cycles += 1;
+      // Ensure one or more full cycles until we cover the container width
+      while (track.scrollWidth < containerEl.clientWidth) {
+        appendCycle(track, list); cycles += 1;
+      }
+      // Duplicate the same number of cycles once more so the second half matches the first for seamless looping
+      for (let i = 0; i < cycles; i += 1) {
+        appendCycle(track, list);
+      }
+      return cycles * 2; // total cycles now present
+    };
     
-    // Top row - scrolls left to right
-    const topCarouselTrack = Utils.createElement('div', {
-      className: 'books-carousel-track top-track'
-    });
+    // Build tracks
+    const topCycles = fillTrackToWidth(topCarouselTrack, topRowBooks, carouselContainer);
+    const bottomCycles = fillTrackToWidth(bottomCarouselTrack, bottomRowBooks, carouselContainer);
     
-    // Bottom row - scrolls right to left
-    const bottomCarouselTrack = Utils.createElement('div', {
-      className: 'books-carousel-track bottom-track'
-    });
-    
-    // Populate top row (left to right)
-    console.log('🔍 Debug: Adding top row books:', topRowBooks.length);
-    topRowBooks.forEach((book, index) => {
-      const bookCard = this.createBookCard(book);
-      topCarouselTrack.appendChild(bookCard);
-    });
-    
-    // Repeat top row books for seamless infinite scrolling
-    topRowBooks.forEach((book, index) => {
-      const bookCard = this.createBookCard(book);
-      topCarouselTrack.appendChild(bookCard);
-    });
-    
-    // Populate bottom row (right to left)
-    console.log('🔍 Debug: Adding bottom row books:', bottomRowBooks.length);
-    bottomRowBooks.forEach((book, index) => {
-      const bookCard = this.createBookCard(book);
-      bottomCarouselTrack.appendChild(bookCard);
-    });
-    
-    // Repeat bottom row books for seamless infinite scrolling
-    bottomRowBooks.forEach((book, index) => {
-      const bookCard = this.createBookCard(book);
-      bottomCarouselTrack.appendChild(bookCard);
-    });
-
+    // Add tracks to container
     carouselContainer.appendChild(topCarouselTrack);
     carouselContainer.appendChild(bottomCarouselTrack);
     
-    console.log('🔍 Debug: Top track has', topCarouselTrack.children.length, 'book cards');
-    console.log('🔍 Debug: Bottom track has', bottomCarouselTrack.children.length, 'book cards');
+    // Start animations only after rows are filled (desktop only)
+    if (window.innerWidth >= 769) {
+      this.startCarouselAnimation(carouselContainer, topCarouselTrack, topRowBooks.length * topCycles, 'left-to-right');
+      this.startCarouselAnimation(carouselContainer, bottomCarouselTrack, bottomRowBooks.length * bottomCycles, 'right-to-left');
+    }
     
-    // Start animations for both rows with different directions
-    this.startCarouselAnimation(carouselContainer, topCarouselTrack, topRowBooks.length, 'left-to-right');
-    this.startCarouselAnimation(carouselContainer, bottomCarouselTrack, bottomRowBooks.length, 'right-to-left');
-
+    // Mobile grid container (mobile-only via CSS)
+    const mobileGrid = Utils.createElement('div', {
+      className: 'books-mobile-grid'
+    });
+    
+    uniqueBooks.forEach(book => {
+      const bookCard = this.createBookCard(book);
+      mobileGrid.appendChild(bookCard);
+    });
+    
+    // Append both desktop carousel and mobile grid
     categorySection.appendChild(carouselContainer);
-
+    categorySection.appendChild(mobileGrid);
+    
     return categorySection;
   }
 
@@ -341,7 +342,7 @@ class BooksGrid extends Component {
     if (book._id || book.id) {
       const bookId = book._id || book.id;
       console.log('🔍 Using book ID for navigation:', bookId);
-      window.location.href = `/book/${bookId}`;
+      window.location.href = `/book-detail.html?id=${bookId}`;
     } else {
       console.log('❌ No book ID found for navigation');
       // Fallback: show notification if book ID is not available

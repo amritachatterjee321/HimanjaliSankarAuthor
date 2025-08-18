@@ -1,0 +1,818 @@
+/* Mobile-specific styles for Himanjali Author Website */
+
+// Import variables for consistency
+@import './variables';
+
+/* Mobile Breakpoints */
+$mobile: 480px;
+$tablet: 768px;
+
+/* Mobile Header Styles */
+@media (max-width: $tablet) {
+  .header {
+    overflow: hidden;
+    width: 100vw;
+    max-width: 100vw;
+    box-sizing: border-box;
+  }
+
+  .header-content {
+    max-width: 100%;
+    width: 100%;
+    box-sizing: border-box;
+    overflow: hidden;
+    gap: 20px;
+  }
+
+  .logo {
+    flex-shrink: 0;
+    min-width: 0;
+  }
+
+  .mobile-menu-button {
+    flex-shrink: 0;
+  }
+}
+
+@media (max-width: $mobile) {
+  .header-content {
+    gap: 15px;
+  }
+}
+
+/* Mobile Navigation Menu */
+@media (max-width: $tablet) {
+  /* Hide desktop navigation on mobile */
+  .nav-menu {
+    display: none !important;
+  }
+
+  /* Show mobile menu button */
+  .mobile-menu-button {
+    display: block !important;
+    cursor: pointer;
+    background: transparent !important;
+    border: none !important;
+    border-radius: 0 !important;
+    width: 44px !important;
+    height: 44px !important;
+    padding: 10px !important;
+    box-shadow: none !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    
+    span {
+      width: 24px !important;
+      height: 3px !important;
+      background: $secondary-color !important;
+      border-radius: 2px !important;
+      transition: all 0.3s ease !important;
+      box-shadow: none !important;
+      margin: 0 !important;
+      display: block !important;
+    }
+
+    &:hover {
+      background: transparent !important;
+      transform: none !important;
+      
+      span {
+        background: $primary-color !important;
+        box-shadow: none !important;
+      }
+    }
+
+    &:active {
+      transform: none !important;
+    }
+  }
+
+  /* Mobile Navigation Overlay */
+  .mobile-nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.9);
+    z-index: 1000;
+    display: none;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    
+    &.active {
+      display: flex;
+      opacity: 1;
+    }
+  }
+
+  /* Mobile Navigation Container */
+  .mobile-nav-container {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+  }
+
+  /* Mobile Navigation Header */
+  .mobile-nav-header {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+  }
+
+  /* Mobile Navigation Close Button */
+  .mobile-nav-close {
+    background: none;
+    border: none;
+    color: $white;
+    font-size: 2rem;
+    cursor: pointer;
+    padding: 10px;
+    transition: color 0.3s ease;
+    
+    &:hover {
+      color: $accent-color;
+    }
+  }
+
+  /* Mobile Navigation Links */
+  .mobile-nav-links {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+    width: 100%;
+    max-width: 300px;
+  }
+
+  .mobile-nav-link {
+    color: $white;
+    text-decoration: none;
+    font-family: $font-serif;
+    font-size: 1.8rem;
+    font-weight: 600;
+    text-align: center;
+    padding: 15px 20px;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+    width: 100%;
+    
+    &:hover {
+      color: $accent-color;
+      background: rgba(255, 255, 255, 0.1);
+      transform: translateY(-2px);
+    }
+    
+    &.active {
+      color: $accent-color;
+      background: rgba(255, 255, 255, 0.15);
+    }
+  }
+
+  /* Mobile Navigation Social Links */
+  .mobile-nav-social {
+    margin-top: 40px;
+    display: flex;
+    gap: 20px;
+    align-items: center;
+  }
+
+  .mobile-nav-social-link {
+    color: $white;
+    font-size: 1.5rem;
+    padding: 10px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.1);
+    transition: all 0.3s ease;
+    
+    &:hover {
+      color: $accent-color;
+      background: rgba(255, 255, 255, 0.2);
+      transform: scale(1.1);
+    }
+  }
+}
+
+@media (max-width: $mobile) {
+  .mobile-nav-link {
+    font-size: 1.6rem;
+    padding: 12px 16px;
+  }
+  
+  .mobile-nav-social {
+    margin-top: 30px;
+    gap: 15px;
+  }
+  
+  .mobile-nav-social-link {
+    font-size: 1.3rem;
+    padding: 8px;
+  }
+}
+
+/* Mobile Body and HTML */
+@media (max-width: 768px) {
+  body,
+  html {
+    overflow-x: hidden;
+    width: 100%;
+    max-width: 100vw;
+    background: transparent !important;
+    background-color: transparent !important;
+  }
+  
+  /* Ensure all main containers are transparent */
+  #app,
+  .app-loading,
+  .main-content,
+  .content-wrapper {
+    background: transparent !important;
+    background-color: transparent !important;
+  }
+}
+
+/* Mobile Books Grid Section */
+@media (max-width: $tablet) {
+  .books-grid-section {
+    padding: 60px 20px;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+
+  .books-grid-container {
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+
+  .books-categories {
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+
+  .category-section {
+    margin-bottom: 40px;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+
+  .section-title {
+    font-size: 2rem;
+  }
+
+  .category-title {
+    font-size: 1.6rem;
+    margin-bottom: 30px;
+  }
+}
+
+@media (max-width: $mobile) {
+  .books-grid-section {
+    padding: 40px 15px;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+
+  .section-title {
+    font-size: 1.8rem;
+  }
+
+  .category-title {
+    font-size: 1.4rem;
+    margin-bottom: 25px;
+  }
+}
+
+/* Hide all carousel variants on mobile */
+@media (max-width: $tablet) {
+  .other-books-carousel,
+  .carousel-container,
+  .carousel-track,
+  .carousel-nav {
+    display: none !important;
+  }
+}
+
+/* Desktop Carousel - Ensure it's visible on desktop */
+.books-carousel-container {
+  display: block !important; /* Show by default on desktop */
+  
+  /* Hide ONLY on mobile devices */
+  @media (max-width: $tablet) {
+    display: none !important;
+  }
+}
+
+/* Desktop Carousel Track - Ensure it's visible on desktop */
+.books-carousel-track {
+  display: flex !important; /* Show by default on desktop */
+  
+  /* Hide ONLY on mobile devices */
+  @media (max-width: $tablet) {
+    display: none !important;
+  }
+}
+
+/* Ensure desktop navigation is visible on desktop */
+@media (min-width: 769px) {
+  .nav-menu {
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  
+  .mobile-menu-button {
+    display: none !important;
+  }
+  
+  .mobile-nav {
+    display: none !important;
+  }
+}
+
+/* Ensure mobile navigation only shows on mobile */
+@media (max-width: 768px) {
+  .nav-menu {
+    display: none !important;
+  }
+  
+  .mobile-menu-button {
+    display: block !important;
+  }
+}
+
+/* Mobile Book Card Styles */
+@media (max-width: $tablet) {
+  .book-card {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    text-align: center !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+    max-width: 120px !important;
+    height: auto !important;
+    min-height: 160px !important;
+    max-height: none !important;
+    
+    @media (max-width: $mobile) {
+      max-width: 100px !important;
+      min-height: 140px !important;
+    }
+  }
+
+  .book-cover {
+    width: 100% !important;
+    height: 160px !important;
+    min-height: 160px !important;
+    max-height: 160px !important;
+    object-fit: cover !important;
+    object-position: center !important;
+    position: relative !important;
+    z-index: 1 !important;
+    display: block !important;
+    flex-shrink: 0 !important;
+    flex-grow: 0 !important;
+    border-radius: 8px !important;
+    overflow: hidden !important;
+    
+    @media (max-width: $mobile) {
+      height: 140px !important;
+      min-height: 140px !important;
+      max-height: 140px !important;
+    }
+    
+    img {
+      width: 100% !important;
+      height: 100% !important;
+      object-fit: cover !important;
+      object-position: center !important;
+    }
+  }
+}
+
+@media (max-width: $mobile) {
+  .book-card {
+    height: 160px !important;
+    min-height: 160px !important;
+    max-height: 160px !important;
+  }
+
+  .book-cover {
+    height: 140px !important;
+  }
+}
+
+/* Hide book title and genre on mobile grid */
+@media (max-width: $tablet) {
+  .books-mobile-grid .book-title,
+  .books-mobile-grid .book-genre {
+    display: none !important;
+  }
+}
+
+/* Mobile Grid Optimizations */
+@media (max-width: $tablet) {
+  .books-mobile-grid {
+    /* Ensure proper spacing and visibility */
+    padding: 10px 0 !important;
+    margin: 0 !important;
+    
+    /* Force 2-column layout with proper sizing */
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 15px !important;
+    row-gap: 30px !important;
+    
+    /* Remove any container constraints */
+    max-width: none !important;
+    width: 100% !important;
+    
+    /* Grid-specific properties */
+    grid-auto-flow: row !important;
+    grid-auto-rows: min-content !important;
+    align-items: start !important;
+    justify-items: center !important;
+    
+    /* Container sizing */
+    box-sizing: border-box !important;
+    overflow: visible !important;
+  }
+  
+  .book-card {
+    /* Ensure book cards take full available space */
+    width: 100% !important;
+    max-width: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    
+    /* Remove any background or borders */
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    
+    /* Prevent overlapping */
+    position: relative !important;
+    z-index: 1 !important;
+    
+    /* Flexbox properties */
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    
+    /* Consistent sizing */
+    height: auto !important;
+    min-height: 180px !important;
+  }
+  
+  .book-cover {
+    /* Ensure book covers are fully visible and consistent */
+    width: 100% !important;
+    height: 160px !important;
+    
+    /* Remove any background or borders */
+    background: transparent !important;
+    background-color: transparent !important;
+    border: none !important;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
+    
+    /* Ensure proper object fit */
+    object-fit: cover !important;
+    object-position: center !important;
+    
+    /* Prevent overlapping */
+    position: relative !important;
+    z-index: 1 !important;
+    display: block !important;
+    
+    /* Spacing */
+    margin: 0 !important;
+    padding: 0 !important;
+    
+    /* Force consistent dimensions */
+    flex-shrink: 0 !important;
+    flex-grow: 0 !important;
+  }
+}
+
+/* Nuclear option - Remove ALL possible white backgrounds on mobile */
+@media (max-width: $tablet) {
+  /* Target all possible container elements */
+  .books-grid-section,
+  .books-grid-container,
+  .books-categories,
+  .category-section,
+  .books-mobile-grid,
+  .book-card,
+  .book-cover,
+  .main-content,
+  .content-wrapper,
+  .container,
+  .section,
+  .grid,
+  .row,
+  .col,
+  div[class*="book"],
+  div[class*="grid"],
+  div[class*="section"],
+  .app,
+  #app,
+  .app-loading {
+    background: transparent !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+    outline: none !important;
+  }
+  
+  /* Target all child elements recursively */
+  .books-grid-section *,
+  .books-grid-container *,
+  .books-categories *,
+  .category-section *,
+  .books-mobile-grid *,
+  .book-card *,
+  .book-cover * {
+    background: transparent !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+    outline: none !important;
+  }
+  
+  /* Remove any remaining white backgrounds from body or html */
+  body,
+  html {
+    background: transparent !important;
+    background-color: transparent !important;
+  }
+}
+
+/* Mobile Typography Adjustments */
+@media (max-width: $tablet) {
+  .section-title {
+    font-family: $font-serif;
+    margin-bottom: 20px;
+  }
+  
+  .category-title {
+    font-family: $font-serif;
+    text-align: center;
+  }
+}
+
+/* Mobile Spacing and Layout */
+@media (max-width: $tablet) {
+  .section-header {
+    margin-bottom: 40px;
+  }
+  
+  .books-categories {
+    margin-bottom: 40px;
+  }
+}
+
+@media (max-width: $mobile) {
+  .section-header {
+    margin-bottom: 30px;
+  }
+  
+  .books-categories {
+    margin-bottom: 30px;
+  }
+}
+
+	// Mobile Books Grid Layout
+	.books-mobile-grid {
+		display: grid !important;
+		grid-template-columns: repeat(3, 1fr) !important;
+		gap: 20px !important;
+		padding: 20px !important;
+		margin: 0 !important;
+		width: 100% !important;
+		max-width: 100% !important;
+		grid-auto-rows: min-content !important;
+		grid-auto-flow: row !important;
+		align-items: start !important;
+		justify-items: center !important;
+		box-sizing: border-box !important;
+		overflow: visible !important;
+		
+		@media (max-width: $mobile) {
+			grid-template-columns: repeat(3, 1fr) !important;
+			gap: 15px !important;
+			padding: 15px !important;
+		}
+	}
+
+/* Books page: mobile grid to match homepage Previous Works */
+@media (max-width: $tablet) {
+	.books-page-section,
+	.books-page-container,
+	.books-categories-container,
+	.books-category-section {
+		background: transparent !important;
+		box-shadow: none !important;
+	}
+
+	.books-category-section .category-header {
+		margin-bottom: 15px !important;
+	}
+
+	.books-category-section .books-grid {
+		display: grid !important;
+		grid-template-columns: repeat(3, 1fr) !important;
+		gap: 20px !important;
+		row-gap: 24px !important;
+		justify-items: center !important;
+		align-items: start !important;
+		width: 100% !important;
+		max-width: 100% !important;
+		margin: 0 !important;
+		padding: 20px !important;
+		box-sizing: border-box !important;
+	}
+
+	.books-category-section .book-card {
+		display: flex !important;
+		flex-direction: column !important;
+		align-items: center !important;
+		justify-content: flex-start !important;
+		width: 100% !important;
+		max-width: 110px !important;
+		padding: 0 !important;
+		margin: 0 !important;
+		background: transparent !important;
+		border: none !important;
+		box-shadow: none !important;
+	}
+
+	.books-category-section .book-cover-image,
+	.books-category-section .book-cover {
+		width: 100% !important;
+		height: 140px !important;
+		object-fit: cover !important;
+		object-position: center !important;
+		border-radius: 8px !important;
+		display: block !important;
+	}
+
+	/* Hide text/details under covers on mobile */
+	.books-category-section .book-info,
+	.books-category-section .book-title,
+	.books-category-section .book-year,
+	.books-category-section .book-description,
+	.books-category-section .book-actions {
+		display: none !important;
+	}
+}
+
+/* Book Detail Page Mobile Styles */
+@media (max-width: $tablet) {
+	.book-detail-section {
+		padding: 60px 20px !important;
+		background: transparent !important;
+		box-shadow: none !important;
+	}
+
+	.book-detail-container {
+		background: transparent !important;
+		box-shadow: none !important;
+	}
+
+	.book-detail-header {
+		grid-template-columns: 1fr !important;
+		gap: 40px !important;
+		text-align: center !important;
+	}
+
+	.book-detail-cover .book-cover-large {
+		max-width: 300px !important;
+		height: 450px !important;
+	}
+
+	.book-detail-basic-info .book-detail-title {
+		font-size: 2rem !important;
+		text-align: center !important;
+	}
+
+	.book-detail-basic-info .book-detail-subtitle {
+		text-align: center !important;
+	}
+
+	.back-button {
+		text-align: center !important;
+		justify-content: center !important;
+		margin-bottom: 30px !important;
+	}
+
+	/* Remove arrows from buy buttons on mobile */
+	.buy-button::after,
+	.buy-button.large::after {
+		content: none !important;
+		display: none !important;
+	}
+
+	/* Remove gap that was meant for arrows */
+	.buy-button,
+	.buy-button.large {
+		gap: 0 !important;
+	}
+}
+
+@media (max-width: $mobile) {
+	.book-detail-section {
+		padding: 40px 15px !important;
+	}
+
+	.book-detail-cover .book-cover-large {
+		max-width: 250px !important;
+		height: 375px !important;
+	}
+
+	.book-detail-basic-info .book-detail-title {
+		font-size: 1.8rem !important;
+	}
+}
+
+/* Mobile Footer Styles */
+@media (max-width: $tablet) {
+	.footer {
+		padding: 40px 20px 25px !important;
+	}
+
+	.social-links {
+		gap: 25px !important;
+		margin: 25px 0 !important;
+	}
+
+	.social-link {
+		width: 55px !important;
+		height: 55px !important;
+		
+		i {
+			font-size: 1.3rem !important;
+		}
+	}
+
+	.copyright {
+		font-size: 14px !important;
+		font-weight: 700 !important;
+		opacity: 1 !important;
+		margin-top: 25px !important;
+		font-family: $font-serif !important;
+		color: $white !important;
+		text-transform: uppercase !important;
+		letter-spacing: 1px !important;
+	}
+
+	.website-credit {
+		font-size: 11px !important;
+		opacity: 0.6 !important;
+		margin-top: 15px !important;
+		font-family: $font-sans !important;
+		color: #cccccc !important;
+		font-weight: 400 !important;
+	}
+}
+
+@media (max-width: $mobile) {
+	.footer {
+		padding: 35px 15px 20px !important;
+	}
+
+	.social-links {
+		gap: 30px !important;
+		margin: 20px 0 !important;
+	}
+
+	.social-link {
+		width: 50px !important;
+		height: 50px !important;
+	}
+
+	.copyright {
+		font-size: 13px !important;
+		margin-top: 20px !important;
+	}
+
+	.website-credit {
+		font-size: 10px !important;
+		margin-top: 12px !important;
+	}
+}

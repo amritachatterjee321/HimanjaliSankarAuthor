@@ -20,12 +20,19 @@
 .latest-book-container {
   max-width: $large;
   margin: 0 auto;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 80px;
-  align-items: center;
-
+  
+  /* Desktop: two-column grid (image left, content right) */
+  @media (min-width: 769px) {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-auto-rows: auto;
+    gap: 40px; /* Reduced from 80px to 40px to bring elements closer */
+    align-items: start;
+  }
+  
+  /* Tablet and below: Use grid */
   @media (max-width: $tablet) {
+    display: grid;
     grid-template-columns: 1fr;
     gap: 50px;
     text-align: center;
@@ -33,16 +40,32 @@
 
   @media (max-width: $mobile) {
     gap: 30px;
+    /* Ensure subtitle appears above image on mobile */
+    grid-template-areas: 
+      "subtitle"
+      "image"
+      "content";
   }
 }
 
 .latest-book-image {
   position: relative;
 
+  /* Desktop placement: left column spanning subtitle + content rows */
+  @media (min-width: 769px) {
+    grid-column: 1;
+    grid-row: 1 / span 2;
+    justify-self: start;
+    display: block; // Ensure container is visible
+    width: 100%;
+    max-width: 400px; // Match the book cover dimensions
+  }
+
   @media (max-width: $mobile) {
     order: -1; // Move image to top on mobile
     display: flex;
     justify-content: center;
+    grid-area: image;
   }
 }
 
@@ -119,13 +142,11 @@
     padding: 0; // Remove padding when image is present
     
     .book-cover-image {
-      position: absolute;
-      top: 0;
-      left: 0;
       width: 100%;
       height: 100%;
       object-fit: cover;
-      z-index: 1;
+      border-radius: $border-radius;
+      display: block; // Ensure image displays properly
     }
     
     // Remove the cover content overlay completely
@@ -175,6 +196,15 @@
 }
 
 .latest-book-content {
+  /* Desktop placement: right column, below subtitle */
+  @media (min-width: 769px) {
+    grid-column: 2;
+    grid-row: 2;
+  }
+  @media (max-width: $mobile) {
+    grid-area: content;
+  }
+
   h2 {
     font-size: 3.5em;
     color: $secondary-color;
@@ -199,10 +229,21 @@
   letter-spacing: 2px;
   margin-bottom: 30px;
   font-weight: 600;
+  
+  /* Desktop: place in right column above title */
+  @media (min-width: 769px) {
+    grid-column: 2;
+    grid-row: 1;
+    text-align: left;
+    width: auto;
+    font-size: 16px;
+    margin-bottom: 5px; /* Reduced from 10px to 5px for tighter spacing */
+  }
 
   @media (max-width: $mobile) {
     font-size: 14px;
     margin-bottom: 20px;
+    grid-area: subtitle;
   }
 }
 
@@ -250,17 +291,18 @@
 
 /* Books Grid Section */
 .books-grid-section {
-  background: $gray-light;
-  padding: 80px 20px;
-
-  @media (max-width: $mobile) {
-    padding: 50px 15px;
-  }
+  background: transparent;
+  padding: 0;
+  margin: 0;
+  width: 100%;
+  max-width: 100%;
 }
 
 .books-grid-container {
-  max-width: $large;
-  margin: 0 auto;
+  max-width: none;
+  margin: 0;
+  padding: 0;
+  width: 100%;
 }
 
 .section-header {
@@ -300,10 +342,10 @@
 }
 
 .category-section {
-  background: $white;
+  background: transparent;
   padding: 50px;
   border-radius: $border-radius;
-  box-shadow: $shadow-light;
+  box-shadow: none;
 
   @media (max-width: $tablet) {
     padding: 30px 20px;
@@ -778,5 +820,157 @@
         right: 10px;
       }
     }
+  }
+}
+
+/* Desktop Books Carousel Styles */
+.books-carousel-container {
+  display: block;
+  margin: 0 auto;
+  padding: 0;
+  width: 100%;
+  max-width: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
+.books-carousel-track {
+  display: flex;
+  gap: 30px;
+  padding: 20px 0;
+  white-space: nowrap;
+  width: max-content;
+  
+  &.top-track {
+    animation: scrollLeftToRight 60s linear infinite;
+  }
+  
+  &.bottom-track {
+    animation: scrollRightToLeft 60s linear infinite;
+  }
+  
+  &:hover {
+    animation-play-state: paused;
+  }
+}
+
+.book-card {
+  flex: 0 0 auto;
+  text-align: center;
+  transition: transform 0.3s ease;
+  background: transparent;
+  
+  &:hover {
+    transform: translateY(-5px);
+  }
+}
+
+.book-cover {
+  width: 150px;
+  height: 225px;
+  margin: 0 auto 15px;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $white;
+  font-size: 0.9rem;
+  text-align: center;
+  padding: 20px;
+  background: $primary-color;
+  
+  &:hover {
+    transform: scale(1.05);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+  }
+  
+  &.has-cover-image {
+    padding: 0;
+    background: transparent;
+    
+    .book-cover-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      border-radius: 8px;
+    }
+  }
+}
+
+.book-title {
+  font-family: $font-serif;
+  font-size: 1.1rem;
+  color: $secondary-color;
+  margin-bottom: 8px;
+  line-height: 1.3;
+}
+
+.book-genre {
+  font-size: 0.9rem;
+  color: $gray-medium;
+  font-style: italic;
+}
+
+/* Carousel Animations */
+@keyframes scrollLeftToRight {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+@keyframes scrollRightToLeft {
+  0% { transform: translateX(-50%); }
+  100% { transform: translateX(0); }
+}
+
+/* Ensure tracks are inline-size based and align from the left to avoid right gaps on desktop */
+@media (min-width: 769px) {
+  .books-carousel-container { overflow: hidden; }
+  .books-carousel-track { white-space: nowrap; }
+}
+
+/* Hide mobile grid on desktop */
+.books-mobile-grid {
+  display: none;
+}
+
+/* Desktop-specific overrides */
+@media (min-width: 769px) {
+  /* Remove any white card styling around books on desktop carousel */
+  .books-carousel-container .book-card {
+    background: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .books-carousel-container .book-cover {
+    background: transparent !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+  
+  /* Hide mobile grid on desktop - use more specific selector */
+  .books-grid-section .books-mobile-grid,
+  .category-section .books-mobile-grid,
+  .books-mobile-grid {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    height: 0 !important;
+    overflow: hidden !important;
+  }
+  
+  /* Ensure carousel is centered */
+  .books-carousel-container {
+    text-align: center;
+    margin: 0 auto;
+  }
+  
+  .books-carousel-track {
+    margin: 0 auto;
   }
 }

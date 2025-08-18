@@ -194,7 +194,53 @@ class BookDetailPage extends Component {
 
     descriptionSection.appendChild(description);
 
-    // Add Amazon Buy Button below description
+    // Add reviews above the buy button if available
+    if (this.bookData.reviews && this.bookData.reviews.length > 0) {
+      const reviewsSection = Utils.createElement('div', {
+        className: 'book-detail-reviews'
+      });
+
+      const reviewsList = Utils.createElement('div', {
+        className: 'reviews-list'
+      });
+
+      this.bookData.reviews.forEach(review => {
+        const reviewItem = Utils.createElement('div', {
+          className: 'review-item'
+        });
+
+        const reviewText = Utils.createElement('p', {
+          className: 'review-text',
+          innerHTML: `"${review.text}"`
+        });
+
+        // Create clickable review source with link if available
+        let reviewSource;
+        if (review.link) {
+          reviewSource = Utils.createElement('a', {
+            href: review.link,
+            className: 'review-source clickable',
+            target: '_blank',
+            rel: 'noopener noreferrer',
+            innerHTML: `— ${review.source}`
+          });
+        } else {
+          reviewSource = Utils.createElement('p', {
+            className: 'review-source',
+            innerHTML: `— ${review.source}`
+          });
+        }
+
+        reviewItem.appendChild(reviewText);
+        reviewItem.appendChild(reviewSource);
+        reviewsList.appendChild(reviewItem);
+      });
+
+      reviewsSection.appendChild(reviewsList);
+      descriptionSection.appendChild(reviewsSection);
+    }
+
+    // Add Amazon Buy Button below reviews
     console.log('🛒 Book Amazon link data:', {
       hasAmazonLink: !!this.bookData.amazonLink,
       amazonLink: this.bookData.amazonLink,
@@ -232,7 +278,7 @@ class BookDetailPage extends Component {
         className: 'buy-button large',
         target: '_blank',
         rel: 'noopener noreferrer',
-        innerHTML: 'Buy Now on Amazon'
+        innerHTML: 'Buy Now'
       });
 
       // Add inline styles to ensure button is visible
@@ -321,51 +367,7 @@ class BookDetailPage extends Component {
     // Add description to basic info section
     basicInfo.appendChild(descriptionSection);
 
-    // Add reviews to basic info section if available
-    if (this.bookData.reviews && this.bookData.reviews.length > 0) {
-      const reviewsSection = Utils.createElement('div', {
-        className: 'book-detail-reviews'
-      });
-
-      const reviewsList = Utils.createElement('div', {
-        className: 'reviews-list'
-      });
-
-      this.bookData.reviews.forEach(review => {
-        const reviewItem = Utils.createElement('div', {
-          className: 'review-item'
-        });
-
-        const reviewText = Utils.createElement('p', {
-          className: 'review-text',
-          innerHTML: `"${review.text}"`
-        });
-
-        // Create clickable review source with link if available
-        let reviewSource;
-        if (review.link) {
-          reviewSource = Utils.createElement('a', {
-            href: review.link,
-            className: 'review-source clickable',
-            target: '_blank',
-            rel: 'noopener noreferrer',
-            innerHTML: `— ${review.source}`
-          });
-        } else {
-          reviewSource = Utils.createElement('p', {
-            className: 'review-source',
-            innerHTML: `— ${review.source}`
-          });
-        }
-
-        reviewItem.appendChild(reviewText);
-        reviewItem.appendChild(reviewSource);
-        reviewsList.appendChild(reviewItem);
-      });
-
-      reviewsSection.appendChild(reviewsList);
-      basicInfo.appendChild(reviewsSection);
-    }
+    // Reviews are now added above the buy button in the description section
 
 
 
@@ -469,7 +471,7 @@ class BookDetailPage extends Component {
         bookCover.addEventListener('click', () => {
           const bookId = book._id || book.id || 'latest';
           console.log('🖱️ Carousel book cover clicked, navigating to book ID:', bookId);
-          window.location.href = `/book/${bookId}`;
+          window.location.href = `/book-detail.html?id=${bookId}`;
         });
 
         const bookTitle = Utils.createElement('h4', {

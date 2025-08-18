@@ -64,7 +64,7 @@ class Header extends Component {
     });
 
     const nav = Utils.createElement('nav', {
-      className: 'nav mobile-nav'
+      className: 'nav'
     });
     
     const navMenu = Utils.createElement('ul', {
@@ -92,6 +92,71 @@ class Header extends Component {
     headerContent.appendChild(nav);
     header.appendChild(headerContent);
 
+    // Mobile Navigation Overlay
+    const mobileNav = Utils.createElement('div', {
+      className: 'mobile-nav'
+    });
+
+    const mobileNavContainer = Utils.createElement('div', {
+      className: 'mobile-nav-container'
+    });
+
+    const mobileNavHeader = Utils.createElement('div', {
+      className: 'mobile-nav-header'
+    });
+
+    const mobileNavClose = Utils.createElement('button', {
+      className: 'mobile-nav-close',
+      'aria-label': 'Close navigation menu',
+      innerHTML: '×'
+    });
+
+    const mobileNavLinks = Utils.createElement('div', {
+      className: 'mobile-nav-links'
+    });
+
+    // Add navigation pages to mobile menu
+    CONFIG.navigation.forEach(item => {
+      const mobileNavLink = Utils.createElement('a', {
+        href: item.href,
+        className: 'mobile-nav-link',
+        innerHTML: item.name
+      });
+
+      mobileNavLinks.appendChild(mobileNavLink);
+    });
+
+    // Add social links to mobile menu
+    const mobileNavSocial = Utils.createElement('div', {
+      className: 'mobile-nav-social'
+    });
+
+    if (CONFIG.social) {
+      Object.entries(CONFIG.social).forEach(([platform, url]) => {
+        if (url && url !== '#') {
+          const socialLink = Utils.createElement('a', {
+            href: url,
+            className: 'mobile-nav-social-link',
+            target: '_blank',
+            rel: 'noopener noreferrer',
+            'aria-label': `${platform} profile`,
+            innerHTML: `<i class="fab fa-${platform.toLowerCase()}"></i>`
+          });
+
+          mobileNavSocial.appendChild(socialLink);
+        }
+      });
+    }
+
+    mobileNavHeader.appendChild(mobileNavClose);
+    mobileNavContainer.appendChild(mobileNavHeader);
+    mobileNavContainer.appendChild(mobileNavLinks);
+    mobileNavContainer.appendChild(mobileNavSocial);
+    mobileNav.appendChild(mobileNavContainer);
+
+    // Append mobile nav to body for proper overlay positioning
+    document.body.appendChild(mobileNav);
+
     return header;
   }
 
@@ -108,9 +173,25 @@ class Header extends Component {
       });
     }
 
+    // Mobile navigation close button
+    const mobileNavClose = document.querySelector('.mobile-nav-close');
+    if (mobileNavClose) {
+      mobileNavClose.addEventListener('click', () => {
+        this.closeMobileMenu();
+      });
+    }
+
+    // Close mobile menu when clicking on navigation links
+    const mobileNavLinks = document.querySelectorAll('.mobile-nav-link');
+    mobileNavLinks.forEach(link => {
+      link.addEventListener('click', () => {
+        this.closeMobileMenu();
+      });
+    });
+
     // Close mobile menu when clicking outside
     document.addEventListener('click', (e) => {
-      if (!this.element.contains(e.target)) {
+      if (!this.element.contains(e.target) && !e.target.closest('.mobile-nav')) {
         this.closeMobileMenu();
       }
     });
@@ -121,11 +202,30 @@ class Header extends Component {
         this.closeMobileMenu();
       }
     }, 100));
+
+    // Close mobile menu on escape key
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        this.closeMobileMenu();
+      }
+    });
   }
 
   toggleMobileMenu() {
     this.isMobileMenuOpen = !this.isMobileMenuOpen;
     this.element.classList.toggle('mobile-menu-open', this.isMobileMenuOpen);
+    
+    // Toggle mobile navigation overlay
+    const mobileNav = document.querySelector('.mobile-nav');
+    if (mobileNav) {
+      if (this.isMobileMenuOpen) {
+        mobileNav.classList.add('active');
+        document.body.style.overflow = 'hidden'; // Prevent background scrolling
+      } else {
+        mobileNav.classList.remove('active');
+        document.body.style.overflow = ''; // Restore scrolling
+      }
+    }
     
     // Toggle aria-expanded for accessibility
     const mobileMenuButton = this.element.querySelector('.mobile-menu-button');
@@ -137,6 +237,13 @@ class Header extends Component {
   closeMobileMenu() {
     this.isMobileMenuOpen = false;
     this.element.classList.remove('mobile-menu-open');
+    
+    // Hide mobile navigation overlay
+    const mobileNav = document.querySelector('.mobile-nav');
+    if (mobileNav) {
+      mobileNav.classList.remove('active');
+      document.body.style.overflow = ''; // Restore scrolling
+    }
     
     const mobileMenuButton = this.element.querySelector('.mobile-menu-button');
     if (mobileMenuButton) {

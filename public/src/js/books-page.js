@@ -337,7 +337,7 @@ class BooksPage extends Component {
         originalId: book._id,
         transformedId: book.id
       });
-      window.location.href = `/book/${bookId}`;
+      window.location.href = `/book-detail.html?id=${bookId}`;
     });
 
     const bookInfo = Utils.createElement('div', {
@@ -361,7 +361,7 @@ class BooksPage extends Component {
         originalId: book._id,
         transformedId: book.id
       });
-      window.location.href = `/book/${bookId}`;
+      window.location.href = `/book-detail.html?id=${bookId}`;
     });
 
     const bookYear = Utils.createElement('p', {

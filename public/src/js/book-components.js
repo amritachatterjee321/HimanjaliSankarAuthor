@@ -87,25 +87,32 @@ class LatestBook extends Component {
   }
 
   fixCoverImageUrl(url) {
+    console.log('🔧 Fixing cover image URL:', url);
+    
     // If it's already an absolute URL, return as is
     if (url.startsWith('http://') || url.startsWith('https://')) {
+      console.log('✅ URL is already absolute:', url);
       return url;
     }
     
     // If it's a relative path starting with /uploads/, convert to a placeholder
     if (url.startsWith('/uploads/')) {
-      // For now, use a placeholder image since Vercel can't serve /uploads/
-      // You can replace this with your actual image hosting service URL
-      return 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=400&h=600&fit=crop';
+      console.log('📁 Uploads path detected, using placeholder image');
+      // Use a more reliable placeholder image
+      return 'https://via.placeholder.com/400x600/667eea/ffffff?text=Book+Cover';
     }
     
     // If it's a relative path without /uploads/, try to make it absolute
     if (url.startsWith('/')) {
-      return `${window.location.origin}${url}`;
+      const absoluteUrl = `${window.location.origin}${url}`;
+      console.log('🔗 Made relative path absolute:', absoluteUrl);
+      return absoluteUrl;
     }
     
     // If it's a relative path without leading slash, add origin
-    return `${window.location.origin}/${url}`;
+    const absoluteUrl = `${window.location.origin}/${url}`;
+    console.log('🔗 Added origin to relative path:', absoluteUrl);
+    return absoluteUrl;
   }
 
   render() {
@@ -124,6 +131,12 @@ class LatestBook extends Component {
       className: 'latest-book-container'
     });
 
+    // Latest Release subtitle - moved above book cover
+    const subtitle = Utils.createElement('div', {
+      className: 'book-subtitle',
+      innerHTML: 'Latest Release'
+    });
+
     // Book Image
     const imageContainer = Utils.createElement('div', {
       className: 'latest-book-image'
@@ -137,7 +150,9 @@ class LatestBook extends Component {
     });
 
     // Add actual cover image if available from CMS
+    console.log('🖼️ Cover image data:', this.bookData.coverImage);
     if (this.bookData.coverImage && this.bookData.coverImage.url) {
+      console.log('🖼️ Creating cover image with URL:', this.bookData.coverImage.url);
       const coverImg = Utils.createElement('img', {
         src: this.bookData.coverImage.url,
         alt: `${this.bookData.title} cover`,
@@ -147,6 +162,10 @@ class LatestBook extends Component {
       
       // Add has-cover-image class for styling
       bookCover.classList.add('has-cover-image');
+    } else {
+      console.log('⚠️ No cover image data available, using fallback');
+      // Add fallback text or placeholder
+      bookCover.innerHTML = `<div style="display: flex; align-items: center; justify-content: center; height: 100%; color: white; font-size: 1.2em; text-align: center; padding: 20px;">${this.bookData.title}</div>`;
     }
 
     // Remove all text overlays - no more genre, title, or author text on covers
@@ -162,11 +181,6 @@ class LatestBook extends Component {
     // Book Content
     const content = Utils.createElement('div', {
       className: 'latest-book-content'
-    });
-
-    const subtitle = Utils.createElement('div', {
-      className: 'book-subtitle',
-      innerHTML: 'Latest Release'
     });
 
     const bookTitle = Utils.createElement('h2', {
@@ -261,7 +275,7 @@ class LatestBook extends Component {
       box-shadow: 0 2px 10px rgba(0,0,0,0.08) !important;
     `;
 
-    content.appendChild(subtitle);
+    // Add content elements to content div
     content.appendChild(bookTitle);
     if (awardsSection) {
       content.appendChild(awardsSection);
@@ -269,6 +283,7 @@ class LatestBook extends Component {
     content.appendChild(description);
     content.appendChild(buyButton);
 
+    container.appendChild(subtitle);
     container.appendChild(imageContainer);
     container.appendChild(content);
     section.appendChild(container);
