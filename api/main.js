@@ -382,7 +382,7 @@ async function handleAbout(req, res) {
         const authorInfo = {
           name: authorData.name || "HIMANJALI SANKAR",
           bio: authorData.bio || "A passionate author who writes compelling narratives that explore themes of resilience, hope, and human connection. Her work spans both adult and children's literature, offering readers of all ages meaningful stories that resonate with the human experience.",
-          achievements: authorData.awards || [
+          awards: authorData.awards || [
             "Published author with works in multiple genres",
             "Contributor to prestigious anthologies",
             "Recipient of literary recognition and awards"
@@ -415,7 +415,7 @@ async function handleAbout(req, res) {
         const fallbackAuthorInfo = {
           name: "HIMANJALI SANKAR",
           bio: "A passionate author who writes compelling narratives that explore themes of resilience, hope, and human connection. Her work spans both adult and children's literature, offering readers of all ages meaningful stories that resonate with the human experience.",
-          achievements: [
+          awards: [
             "Published author with works in multiple genres",
             "Contributor to prestigious anthologies",
             "Recipient of literary recognition and awards"
@@ -439,7 +439,7 @@ async function handleAbout(req, res) {
         data: {
           name: "HIMANJALI SANKAR",
           bio: "A passionate author who writes compelling narratives.",
-          achievements: ["Published author", "Contributor to anthologies"],
+          awards: ["Published author", "Contributor to anthologies"],
           genres: ["Contemporary Fiction", "Children's Literature"],
           website: "https://himanjalisankar.com"
         }

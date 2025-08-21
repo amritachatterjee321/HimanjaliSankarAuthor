@@ -444,14 +444,34 @@ class About extends Component {
       className: 'author-bio'
     });
 
+    // Add awards section above bio if available
+    if (this.authorData?.awards && Array.isArray(this.authorData.awards) && this.authorData.awards.length > 0) {
+      const awardsSection = Utils.createElement('div', {
+        className: 'author-awards'
+      });
+      
+      const awardsList = Utils.createElement('ul', {
+        className: 'awards-list'
+      });
+      
+      this.authorData.awards.forEach(award => {
+        const awardItem = Utils.createElement('li', {
+          className: 'award-item',
+          innerHTML: award
+        });
+        awardsList.appendChild(awardItem);
+      });
+      
+      awardsSection.appendChild(awardsList);
+      authorBio.appendChild(awardsSection);
+    }
+
     const bioText = Utils.createElement('div', {
       className: 'bio-text',
       innerHTML: this.authorData?.bio || 'A passionate author who loves to tell stories that touch the heart and inspire the mind. With a deep appreciation for the power of storytelling, Himanjali creates narratives that resonate with readers of all ages.'
     });
 
     authorBio.appendChild(bioText);
-
-    // Awards section removed - no longer displayed
 
     // Assemble about content
     aboutContent.appendChild(authorPhoto);
