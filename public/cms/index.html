@@ -66,9 +66,21 @@
                 </div>
                 
                 <div class="homepage-config">
+                    <!-- Latest Release Text Configuration -->
+                    <div class="latest-release-text-section">
+                        <h3>Latest Release Text</h3>
+                        <p class="section-description">Customize the text that appears above the featured book on the homepage</p>
+                        
+                        <div class="form-group">
+                            <label for="latest-release-text">Latest Release Label</label>
+                            <input type="text" id="latest-release-text" name="latestReleaseText" placeholder="LATEST RELEASE" value="LATEST RELEASE">
+                            <small>This text will appear above the featured book on the homepage</small>
+                        </div>
+                    </div>
+
                     <!-- Featured Book Selection -->
                     <div class="featured-book-section">
-                        <h3>Featured Book (Latest Release)</h3>
+                        <h3>Featured Book</h3>
                         <p class="section-description">Select which book will be featured prominently on the homepage</p>
                         
                         <div class="form-group">
@@ -83,22 +95,7 @@
                         </div>
                     </div>
 
-                    <!-- Homepage Books Selection -->
-                    <div class="homepage-books-section">
-                        <h3>Homepage Books Display</h3>
-                        <p class="section-description">Select which books to show below the featured book and arrange their order</p>
-                        
-                        <div class="homepage-books-list" id="homepage-books-list">
-                            <!-- Available books will be listed here -->
-                        </div>
-                        
-                        <div class="homepage-books-selected" id="homepage-books-selected">
-                            <h4>Selected Books (Drag to reorder)</h4>
-                            <div id="selected-books-container" class="selected-books-container">
-                                <!-- Selected books will be shown here -->
-                            </div>
-                        </div>
-                    </div>
+
                 </div>
             </section>
 

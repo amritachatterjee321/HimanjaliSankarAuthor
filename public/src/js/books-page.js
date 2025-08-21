@@ -36,7 +36,7 @@ class BooksPage extends Component {
       console.log('📚 Response type:', typeof response);
       console.log('📚 Response keys:', Object.keys(response));
       
-      // The API returns { adults: [...], children: [...], latest: {...}, homepageBooks: [...] }
+      // The API returns { adults: [...], children: [...], latest: {...} }
       if (response && typeof response === 'object') {
         if (response.adults || response.children) {
           console.log('📚 Found structured response with adults/children arrays');

@@ -18,33 +18,20 @@ class BooksGrid extends Component {
       this.booksData = await this.apiService.getBooks();
       console.log('🔍 Fetched books data:', this.booksData);
       
-      // Transform the API response to include homepageBooks for the carousel
-      if (this.booksData.adults || this.booksData.children) {
-        // Combine adults and children books for the homepage carousel
-        const allBooks = [
-          ...(this.booksData.adults || []),
-          ...(this.booksData.children || [])
-        ];
-        
-        // Fix cover image URLs for Vercel deployment
-        allBooks.forEach(book => {
+      // Fix cover image URLs for Vercel deployment
+      if (this.booksData.adults) {
+        this.booksData.adults.forEach(book => {
           if (book.coverImage && book.coverImage.url) {
             book.coverImage.url = this.fixCoverImageUrl(book.coverImage.url);
           }
         });
-        
-        // Add homepageBooks property for the carousel
-        this.booksData.homepageBooks = allBooks;
-        
-        console.log('🔍 Transformed homepage books:', this.booksData.homepageBooks);
-        this.booksData.homepageBooks.forEach((book, index) => {
-          console.log(`🔍 Book ${index}:`, {
-            title: book.title,
-            _id: book._id,
-            id: book.id,
-            coverImage: book.coverImage,
-            coverClass: book.coverClass
-          });
+      }
+      
+      if (this.booksData.children) {
+        this.booksData.children.forEach(book => {
+          if (book.coverImage && book.coverImage.url) {
+            book.coverImage.url = this.fixCoverImageUrl(book.coverImage.url);
+          }
         });
       }
     } catch (error) {
@@ -75,11 +62,7 @@ class BooksGrid extends Component {
         ]
       };
       
-      // Add homepageBooks for fallback data too
-      this.booksData.homepageBooks = [
-        ...this.booksData.adults,
-        ...this.booksData.children
-      ];
+
     }
   }
 
@@ -114,11 +97,14 @@ class BooksGrid extends Component {
       className: 'books-categories'
     });
 
-    // Previous Works Section - Books from Homepage Featuring CMS
-    const homepageBooks = this.booksData.homepageBooks || [];
+    // Previous Works Section - Show all books
+    const allBooks = [
+      ...(this.booksData.adults || []),
+      ...(this.booksData.children || [])
+    ];
     
-    if (homepageBooks.length > 0) {
-      const previousWorksSection = this.createCategorySection('', homepageBooks); // Empty title to avoid duplicate
+    if (allBooks.length > 0) {
+      const previousWorksSection = this.createCategorySection('', allBooks);
       categoriesContainer.appendChild(previousWorksSection);
     }
 

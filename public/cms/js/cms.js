@@ -9,7 +9,7 @@ class CMS {
         this.settings = {};
         this.homepageConfig = {
             featuredBook: null,
-            homepageBooks: []
+            latestReleaseText: 'LATEST RELEASE'
         };
         
         this.init().catch(error => {
@@ -117,13 +117,13 @@ class CMS {
     async checkAuth() {
         const token = localStorage.getItem('cms_token');
         if (!token) {
-            this.showLoginScreen();
+            this.showLogin();
             return;
         }
 
         try {
             const response = await fetch('/api/cms/auth/verify', {
-                method: 'POST',
+                method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
                     'Authorization': `Bearer ${token}`
@@ -138,12 +138,12 @@ class CMS {
                 this.loadData();
             } else {
                 localStorage.removeItem('cms_token');
-                this.showLoginScreen();
+                this.showLogin();
             }
         } catch (error) {
             console.error('Auth check failed:', error);
             localStorage.removeItem('cms_token');
-            this.showLoginScreen();
+            this.showLogin();
         }
     }
 
@@ -215,9 +215,7 @@ class CMS {
             this.currentSection = section;
             
             // Load section-specific data
-            if (section === 'images') {
-                this.loadImages();
-            } else if (section === 'media') {
+            if (section === 'media') {
                 this.loadMedia();
             }
         }
@@ -229,7 +227,6 @@ class CMS {
             this.loadMedia(),
             this.loadAuthor(),
             this.loadSocial(),
-            this.loadImages(),
             this.loadHomepageConfig()
         ]);
     }
@@ -1160,7 +1157,7 @@ class CMS {
             const response = await this.apiRequest('/homepage-config');
             this.homepageConfig = response.homepageConfig || {
                 featuredBook: null,
-                homepageBooks: []
+                latestReleaseText: 'LATEST RELEASE'
             };
             this.renderHomepageConfig();
         } catch (error) {
@@ -1168,7 +1165,7 @@ class CMS {
             // Use default config if API fails
             this.homepageConfig = {
                 featuredBook: null,
-                homepageBooks: []
+                latestReleaseText: 'LATEST RELEASE'
             };
             this.renderHomepageConfig();
         }
@@ -1177,8 +1174,6 @@ class CMS {
     renderHomepageConfig() {
         this.renderFeaturedBookSelect();
         this.renderFeaturedBookPreview();
-        this.renderHomepageBooksList();
-        this.renderSelectedBooks();
         this.bindHomepageEvents();
     }
 
@@ -1232,58 +1227,9 @@ class CMS {
         }
     }
 
-    renderHomepageBooksList() {
-        const container = document.getElementById('homepage-books-list');
-        if (!container) return;
 
-        if (this.books.length === 0) {
-            container.innerHTML = '<p class="no-data">No books available</p>';
-            return;
-        }
 
-        container.innerHTML = `
-            <h4>Available Books</h4>
-            <div class="available-books">
-                ${this.books.map(book => `
-                    <div class="book-checkbox-item ${this.homepageConfig.homepageBooks.includes(book.id || book._id) ? 'selected' : ''}" 
-                         data-book-id="${book.id || book._id}">
-                        <input type="checkbox" id="book-${book.id || book._id}" 
-                               ${this.homepageConfig.homepageBooks.includes(book.id || book._id) ? 'checked' : ''}>
-                        <label for="book-${book.id || book._id}">
-                            <strong>${book.title}</strong><br>
-                            <small>${book.year} • ${book.category}</small>
-                        </label>
-                    </div>
-                `).join('')}
-            </div>
-        `;
-    }
 
-    renderSelectedBooks() {
-        const container = document.getElementById('selected-books-container');
-        if (!container) return;
-
-        if (this.homepageConfig.homepageBooks.length === 0) {
-            container.innerHTML = '<div class="empty-state">No books selected for homepage display</div>';
-            return;
-        }
-
-        container.innerHTML = this.homepageConfig.homepageBooks.map((bookId, index) => {
-            const book = this.books.find(b => (b.id || b._id) === bookId);
-            if (!book) return '';
-
-            return `
-                <div class="selected-book-item" data-book-id="${bookId}" data-index="${index}">
-                    <div class="book-info">
-                        <div class="book-title">${book.title}</div>
-                        <div class="book-meta">${book.year} • ${book.category}</div>
-                    </div>
-                    <div class="drag-handle">⋮⋮</div>
-                    <button class="remove-btn" data-book-id="${bookId}">×</button>
-                </div>
-            `;
-        }).join('');
-    }
 
     bindHomepageEvents() {
         // Featured book selection
@@ -1295,124 +1241,16 @@ class CMS {
             });
         }
 
-        // Book checkboxes
-        document.querySelectorAll('.book-checkbox-item').forEach(item => {
-            item.addEventListener('click', (e) => {
-                if (e.target.type !== 'checkbox') {
-                    const checkbox = item.querySelector('input[type="checkbox"]');
-                    checkbox.checked = !checkbox.checked;
-                }
-                
-                const bookId = item.dataset.bookId;
-                const checkbox = item.querySelector('input[type="checkbox"]');
-                
-                if (checkbox.checked) {
-                    if (!this.homepageConfig.homepageBooks.includes(bookId)) {
-                        this.homepageConfig.homepageBooks.push(bookId);
-                    }
-                    item.classList.add('selected');
-                } else {
-                    const index = this.homepageConfig.homepageBooks.indexOf(bookId);
-                    if (index > -1) {
-                        this.homepageConfig.homepageBooks.splice(index, 1);
-                    }
-                    item.classList.remove('selected');
-                }
-                
-                this.renderSelectedBooks();
+        // Latest release text input
+        const latestReleaseInput = document.getElementById('latest-release-text');
+        if (latestReleaseInput) {
+            latestReleaseInput.addEventListener('input', (e) => {
+                this.homepageConfig.latestReleaseText = e.target.value;
             });
-        });
-
-        // Remove book buttons
-        document.querySelectorAll('.remove-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                const bookId = e.target.dataset.bookId;
-                const index = this.homepageConfig.homepageBooks.indexOf(bookId);
-                if (index > -1) {
-                    this.homepageConfig.homepageBooks.splice(index, 1);
-                }
-                
-                // Update checkbox
-                const checkboxItem = document.querySelector(`[data-book-id="${bookId}"]`);
-                if (checkboxItem) {
-                    const checkbox = checkboxItem.querySelector('input[type="checkbox"]');
-                    if (checkbox) {
-                        checkbox.checked = false;
-                        checkboxItem.classList.remove('selected');
-                    }
-                }
-                
-                this.renderSelectedBooks();
-            });
-        });
-
-        // Drag and drop functionality
-        this.initializeDragAndDrop();
+        }
     }
 
-    initializeDragAndDrop() {
-        const container = document.getElementById('selected-books-container');
-        if (!container) return;
 
-        let draggedItem = null;
-
-        container.addEventListener('dragstart', (e) => {
-            if (e.target.classList.contains('selected-book-item')) {
-                draggedItem = e.target;
-                e.target.classList.add('dragging');
-                e.dataTransfer.effectAllowed = 'move';
-                e.dataTransfer.setData('text/html', e.target.outerHTML);
-            }
-        });
-
-        container.addEventListener('dragend', (e) => {
-            if (e.target.classList.contains('selected-book-item')) {
-                e.target.classList.remove('dragging');
-            }
-        });
-
-        container.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            e.dataTransfer.dropEffect = 'move';
-            
-            if (e.target.classList.contains('selected-book-item')) {
-                e.target.classList.add('drag-over');
-            }
-        });
-
-        container.addEventListener('dragleave', (e) => {
-            if (e.target.classList.contains('selected-book-item')) {
-                e.target.classList.remove('drag-over');
-            }
-        });
-
-        container.addEventListener('drop', (e) => {
-            e.preventDefault();
-            
-            if (e.target.classList.contains('selected-book-item') && draggedItem) {
-                const targetIndex = parseInt(e.target.dataset.index);
-                const draggedIndex = parseInt(draggedItem.dataset.index);
-                
-                // Reorder the array
-                const [movedBook] = this.homepageConfig.homepageBooks.splice(draggedIndex, 1);
-                this.homepageConfig.homepageBooks.splice(targetIndex, 0, movedBook);
-                
-                // Re-render to update indices
-                this.renderSelectedBooks();
-                this.bindHomepageEvents();
-            }
-            
-            // Remove drag-over styling
-            document.querySelectorAll('.drag-over').forEach(item => {
-                item.classList.remove('drag-over');
-            });
-        });
-
-        // Make items draggable
-        document.querySelectorAll('.selected-book-item').forEach(item => {
-            item.draggable = true;
-        });
-    }
 
     copyImageUrl(url) {
         navigator.clipboard.writeText(url).then(() => {
@@ -1428,7 +1266,6 @@ class CMS {
         try {
             await this.apiRequest(`/images/${imageId}`, 'DELETE');
             this.showNotification('Image deleted successfully!', 'success');
-            this.loadImages();
         } catch (error) {
             console.error('Failed to delete image:', error);
             this.showNotification('Failed to delete image', 'error');

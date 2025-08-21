@@ -55,7 +55,6 @@ router.get('/', async (req, res) => {
     // First, try to get books from MongoDB (CMS data)
     let books = [];
     let featuredBookData = null;
-    let homepageBooksData = [];
     
     try {
       const booksCollection = database.getBooksCollection();
@@ -68,8 +67,7 @@ router.get('/', async (req, res) => {
       
         if (homepageConfig) {
           console.log('✅ Found homepage configuration from CMS:', {
-            featuredBook: homepageConfig.featuredBook,
-            homepageBooks: homepageConfig.homepageBooks?.length || 0
+            featuredBook: homepageConfig.featuredBook
           });
           
           // Get featured book
@@ -101,33 +99,7 @@ router.get('/', async (req, res) => {
             }
           }
           
-          // Get homepage books in the order specified by CMS
-          if (homepageConfig.homepageBooks && Array.isArray(homepageConfig.homepageBooks)) {
-            homepageBooksData = homepageConfig.homepageBooks
-              .map(bookId => {
-                const book = books.find(b => 
-                  b._id?.toString() === bookId || 
-                  b.id === bookId
-                );
-                return book;
-              })
-              .filter(book => book) // Remove any undefined books
-              .map(book => ({
-                id: book._id?.toString() || book.id,
-                title: book.title,
-                year: book.year,
-                genre: book.genre,
-                category: book.category,
-                description: book.description,
-                shortDescription: book.shortDescription,
-                amazonLink: book.amazonLink,
-                awards: book.awards || [],
-                coverImage: book.coverImage,
-                coverClass: book.coverClass
-              }));
-            
-            console.log(`✅ Loaded ${homepageBooksData.length} homepage books from CMS config`);
-          }
+
         } else {
           console.log('⚠️ No homepage configuration found in CMS');
         }
@@ -145,7 +117,6 @@ router.get('/', async (req, res) => {
     // Transform CMS books to match the expected format
     const transformedBooks = {
       latest: featuredBookData || null,
-      homepageBooks: homepageBooksData.length > 0 ? homepageBooksData : [], // Direct access to homepage books
       adults: books.filter(book => book.category === 'adults').map(book => ({
         id: book._id?.toString() || book.id,
         title: book.title,
@@ -222,7 +193,8 @@ router.get('/latest', async (req, res) => {
             awards: featuredBook.awards || [],
             reviews: featuredBook.reviews || [],
             coverImage: featuredBook.coverImage,
-            coverClass: featuredBook.coverClass
+            coverClass: featuredBook.coverClass,
+            latestReleaseText: homepageConfig.latestReleaseText || "LATEST RELEASE"
           };
           return res.json(transformedLatest);
         } else {

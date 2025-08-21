@@ -906,26 +906,7 @@ async function handleHomepageConfig(req, res) {
         }
       }
       
-      // Validate homepage books if updating
-      if (updates.homepageBooks && Array.isArray(updates.homepageBooks)) {
-        try {
-          const client = await clientPromise;
-          const dbName = getDatabaseName();
-          const db = client.db(dbName);
-          const booksCollection = db.collection('books');
-          
-          // Check if all homepage books exist
-          for (const bookId of updates.homepageBooks) {
-            const bookExists = await booksCollection.findOne({ _id: new ObjectId(bookId) });
-            if (!bookExists) {
-              return res.status(400).json({ error: `Homepage book with ID ${bookId} not found` });
-            }
-          }
-        } catch (error) {
-          console.error('Error validating homepage books:', error);
-          return res.status(400).json({ error: 'Invalid homepage book ID format' });
-        }
-      }
+
       
       const client = await clientPromise;
       const dbName = getDatabaseName();
@@ -1139,7 +1120,7 @@ function getMockSocial() {
 function getMockHomepageConfig() {
   return {
     featuredBook: 'book-1',
-    homepageBooks: ['book-1', 'book-2'],
+    latestReleaseText: 'LATEST RELEASE',
     heroTitle: 'Welcome to the World of Himanjali Sankar',
     heroSubtitle: 'Discover stories that touch the heart and inspire the mind',
     updatedAt: new Date().toISOString()

@@ -75,6 +75,8 @@ class ApiService {
   async getMedia() {
     return this.request('/api/media');
   }
+
+
 }
 
 export default ApiService;

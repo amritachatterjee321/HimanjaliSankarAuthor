@@ -324,7 +324,7 @@ class CMSService {
       const config = await collection.findOne({});
       return config || {
         featuredBook: null,
-        homepageBooks: []
+        latestReleaseText: 'LATEST RELEASE'
       };
     } catch (error) {
       console.error('Error fetching homepage config:', error);

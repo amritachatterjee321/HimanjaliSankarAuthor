@@ -27,6 +27,14 @@ class LatestBook extends Component {
         newData.coverImage.url = this.fixCoverImageUrl(newData.coverImage.url);
       }
       
+      // Use latestReleaseText from book data (now included in API response)
+      if (newData.latestReleaseText) {
+        console.log('📝 Using latest release text from API:', newData.latestReleaseText);
+      } else {
+        newData.latestReleaseText = 'LATEST RELEASE';
+        console.log('📝 Using default latest release text');
+      }
+      
       // Check if data has actually changed
       if (this.hasDataChanged(newData)) {
         console.log('🔄 New book data detected, updating display...');
@@ -53,7 +61,8 @@ class LatestBook extends Component {
           publicationYear: "2024",
           publisher: "Literary Press",
           amazonLink: "https://amazon.com/echoes-tomorrow",
-          pages: "324"
+          pages: "324",
+          latestReleaseText: "LATEST RELEASE"
         };
       }
     }
@@ -63,7 +72,7 @@ class LatestBook extends Component {
     if (!this.bookData) return true;
     
     // Compare key fields to detect changes
-    const fieldsToCompare = ['title', 'subtitle', 'genre', 'description', 'publicationYear', 'publisher'];
+    const fieldsToCompare = ['title', 'subtitle', 'genre', 'description', 'publicationYear', 'publisher', 'latestReleaseText'];
     const hasChanges = fieldsToCompare.some(field => {
       const oldValue = this.bookData[field];
       const newValue = newData[field];
@@ -134,7 +143,7 @@ class LatestBook extends Component {
     // Latest Release subtitle - moved above book cover
     const subtitle = Utils.createElement('div', {
       className: 'book-subtitle',
-      innerHTML: 'Latest Release'
+      innerHTML: this.bookData.latestReleaseText || 'LATEST RELEASE'
     });
 
     // Book Image
