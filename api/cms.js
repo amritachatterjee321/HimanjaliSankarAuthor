@@ -864,7 +864,7 @@ async function handleHomepageConfig(req, res) {
       const client = await clientPromise;
       const dbName = getDatabaseName();
       const db = client.db(dbName);
-      const configCollection = db.collection('homepage-config');
+      const configCollection = db.collection('homepageConfig');
       console.log('🏠 Homepage config collection accessed');
 
       // Get homepage configuration from MongoDB
@@ -911,7 +911,7 @@ async function handleHomepageConfig(req, res) {
       const client = await clientPromise;
       const dbName = getDatabaseName();
       const db = client.db(dbName);
-      const configCollection = db.collection('homepage-config');
+      const configCollection = db.collection('homepageConfig');
       
       // Add update timestamp
       updates.updatedAt = new Date();

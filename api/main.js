@@ -100,6 +100,52 @@ async function handleBooks(req, res) {
           res.status(400).json({ message: 'Invalid book ID format' });
         }
       } else if (latest) {
+        // First try to get featured book from CMS homepage configuration
+        try {
+          console.log('🔄 Attempting to fetch featured book from CMS homepage configuration...');
+          const homepageConfigCollection = db.collection('homepageConfig');
+          const homepageConfig = await homepageConfigCollection.findOne({});
+          
+          if (homepageConfig && homepageConfig.featuredBook) {
+            // Get the featured book from the books collection
+            const featuredBook = await booksCollection.findOne({ 
+              $or: [
+                { _id: new ObjectId(homepageConfig.featuredBook) },
+                { id: homepageConfig.featuredBook }
+              ]
+            });
+            
+            if (featuredBook) {
+              console.log('✅ Using CMS homepage config for featured book:', featuredBook.title);
+              const transformedLatest = {
+                id: featuredBook._id?.toString() || featuredBook.id,
+                title: featuredBook.title,
+                subtitle: "Latest Release",
+                description: featuredBook.description,
+                shortDescription: featuredBook.shortDescription || featuredBook.description?.substring(0, 200),
+                year: featuredBook.year,
+                genre: featuredBook.genre,
+                category: featuredBook.category,
+                amazonLink: featuredBook.amazonLink,
+                awards: featuredBook.awards || [],
+                reviews: featuredBook.reviews || [],
+                coverImage: featuredBook.coverImage,
+                coverClass: featuredBook.coverClass,
+                latestReleaseText: homepageConfig.latestReleaseText || "LATEST RELEASE"
+              };
+              return res.status(200).json(transformedLatest);
+            } else {
+              console.log('❌ Featured book from CMS config not found in books collection');
+            }
+          } else {
+            console.log('❌ No featured book configured in CMS homepage config');
+          }
+        } catch (error) {
+          console.error('❌ Error accessing CMS homepage configuration:', error.message);
+          console.log('🔄 Falling back to books collection');
+        }
+        
+        // Fallback to getting the latest book by year
         const latestBook = await booksCollection
           .find({})
           .sort({ year: -1 })
@@ -107,7 +153,24 @@ async function handleBooks(req, res) {
           .toArray();
         
         if (latestBook.length > 0) {
-          res.status(200).json(latestBook[0]);
+          const book = latestBook[0];
+          const transformedLatest = {
+            id: book._id?.toString() || book.id,
+            title: book.title,
+            subtitle: "Latest Release",
+            description: book.description,
+            shortDescription: book.shortDescription || book.description?.substring(0, 200),
+            year: book.year,
+            genre: book.genre,
+            category: book.category,
+            amazonLink: book.amazonLink,
+            awards: book.awards || [],
+            reviews: book.reviews || [],
+            coverImage: book.coverImage,
+            coverClass: book.coverClass,
+            latestReleaseText: "LATEST RELEASE"
+          };
+          res.status(200).json(transformedLatest);
         } else {
           res.status(404).json({ message: 'No books found' });
         }

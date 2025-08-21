@@ -1155,7 +1155,7 @@ class CMS {
     async loadHomepageConfig() {
         try {
             const response = await this.apiRequest('/homepage-config');
-            this.homepageConfig = response.homepageConfig || {
+            this.homepageConfig = response.config || {
                 featuredBook: null,
                 latestReleaseText: 'LATEST RELEASE'
             };
@@ -1174,6 +1174,7 @@ class CMS {
     renderHomepageConfig() {
         this.renderFeaturedBookSelect();
         this.renderFeaturedBookPreview();
+        this.populateLatestReleaseText();
         this.bindHomepageEvents();
     }
 
@@ -1224,6 +1225,13 @@ class CMS {
         } else {
             preview.innerHTML = '<p>No featured book selected</p>';
             preview.classList.remove('has-book');
+        }
+    }
+
+    populateLatestReleaseText() {
+        const latestReleaseInput = document.getElementById('latest-release-text');
+        if (latestReleaseInput) {
+            latestReleaseInput.value = this.homepageConfig.latestReleaseText || 'LATEST RELEASE';
         }
     }
 
