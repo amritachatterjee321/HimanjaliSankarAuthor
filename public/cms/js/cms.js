@@ -42,6 +42,15 @@ class CMS {
             this.logout();
         });
 
+        // Clear token (for debugging)
+        document.getElementById('clear-token-btn').addEventListener('click', () => {
+            localStorage.removeItem('cms_token');
+            this.showNotification('Token cleared, please refresh the page', 'info');
+            setTimeout(() => {
+                window.location.reload();
+            }, 2000);
+        });
+
         // Book management
         document.getElementById('add-book-btn').addEventListener('click', () => {
             this.showBookModal();
@@ -115,13 +124,23 @@ class CMS {
     // Removed bindImagePreviewEvents function - now using URL-based image management
 
     async checkAuth() {
+        console.log('🔐 Checking authentication...');
         const token = localStorage.getItem('cms_token');
+        console.log('🔐 Token in localStorage:', token ? 'Present' : 'Not present');
+        
+        // Force login screen for now to debug the issue
+        console.log('🔐 Forcing login screen for debugging');
+        this.showLogin();
+        return;
+        
         if (!token) {
+            console.log('🔐 No token found, showing login screen');
             this.showLogin();
             return;
         }
 
         try {
+            console.log('🔐 Verifying token with API...');
             const response = await fetch('/api/cms/auth/verify', {
                 method: 'GET',
                 headers: {
@@ -130,18 +149,22 @@ class CMS {
                 }
             });
 
+            console.log('🔐 Verification response status:', response.status);
+
             if (response.ok) {
                 const data = await response.json();
+                console.log('🔐 Token verified successfully:', data);
                 this.isAuthenticated = true;
                 this.currentUser = data.user;
                 this.showDashboard();
                 this.loadData();
             } else {
+                console.log('🔐 Token verification failed, removing token');
                 localStorage.removeItem('cms_token');
                 this.showLogin();
             }
         } catch (error) {
-            console.error('Auth check failed:', error);
+            console.error('🔐 Auth check failed:', error);
             localStorage.removeItem('cms_token');
             this.showLogin();
         }
@@ -185,11 +208,13 @@ class CMS {
     }
 
     showLogin() {
+        console.log('🔐 Showing login screen');
         document.getElementById('login-screen').classList.add('active');
         document.getElementById('dashboard').classList.remove('active');
     }
 
     showDashboard() {
+        console.log('🔐 Showing dashboard');
         document.getElementById('login-screen').classList.remove('active');
         document.getElementById('dashboard').classList.add('active');
     }

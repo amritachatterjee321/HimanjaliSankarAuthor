@@ -55,9 +55,11 @@ export default async function handler(req, res) {
     }
   } catch (error) {
     console.error('CMS API error:', error);
+    console.error('Error stack:', error.stack);
     res.status(500).json({ 
       error: 'Internal server error',
-      message: error.message 
+      message: error.message,
+      stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
     });
   }
 }
@@ -851,6 +853,11 @@ async function handleSocial(req, res) {
 
 // Handle homepage configuration
 async function handleHomepageConfig(req, res) {
+  console.log('🏠 Homepage config handler called');
+  console.log('🏠 Method:', req.method);
+  console.log('🏠 URL:', req.url);
+  console.log('🏠 Query params:', req.query);
+  
   try {
     if (req.method === 'GET') {
       // Get homepage configuration from MongoDB
@@ -880,7 +887,32 @@ async function handleHomepageConfig(req, res) {
       }
     } else if (req.method === 'PUT') {
       // Update homepage configuration in MongoDB
+      console.log('🏠 PUT request received');
+      console.log('🏠 MongoDB available check:', isMongoDBAvailable());
+      console.log('🏠 Authorization header:', req.headers.authorization ? 'Present' : 'Not present');
+      
+      // Check for authentication token (temporarily disabled for debugging)
+      const authHeader = req.headers.authorization;
+      if (authHeader && authHeader.startsWith('Bearer ')) {
+        const token = authHeader.substring(7);
+        console.log('🏠 Token received:', token ? 'Present' : 'Not present');
+        
+        try {
+          // Verify the token
+          const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key');
+          console.log('✅ Token verified for user:', decoded.username);
+        } catch (tokenError) {
+          console.error('❌ Token verification failed:', tokenError.message);
+          console.log('⚠️ Continuing without authentication for debugging');
+          // Temporarily allow requests even with invalid tokens for debugging
+        }
+      } else {
+        console.log('⚠️ No authentication token provided');
+        // For now, allow requests without authentication for testing
+      }
+      
       if (!isMongoDBAvailable()) {
+        console.log('❌ MongoDB not available');
         return res.status(500).json({ error: 'MongoDB not available' });
       }
 
@@ -888,6 +920,14 @@ async function handleHomepageConfig(req, res) {
       console.log('🏠 Updating homepage config:', updates);
       console.log('🏠 Request body type:', typeof req.body);
       console.log('🏠 Request body keys:', Object.keys(req.body || {}));
+      console.log('🏠 Request headers:', req.headers);
+      console.log('🏠 Request method:', req.method);
+      
+      // Ensure we have a valid body
+      if (!updates || typeof updates !== 'object') {
+        console.error('Invalid request body:', updates);
+        return res.status(400).json({ error: 'Invalid request body' });
+      }
       
       // Validate featured book if updating
       if (updates.featuredBook && updates.featuredBook.trim() !== '') {
@@ -921,20 +961,30 @@ async function handleHomepageConfig(req, res) {
         updates.featuredBook = null;
       }
       
-
-      
+      // Save to database
+      console.log('🏠 Connecting to MongoDB...');
+      let client, db, configCollection;
       try {
-        const client = await clientPromise;
+        client = await clientPromise;
+        console.log('✅ MongoDB client connected');
+        
         const dbName = getDatabaseName();
-        const db = client.db(dbName);
-        const configCollection = db.collection('homepageConfig');
-        
-        // Add update timestamp
-        updates.updatedAt = new Date();
-        
-        console.log('🏠 Saving homepage config to database:', updates);
-        
-        // Upsert the configuration (create if doesn't exist, update if it does)
+        console.log('🏠 Using database:', dbName);
+        db = client.db(dbName);
+        configCollection = db.collection('homepageConfig');
+        console.log('🏠 Homepage config collection accessed');
+      } catch (dbError) {
+        console.error('❌ Database connection error:', dbError);
+        throw dbError;
+      }
+      
+      // Add update timestamp
+      updates.updatedAt = new Date();
+      
+      console.log('🏠 Saving homepage config to database:', updates);
+      
+      // Upsert the configuration (create if doesn't exist, update if it does)
+      try {
         const result = await configCollection.updateOne(
           {}, // Empty filter to match any document
           { $set: updates },
@@ -947,9 +997,9 @@ async function handleHomepageConfig(req, res) {
           message: 'Homepage configuration updated successfully',
           updates
         });
-      } catch (dbError) {
-        console.error('Database error while saving homepage config:', dbError);
-        res.status(500).json({ error: 'Failed to save homepage configuration to database' });
+      } catch (updateError) {
+        console.error('❌ Database update error:', updateError);
+        throw updateError;
       }
     } else {
       res.status(405).json({ error: 'Method not allowed' });

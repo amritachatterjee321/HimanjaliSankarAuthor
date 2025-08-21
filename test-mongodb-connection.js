@@ -1,46 +1,48 @@
-import { MongoClient } from 'mongodb';
-import dotenv from 'dotenv';
+// Test MongoDB connection
+import clientPromise, { isMongoDBAvailable, getDatabaseName } from './api/lib/mongodb.js';
 
-dotenv.config();
-
-const MONGODB_URI = process.env.MONGODB_URI;
-const DB_NAME = process.env.DB_NAME || 'Cluster0';
-
-console.log('🔧 Testing MongoDB Connection...');
-console.log('URI:', MONGODB_URI ? 'Set' : 'Not set');
-console.log('DB Name:', DB_NAME);
-
-if (!MONGODB_URI) {
-  console.error('❌ MONGODB_URI is not set in .env file');
-  process.exit(1);
-}
-
-async function testConnection() {
-  const options = {
-    retryWrites: true,
-    w: 'majority',
-    serverSelectionTimeoutMS: 30000,
-    socketTimeoutMS: 45000,
-  };
-
+async function testMongoDBConnection() {
+  console.log('🧪 Testing MongoDB connection...');
+  
   try {
-    console.log('🔄 Attempting to connect...');
-    const client = new MongoClient(MONGODB_URI, options);
+    // Check if MongoDB is available
+    const available = isMongoDBAvailable();
+    console.log('MongoDB available:', available);
     
-    await client.connect();
-    console.log('✅ Connected successfully!');
+    if (!available) {
+      console.log('❌ MongoDB not available - no MONGODB_URI');
+      return;
+    }
     
-    const db = client.db(DB_NAME);
-    const collections = await db.listCollections().toArray();
-    console.log('📊 Collections found:', collections.map(c => c.name));
+    // Try to connect
+    console.log('🔌 Attempting to connect to MongoDB...');
+    const client = await clientPromise;
+    console.log('✅ MongoDB client connected successfully');
     
-    await client.close();
-    console.log('🔌 Connection closed');
+    const dbName = getDatabaseName();
+    console.log('📊 Database name:', dbName);
+    
+    const db = client.db(dbName);
+    console.log('✅ Database accessed successfully');
+    
+    // Test homepage config collection
+    const configCollection = db.collection('homepageConfig');
+    console.log('✅ Homepage config collection accessed');
+    
+    // Test a simple operation
+    const testDoc = await configCollection.findOne({});
+    console.log('✅ Test query successful, found:', testDoc ? '1 document' : '0 documents');
+    
+    console.log('🎉 All MongoDB tests passed!');
     
   } catch (error) {
-    console.error('❌ Connection failed:', error.message);
-    console.error('Full error:', error);
+    console.error('❌ MongoDB test failed:', error);
+    console.error('Error details:', {
+      name: error.name,
+      message: error.message,
+      stack: error.stack
+    });
   }
 }
 
-testConnection();
+testMongoDBConnection();
