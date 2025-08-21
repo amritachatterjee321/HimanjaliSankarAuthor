@@ -230,7 +230,7 @@ class LatestBook extends Component {
       href: amazonLink,
       className: 'buy-button',
       target: '_blank',
-      innerHTML: 'Buy Now on Amazon',
+      innerHTML: 'Buy now',
       onClick: (e) => {
         if (!this.bookData.amazonLink) {
           e.preventDefault();

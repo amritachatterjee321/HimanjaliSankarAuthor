@@ -721,14 +721,7 @@ $tablet: 768px;
 		margin-bottom: 30px !important;
 	}
 
-	/* Remove arrows from buy buttons on mobile */
-	.buy-button::after,
-	.buy-button.large::after {
-		content: none !important;
-		display: none !important;
-	}
-
-	/* Remove gap that was meant for arrows */
+	/* Buy button styling for mobile */
 	.buy-button,
 	.buy-button.large {
 		gap: 0 !important;

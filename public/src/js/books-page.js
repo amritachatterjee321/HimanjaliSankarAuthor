@@ -395,7 +395,7 @@ class BooksPage extends Component {
         className: 'book-link',
         target: '_blank',
         rel: 'noopener noreferrer',
-        innerHTML: 'View on Amazon'
+        innerHTML: 'Buy now'
       });
 
       bookActions.appendChild(amazonButton);

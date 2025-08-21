@@ -375,15 +375,7 @@
     box-shadow: $shadow-medium;
   }
 
-  &::after {
-    content: '→';
-    font-size: 18px;
-    transition: $transition;
-  }
 
-  &:hover::after {
-    transform: translateX(5px);
-  }
 }
 
 
