@@ -42,15 +42,6 @@ class CMS {
             this.logout();
         });
 
-        // Clear token (for debugging)
-        document.getElementById('clear-token-btn').addEventListener('click', () => {
-            localStorage.removeItem('cms_token');
-            this.showNotification('Token cleared, please refresh the page', 'info');
-            setTimeout(() => {
-                window.location.reload();
-            }, 2000);
-        });
-
         // Book management
         document.getElementById('add-book-btn').addEventListener('click', () => {
             this.showBookModal();
@@ -127,11 +118,6 @@ class CMS {
         console.log('🔐 Checking authentication...');
         const token = localStorage.getItem('cms_token');
         console.log('🔐 Token in localStorage:', token ? 'Present' : 'Not present');
-        
-        // Force login screen for now to debug the issue
-        console.log('🔐 Forcing login screen for debugging');
-        this.showLogin();
-        return;
         
         if (!token) {
             console.log('🔐 No token found, showing login screen');

@@ -17,7 +17,21 @@ export default async function handler(req, res) {
   }
 
   // Get the endpoint from the URL path - use query parameter for endpoint
-  const endpoint = req.query.endpoint || req.url?.split('/').pop() || '';
+  let endpoint = req.query.endpoint || '';
+  
+  // If no endpoint in query, try to extract from URL path
+  if (!endpoint) {
+    const urlPath = req.url || '';
+    const pathParts = urlPath.split('/');
+    // Look for the endpoint in the path
+    const endpointIndex = pathParts.findIndex(part => 
+      ['login', 'verify', 'dashboard', 'books', 'media', 'author', 'social', 'homepage-config', 'settings'].includes(part)
+    );
+    if (endpointIndex !== -1) {
+      endpoint = pathParts[endpointIndex];
+    }
+  }
+  
   console.log('🔍 CMS API called with endpoint:', endpoint);
   console.log('🔍 Full URL:', req.url);
   console.log('🔍 Query params:', req.query);
@@ -39,6 +53,7 @@ export default async function handler(req, res) {
     } else if (endpoint === 'social' || req.url?.includes('/social')) {
       await handleSocial(req, res);
     } else if (endpoint === 'homepage-config' || req.url?.includes('/homepage-config')) {
+      console.log('🏠 Routing to homepage-config handler');
       await handleHomepageConfig(req, res);
     } else if (endpoint === 'settings' || req.url?.includes('/settings')) {
       await handleSettings(req, res);
@@ -857,6 +872,7 @@ async function handleHomepageConfig(req, res) {
   console.log('🏠 Method:', req.method);
   console.log('🏠 URL:', req.url);
   console.log('🏠 Query params:', req.query);
+  console.log('🏠 Headers:', req.headers);
   
   try {
     if (req.method === 'GET') {
@@ -888,11 +904,11 @@ async function handleHomepageConfig(req, res) {
     } else if (req.method === 'PUT') {
       // Update homepage configuration in MongoDB
       console.log('🏠 PUT request received');
-      console.log('🏠 MongoDB available check:', isMongoDBAvailable());
-      console.log('🏠 Authorization header:', req.headers.authorization ? 'Present' : 'Not present');
       
-      // Check for authentication token (temporarily disabled for debugging)
+      // Check for authentication token
       const authHeader = req.headers.authorization;
+      console.log('🏠 Authorization header:', authHeader);
+      
       if (authHeader && authHeader.startsWith('Bearer ')) {
         const token = authHeader.substring(7);
         console.log('🏠 Token received:', token ? 'Present' : 'Not present');
@@ -903,12 +919,13 @@ async function handleHomepageConfig(req, res) {
           console.log('✅ Token verified for user:', decoded.username);
         } catch (tokenError) {
           console.error('❌ Token verification failed:', tokenError.message);
-          console.log('⚠️ Continuing without authentication for debugging');
-          // Temporarily allow requests even with invalid tokens for debugging
+          console.log('🏠 Returning 401 for invalid token');
+          return res.status(401).json({ error: 'Invalid authentication token' });
         }
       } else {
         console.log('⚠️ No authentication token provided');
-        // For now, allow requests without authentication for testing
+        console.log('🏠 Returning 401 for missing token');
+        return res.status(401).json({ error: 'Authentication token required' });
       }
       
       if (!isMongoDBAvailable()) {
@@ -918,10 +935,6 @@ async function handleHomepageConfig(req, res) {
 
       const updates = req.body;
       console.log('🏠 Updating homepage config:', updates);
-      console.log('🏠 Request body type:', typeof req.body);
-      console.log('🏠 Request body keys:', Object.keys(req.body || {}));
-      console.log('🏠 Request headers:', req.headers);
-      console.log('🏠 Request method:', req.method);
       
       // Ensure we have a valid body
       if (!updates || typeof updates !== 'object') {
@@ -933,7 +946,6 @@ async function handleHomepageConfig(req, res) {
       if (updates.featuredBook && updates.featuredBook.trim() !== '') {
         // Check if the featured book exists in books collection
         try {
-          console.log('🏠 Validating featured book ID:', updates.featuredBook);
           const client = await clientPromise;
           const dbName = getDatabaseName();
           const db = client.db(dbName);
@@ -941,38 +953,29 @@ async function handleHomepageConfig(req, res) {
           
           // Validate ObjectId format first
           if (!ObjectId.isValid(updates.featuredBook)) {
-            console.error('Invalid ObjectId format:', updates.featuredBook);
             return res.status(400).json({ error: 'Invalid featured book ID format' });
           }
           
           const bookExists = await booksCollection.findOne({ _id: new ObjectId(updates.featuredBook) });
           if (!bookExists) {
-            console.error('Featured book not found in database:', updates.featuredBook);
             return res.status(400).json({ error: 'Featured book not found in database' });
           }
-          console.log('✅ Featured book validation successful');
         } catch (error) {
           console.error('Error validating featured book:', error);
           return res.status(400).json({ error: 'Invalid featured book ID format' });
         }
       } else {
         // If featuredBook is empty/null, set it to null explicitly
-        console.log('🏠 Setting featuredBook to null (empty value)');
         updates.featuredBook = null;
       }
       
       // Save to database
-      console.log('🏠 Connecting to MongoDB...');
       let client, db, configCollection;
       try {
         client = await clientPromise;
-        console.log('✅ MongoDB client connected');
-        
         const dbName = getDatabaseName();
-        console.log('🏠 Using database:', dbName);
         db = client.db(dbName);
         configCollection = db.collection('homepageConfig');
-        console.log('🏠 Homepage config collection accessed');
       } catch (dbError) {
         console.error('❌ Database connection error:', dbError);
         throw dbError;
@@ -980,8 +983,6 @@ async function handleHomepageConfig(req, res) {
       
       // Add update timestamp
       updates.updatedAt = new Date();
-      
-      console.log('🏠 Saving homepage config to database:', updates);
       
       // Upsert the configuration (create if doesn't exist, update if it does)
       try {
@@ -991,7 +992,7 @@ async function handleHomepageConfig(req, res) {
           { upsert: true }
         );
         
-        console.log('✅ Homepage config updated successfully in database. Result:', result);
+        console.log('✅ Homepage config updated successfully');
         res.json({
           success: true,
           message: 'Homepage configuration updated successfully',

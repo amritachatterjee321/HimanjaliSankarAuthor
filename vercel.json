@@ -27,8 +27,15 @@
     { "source": "/api/cms/media/:id", "destination": "/api/cms?endpoint=media&id=:id" },
     { "source": "/api/cms/author", "destination": "/api/cms?endpoint=author" },
     { "source": "/api/cms/social", "destination": "/api/cms?endpoint=social" },
-    { "source": "/api/cms/homepage-config", "destination": "/api/cms?endpoint=homepage-config" },
     { "source": "/api/cms/settings", "destination": "/api/cms?endpoint=settings" },
+    { "source": "/api/cms/homepage-config", "destination": "/api/cms?endpoint=homepage-config" },
+    { "source": "/api/cms/books/:id", "destination": "/api/cms?endpoint=books&id=:id" },
+    { "source": "/api/cms/books", "destination": "/api/cms?endpoint=books" },
+    { "source": "/api/cms/media/:id", "destination": "/api/cms?endpoint=media&id=:id" },
+    { "source": "/api/cms/media", "destination": "/api/cms?endpoint=media" },
+    { "source": "/api/cms/author", "destination": "/api/cms?endpoint=author" },
+    { "source": "/api/cms/social", "destination": "/api/cms?endpoint=social" },
+    { "source": "/api/cms/auth/:path*", "destination": "/api/cms?endpoint=:path*" },
     { "source": "/api/cms/:path*", "destination": "/api/cms" }
   ],
   "functions": {
