@@ -886,49 +886,71 @@ async function handleHomepageConfig(req, res) {
 
       const updates = req.body;
       console.log('🏠 Updating homepage config:', updates);
+      console.log('🏠 Request body type:', typeof req.body);
+      console.log('🏠 Request body keys:', Object.keys(req.body || {}));
       
       // Validate featured book if updating
-      if (updates.featuredBook) {
+      if (updates.featuredBook && updates.featuredBook.trim() !== '') {
         // Check if the featured book exists in books collection
         try {
+          console.log('🏠 Validating featured book ID:', updates.featuredBook);
           const client = await clientPromise;
           const dbName = getDatabaseName();
           const db = client.db(dbName);
           const booksCollection = db.collection('books');
           
+          // Validate ObjectId format first
+          if (!ObjectId.isValid(updates.featuredBook)) {
+            console.error('Invalid ObjectId format:', updates.featuredBook);
+            return res.status(400).json({ error: 'Invalid featured book ID format' });
+          }
+          
           const bookExists = await booksCollection.findOne({ _id: new ObjectId(updates.featuredBook) });
           if (!bookExists) {
+            console.error('Featured book not found in database:', updates.featuredBook);
             return res.status(400).json({ error: 'Featured book not found in database' });
           }
+          console.log('✅ Featured book validation successful');
         } catch (error) {
           console.error('Error validating featured book:', error);
           return res.status(400).json({ error: 'Invalid featured book ID format' });
         }
+      } else {
+        // If featuredBook is empty/null, set it to null explicitly
+        console.log('🏠 Setting featuredBook to null (empty value)');
+        updates.featuredBook = null;
       }
       
 
       
-      const client = await clientPromise;
-      const dbName = getDatabaseName();
-      const db = client.db(dbName);
-      const configCollection = db.collection('homepageConfig');
-      
-      // Add update timestamp
-      updates.updatedAt = new Date();
-      
-      // Upsert the configuration (create if doesn't exist, update if it does)
-      const result = await configCollection.updateOne(
-        {}, // Empty filter to match any document
-        { $set: updates },
-        { upsert: true }
-      );
-      
-      console.log('✅ Homepage config updated successfully in database');
-      res.json({
-        success: true,
-        message: 'Homepage configuration updated successfully',
-        updates
-      });
+      try {
+        const client = await clientPromise;
+        const dbName = getDatabaseName();
+        const db = client.db(dbName);
+        const configCollection = db.collection('homepageConfig');
+        
+        // Add update timestamp
+        updates.updatedAt = new Date();
+        
+        console.log('🏠 Saving homepage config to database:', updates);
+        
+        // Upsert the configuration (create if doesn't exist, update if it does)
+        const result = await configCollection.updateOne(
+          {}, // Empty filter to match any document
+          { $set: updates },
+          { upsert: true }
+        );
+        
+        console.log('✅ Homepage config updated successfully in database. Result:', result);
+        res.json({
+          success: true,
+          message: 'Homepage configuration updated successfully',
+          updates
+        });
+      } catch (dbError) {
+        console.error('Database error while saving homepage config:', dbError);
+        res.status(500).json({ error: 'Failed to save homepage configuration to database' });
+      }
     } else {
       res.status(405).json({ error: 'Method not allowed' });
     }
