@@ -120,37 +120,33 @@ app.use(morgan('combined'));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// API routes - only enable in development mode
-if (process.env.NODE_ENV !== 'production') {
-  app.use('/api/contact', contactRoutes);
-  app.use('/api/books', booksRoutes);
-  app.use('/api/cms', cmsRoutes);
-  app.use('/api/about', aboutRoutes);
+// API routes - enable in both development and production
+app.use('/api/contact', contactRoutes);
+app.use('/api/books', booksRoutes);
+app.use('/api/cms', cmsRoutes);
+app.use('/api/about', aboutRoutes);
 
-  // Public social media endpoint (no authentication required)
-  app.get('/api/social', async (req, res) => {
-    try {
-      const social = await cmsService.getSocial();
-      res.json({ social });
-    } catch (error) {
-      console.error('Error reading social media:', error);
-      res.status(500).json({ error: 'Failed to load social links' });
-    }
-  });
+// Public social media endpoint (no authentication required)
+app.get('/api/social', async (req, res) => {
+  try {
+    const social = await cmsService.getSocial();
+    res.json({ social });
+  } catch (error) {
+    console.error('Error reading social media:', error);
+    res.status(500).json({ error: 'Failed to load social links' });
+  }
+});
 
-  // Public media endpoint (no authentication required)
-  app.get('/api/media', async (req, res) => {
-    try {
-      const media = await cmsService.getAllMedia();
-      res.json({ media });
-    } catch (error) {
-      console.error('Error reading media:', error);
-      res.status(500).json({ error: 'Failed to load media' });
-    }
-  });
-} else {
-  console.log('🚀 Production mode: API routes disabled, using Vercel serverless functions');
-}
+// Public media endpoint (no authentication required)
+app.get('/api/media', async (req, res) => {
+  try {
+    const media = await cmsService.getAllMedia();
+    res.json({ media });
+  } catch (error) {
+    console.error('Error reading media:', error);
+    res.status(500).json({ error: 'Failed to load media' });
+  }
+});
 
 // Serve static files (including favicon)
 app.use(express.static(join(__dirname, 'public'), {

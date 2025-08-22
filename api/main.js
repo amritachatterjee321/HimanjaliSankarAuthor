@@ -183,7 +183,8 @@ async function handleBooks(req, res) {
         const allBooks = await booksCollection.find({}).toArray();
         const booksByCategory = {
           adults: allBooks.filter(book => book.category === 'adults'),
-          children: allBooks.filter(book => book.category === 'children')
+          children: allBooks.filter(book => book.category === 'children'),
+          'young-adult': allBooks.filter(book => book.category === 'young-adult')
         };
         res.status(200).json(booksByCategory);
       }
@@ -634,6 +635,19 @@ function getFallbackBooks() {
         },
         amazonLink: "https://amazon.com/dp/B0C4567890",
         category: "children"
+      }
+    ],
+    'young-adult': [
+      {
+        _id: "fallback-4",
+        title: "The Midnight Library",
+        year: "2024",
+        shortDescription: "A magical coming-of-age story about identity, belonging, and the power of storytelling.",
+        coverImage: {
+          url: "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=400&h=600&fit=crop"
+        },
+        amazonLink: "https://amazon.com/dp/B0C5678901",
+        category: "young-adult"
       }
     ]
   };
