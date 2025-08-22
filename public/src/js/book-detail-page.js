@@ -209,31 +209,50 @@ class BookDetailPage extends Component {
           className: 'review-item'
         });
 
-        const reviewText = Utils.createElement('p', {
-          className: 'review-text',
-          innerHTML: `"${review.text}"`
-        });
-
-        // Create clickable review source with link if available
-        let reviewSource;
-        if (review.link) {
-          reviewSource = Utils.createElement('a', {
-            href: review.link,
-            className: 'review-source clickable',
-            target: '_blank',
-            rel: 'noopener noreferrer',
-            innerHTML: `— ${review.source}`
+        // Handle review as a string (current format) or object (future format)
+        let reviewText, reviewSource;
+        
+        if (typeof review === 'string') {
+          // Current format: review is a string like "xknxkvn - hey"
+          reviewText = Utils.createElement('p', {
+            className: 'review-text',
+            innerHTML: `"${review}"`
           });
-        } else {
+          
+          // No source link for string reviews
           reviewSource = Utils.createElement('p', {
             className: 'review-source',
-            innerHTML: `— ${review.source}`
+            innerHTML: `— Review`
           });
+        } else if (typeof review === 'object' && review.text) {
+          // Future format: review is an object with text and source properties
+          reviewText = Utils.createElement('p', {
+            className: 'review-text',
+            innerHTML: `"${review.text}"`
+          });
+
+          // Create clickable review source with link if available
+          if (review.link) {
+            reviewSource = Utils.createElement('a', {
+              href: review.link,
+              className: 'review-source clickable',
+              target: '_blank',
+              rel: 'noopener noreferrer',
+              innerHTML: `— ${review.source}`
+            });
+          } else {
+            reviewSource = Utils.createElement('p', {
+              className: 'review-source',
+              innerHTML: `— ${review.source}`
+            });
+          }
         }
 
-        reviewItem.appendChild(reviewText);
-        reviewItem.appendChild(reviewSource);
-        reviewsList.appendChild(reviewItem);
+        if (reviewText) {
+          reviewItem.appendChild(reviewText);
+          reviewItem.appendChild(reviewSource);
+          reviewsList.appendChild(reviewItem);
+        }
       });
 
       reviewsSection.appendChild(reviewsList);
