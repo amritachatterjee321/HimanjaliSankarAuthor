@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Test</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        .form-group { margin: 10px 0; }
+        label { display: block; margin-bottom: 5px; }
+        input { padding: 8px; width: 200px; }
+        button { padding: 10px 20px; margin: 5px; }
+        .result { margin-top: 20px; padding: 10px; border: 1px solid #ccc; }
+        .success { background-color: #d4edda; border-color: #c3e6cb; }
+        .error { background-color: #f8d7da; border-color: #f5c6cb; }
+    </style>
+</head>
+<body>
+    <h1>CMS Login Test</h1>
+    
+    <div class="form-group">
+        <label for="username">Username:</label>
+        <input type="text" id="username" value="admin">
+    </div>
+    
+    <div class="form-group">
+        <label for="password">Password:</label>
+        <input type="password" id="password" value="admin123">
+    </div>
+    
+    <button onclick="testLogin()">Test Login</button>
+    <button onclick="clearTokens()">Clear Tokens</button>
+    <button onclick="checkAuth()">Check Auth Status</button>
+    
+    <div id="result" class="result" style="display: none;"></div>
+    
+    <script>
+        async function testLogin() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            const resultDiv = document.getElementById('result');
+            resultDiv.style.display = 'block';
+            resultDiv.className = 'result';
+            resultDiv.innerHTML = 'Testing login...';
+            
+            try {
+                const response = await fetch('/api/cms/auth/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ username, password })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultDiv.className = 'result success';
+                    resultDiv.innerHTML = `
+                        <h3>✅ Login Successful!</h3>
+                        <p><strong>User:</strong> ${data.user.username}</p>
+                        <p><strong>Token:</strong> ${data.token ? 'Present' : 'Missing'}</p>
+                        <p><strong>Message:</strong> ${data.message}</p>
+                    `;
+                    
+                    // Store the token
+                    localStorage.setItem('cms_token', data.token);
+                } else {
+                    resultDiv.className = 'result error';
+                    resultDiv.innerHTML = `
+                        <h3>❌ Login Failed</h3>
+                        <p><strong>Error:</strong> ${data.error}</p>
+                        <p><strong>Status:</strong> ${response.status}</p>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.innerHTML = `
+                    <h3>❌ Login Error</h3>
+                    <p><strong>Error:</strong> ${error.message}</p>
+                `;
+            }
+        }
+        
+        function clearTokens() {
+            localStorage.removeItem('cms_token');
+            const resultDiv = document.getElementById('result');
+            resultDiv.style.display = 'block';
+            resultDiv.className = 'result success';
+            resultDiv.innerHTML = '<h3>✅ Tokens Cleared</h3><p>All stored tokens have been removed.</p>';
+        }
+        
+        async function checkAuth() {
+            const token = localStorage.getItem('cms_token');
+            const resultDiv = document.getElementById('result');
+            resultDiv.style.display = 'block';
+            
+            if (!token) {
+                resultDiv.className = 'result error';
+                resultDiv.innerHTML = '<h3>❌ No Token Found</h3><p>No authentication token is stored.</p>';
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/cms/auth/verify', {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultDiv.className = 'result success';
+                    resultDiv.innerHTML = `
+                        <h3>✅ Token Valid</h3>
+                        <p><strong>User:</strong> ${data.user.username}</p>
+                        <p><strong>Valid:</strong> ${data.valid}</p>
+                    `;
+                } else {
+                    resultDiv.className = 'result error';
+                    resultDiv.innerHTML = `
+                        <h3>❌ Token Invalid</h3>
+                        <p><strong>Error:</strong> ${data.error}</p>
+                    `;
+                }
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.innerHTML = `
+                    <h3>❌ Auth Check Error</h3>
+                    <p><strong>Error:</strong> ${error.message}</p>
+                `;
+            }
+        }
+    </script>
+</body>
+</html>

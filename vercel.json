@@ -18,6 +18,7 @@
     { "source": "/api/test", "destination": "/api/main?endpoint=test" },
     { "source": "/api/debug", "destination": "/api/main?endpoint=debug" },
     { "source": "/api/test-simple", "destination": "/api/test-simple" },
+    { "source": "/test-login", "destination": "/test-login.html" },
     { "source": "/api/cms/auth/login", "destination": "/api/cms?endpoint=login" },
     { "source": "/api/cms/auth/verify", "destination": "/api/cms?endpoint=verify" },
     { "source": "/api/cms/dashboard", "destination": "/api/cms?endpoint=dashboard" },

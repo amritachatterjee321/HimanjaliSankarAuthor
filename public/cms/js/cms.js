@@ -18,8 +18,10 @@ class CMS {
     }
 
     async init() {
+        console.log('🚀 CMS initializing...');
         this.bindEvents();
         await this.loadSettings();
+        console.log('🔐 Starting authentication check...');
         this.checkAuth();
     }
 
@@ -28,6 +30,15 @@ class CMS {
         document.getElementById('login-form').addEventListener('submit', (e) => {
             e.preventDefault();
             this.handleLogin();
+        });
+
+        // Clear tokens button
+        document.getElementById('clear-tokens-btn').addEventListener('click', () => {
+            localStorage.removeItem('cms_token');
+            this.showNotification('Tokens cleared, please refresh the page', 'info');
+            setTimeout(() => {
+                window.location.reload();
+            }, 2000);
         });
 
         // Navigation
@@ -116,6 +127,16 @@ class CMS {
 
     async checkAuth() {
         console.log('🔐 Checking authentication...');
+        
+        // Clear any existing tokens to force login
+        localStorage.removeItem('cms_token');
+        console.log('🔐 Cleared any existing tokens');
+        
+        // Always show login screen for now
+        console.log('🔐 Forcing login screen');
+        this.showLogin();
+        return;
+        
         const token = localStorage.getItem('cms_token');
         console.log('🔐 Token in localStorage:', token ? 'Present' : 'Not present');
         
@@ -159,8 +180,12 @@ class CMS {
     async handleLogin() {
         const username = document.getElementById('username').value;
         const password = document.getElementById('password').value;
+        
+        console.log('🔐 Login attempt for username:', username);
+        console.log('🔐 Password provided:', password ? 'Yes' : 'No');
 
         try {
+            console.log('🔐 Making login request to API...');
             const response = await fetch('/api/cms/auth/login', {
                 method: 'POST',
                 headers: {
@@ -169,19 +194,24 @@ class CMS {
                 body: JSON.stringify({ username, password })
             });
 
+            console.log('🔐 Login response status:', response.status);
+
             if (response.ok) {
                 const data = await response.json();
+                console.log('🔐 Login successful, storing token');
                 localStorage.setItem('cms_token', data.token);
                 this.isAuthenticated = true;
                 this.currentUser = data.user;
+                console.log('🔐 Showing dashboard after successful login');
                 this.showDashboard();
                 this.loadData();
             } else {
                 const errorData = await response.json();
+                console.log('🔐 Login failed:', errorData);
                 this.showNotification(errorData.error || 'Login failed', 'error');
             }
         } catch (error) {
-            console.error('Login error:', error);
+            console.error('🔐 Login error:', error);
             this.showNotification('Login error: ' + error.message, 'error');
         }
     }
@@ -195,14 +225,42 @@ class CMS {
 
     showLogin() {
         console.log('🔐 Showing login screen');
-        document.getElementById('login-screen').classList.add('active');
-        document.getElementById('dashboard').classList.remove('active');
+        const loginScreen = document.getElementById('login-screen');
+        const dashboard = document.getElementById('dashboard');
+        
+        if (loginScreen) {
+            loginScreen.classList.add('active');
+            console.log('✅ Login screen activated');
+        } else {
+            console.error('❌ Login screen element not found');
+        }
+        
+        if (dashboard) {
+            dashboard.classList.remove('active');
+            console.log('✅ Dashboard deactivated');
+        } else {
+            console.error('❌ Dashboard element not found');
+        }
     }
 
     showDashboard() {
         console.log('🔐 Showing dashboard');
-        document.getElementById('login-screen').classList.remove('active');
-        document.getElementById('dashboard').classList.add('active');
+        const loginScreen = document.getElementById('login-screen');
+        const dashboard = document.getElementById('dashboard');
+        
+        if (loginScreen) {
+            loginScreen.classList.remove('active');
+            console.log('✅ Login screen deactivated');
+        } else {
+            console.error('❌ Login screen element not found');
+        }
+        
+        if (dashboard) {
+            dashboard.classList.add('active');
+            console.log('✅ Dashboard activated');
+        } else {
+            console.error('❌ Dashboard element not found');
+        }
     }
 
     showLoginError(message) {
