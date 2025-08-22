@@ -936,8 +936,8 @@
   color: $white;
   font-size: 0.9rem;
   text-align: center;
-  padding: 20px;
-  background: $primary-color;
+  padding: 0;
+  background: transparent;
   
   &:hover {
     transform: scale(1.05);

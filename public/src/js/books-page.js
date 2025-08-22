@@ -206,17 +206,7 @@ class BooksPage extends Component {
       className: 'books-categories-container'
     });
 
-    // Children's Fiction Section (First)
-    console.log('🎨 Checking children section:', this.booksData.children);
-    if (this.booksData.children && this.booksData.children.length > 0) {
-      console.log('🎨 Creating children section with', this.booksData.children.length, 'books');
-      const childrenSection = this.createCategorySection("Children's Fiction", this.booksData.children);
-      categoriesContainer.appendChild(childrenSection);
-    } else {
-      console.log('🎨 No children books to display');
-    }
-
-    // Adult Fiction Section (Second)
+    // Adult Fiction Section (First)
     console.log('🎨 Checking adults section:', this.booksData.adults);
     if (this.booksData.adults && this.booksData.adults.length > 0) {
       console.log('🎨 Creating adult section with', this.booksData.adults.length, 'books');
@@ -224,7 +214,7 @@ class BooksPage extends Component {
       categoriesContainer.appendChild(adultSection);
     }
 
-    // Young Adult Fiction Section (Third)
+    // Young Adult Fiction Section (Second)
     console.log('🎨 Checking young-adult section:', this.booksData['young-adult']);
     if (this.booksData['young-adult'] && this.booksData['young-adult'].length > 0) {
       console.log('🎨 Creating young-adult section with', this.booksData['young-adult'].length, 'books');
@@ -232,6 +222,16 @@ class BooksPage extends Component {
       categoriesContainer.appendChild(youngAdultSection);
     } else {
       console.log('🎨 No young-adult books to display');
+    }
+
+    // Children's Fiction Section (Third)
+    console.log('🎨 Checking children section:', this.booksData.children);
+    if (this.booksData.children && this.booksData.children.length > 0) {
+      console.log('🎨 Creating children section with', this.booksData.children.length, 'books');
+      const childrenSection = this.createCategorySection("Children's Fiction", this.booksData.children);
+      categoriesContainer.appendChild(childrenSection);
+    } else {
+      console.log('🎨 No children books to display');
     }
 
     container.appendChild(categoriesContainer);
@@ -327,6 +327,20 @@ class BooksPage extends Component {
         alt: `Cover of ${book.title}`,
         loading: 'lazy'
       });
+      
+      // Adjust container aspect ratio based on image
+      coverImage.addEventListener('load', () => {
+        const aspectRatio = coverImage.naturalWidth / coverImage.naturalHeight;
+        const baseHeight = 380; // Base height from CSS
+        const calculatedWidth = baseHeight * aspectRatio;
+        
+        // Set container dimensions based on image aspect ratio
+        bookCover.style.width = `${Math.min(calculatedWidth, 320)}px`;
+        bookCover.style.height = `${baseHeight}px`;
+        
+        console.log(`📐 Image aspect ratio: ${aspectRatio.toFixed(2)}, Container: ${bookCover.style.width} x ${bookCover.style.height}`);
+      });
+      
       bookCover.appendChild(coverImage);
     } else if (book.coverImage && typeof book.coverImage === 'string') {
       // Handle case where coverImage is directly a string URL
@@ -340,6 +354,20 @@ class BooksPage extends Component {
         alt: `Cover of ${book.title}`,
         loading: 'lazy'
       });
+      
+      // Adjust container aspect ratio based on image
+      coverImage.addEventListener('load', () => {
+        const aspectRatio = coverImage.naturalWidth / coverImage.naturalHeight;
+        const baseHeight = 380; // Base height from CSS
+        const calculatedWidth = baseHeight * aspectRatio;
+        
+        // Set container dimensions based on image aspect ratio
+        bookCover.style.width = `${Math.min(calculatedWidth, 320)}px`;
+        bookCover.style.height = `${baseHeight}px`;
+        
+        console.log(`📐 Image aspect ratio: ${aspectRatio.toFixed(2)}, Container: ${bookCover.style.width} x ${bookCover.style.height}`);
+      });
+      
       bookCover.appendChild(coverImage);
     } else {
       // Fallback to CSS-based cover
