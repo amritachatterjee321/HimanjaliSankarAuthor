@@ -1141,6 +1141,22 @@ async function handleHomepageConfig(req, res) {
 
 // Handle settings
 async function handleSettings(req, res) {
+  // Authentication required for all settings operations
+  const authHeader = req.headers['authorization'];
+  const token = authHeader && authHeader.split(' ')[1];
+
+  if (!token) {
+    return res.status(401).json({ error: 'Access token required' });
+  }
+
+  try {
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'your-secret-key');
+    console.log('✅ Settings access - Token verified for user:', decoded.username);
+  } catch (error) {
+    console.error('❌ Settings access - Invalid token:', error.message);
+    return res.status(403).json({ error: 'Invalid token' });
+  }
+
   try {
     if (req.method === 'GET') {
       // Get settings from MongoDB
@@ -1170,6 +1186,9 @@ async function handleSettings(req, res) {
       
     } else if (req.method === 'PUT') {
       // Update settings in MongoDB
+      console.log('🔍 PUT settings request received');
+      console.log('🔍 Request body:', { ...req.body, password: req.body.password ? '[HIDDEN]' : undefined });
+      
       if (!isMongoDBAvailable()) {
         console.log('⚠️ MongoDB not available, cannot save settings');
         return res.status(503).json({ error: 'Database not available' });
@@ -1211,8 +1230,8 @@ async function handleSettings(req, res) {
         { upsert: true }
       );
       
-      console.log('✅ Settings updated successfully');
-      res.json({
+      console.log('✅ Settings updated successfully in database');
+      const responseData = {
         success: true,
         message: 'Settings updated successfully',
         settings: {
@@ -1222,14 +1241,17 @@ async function handleSettings(req, res) {
           siteDescription: settingsData.siteDescription,
           updatedAt: settingsData.updatedAt
         }
-      });
+      };
+      console.log('🔍 Sending response:', responseData);
+      res.json(responseData);
       
     } else {
       res.status(405).json({ error: 'Method not allowed' });
     }
   } catch (error) {
-    console.error('Settings API error:', error);
-    res.status(500).json({ error: 'Settings operation failed' });
+    console.error('❌ Settings API error:', error);
+    console.error('❌ Error stack:', error.stack);
+    res.status(500).json({ error: 'Settings operation failed', details: error.message });
   }
 }
 

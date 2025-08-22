@@ -427,8 +427,20 @@ router.get('/settings', authenticateToken, async (req, res) => {
 
 router.put('/settings', authenticateToken, async (req, res) => {
   try {
+    console.log('🔍 PUT /settings endpoint called');
+    console.log('🔍 Request body:', { ...req.body, password: req.body.password ? '[HIDDEN]' : undefined });
+    
     const settings = await cmsService.updateSettings(req.body);
-    res.json({ settings });
+    console.log('🔍 Service returned:', { ...settings, password: settings?.password ? '[HASHED]' : undefined });
+    
+    const response = { 
+      success: true,
+      message: 'Settings updated successfully',
+      settings 
+    };
+    console.log('🔍 Sending response:', { ...response, settings: { ...response.settings, password: '[HASHED]' } });
+    
+    res.json(response);
   } catch (error) {
     console.error('Error updating settings:', error);
     res.status(500).json({ error: 'Failed to update settings' });

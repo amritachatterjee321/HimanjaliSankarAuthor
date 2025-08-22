@@ -1,5 +1,6 @@
 import database from '../config/database.js';
 import { ObjectId } from 'mongodb';
+import bcrypt from 'bcryptjs';
 
 class CMSService {
   constructor() {
@@ -380,10 +381,18 @@ class CMSService {
       // Filter out _id field to prevent MongoDB immutable field error
       const { _id, ...cleanSettingsData } = settingsData;
       
+      // Hash password if it's being updated
       const updateData = {
         ...cleanSettingsData,
         updatedAt: new Date()
       };
+      
+      if (updateData.password) {
+        console.log('🔐 Hashing password before saving to database');
+        updateData.password = await bcrypt.hash(updateData.password, 12);
+      }
+      
+      console.log('💾 Updating settings in database:', { ...updateData, password: updateData.password ? '[HASHED]' : undefined });
       
       const result = await collection.findOneAndUpdate(
         {},
@@ -391,6 +400,7 @@ class CMSService {
         { upsert: true, returnDocument: 'after' }
       );
       
+      console.log('✅ Settings updated successfully in database');
       return result.value;
     } catch (error) {
       console.error('Error updating settings:', error);
@@ -401,23 +411,50 @@ class CMSService {
   // User operations
   async getUserByUsername(username) {
     try {
+      // For admin users, get credentials from settings collection
+      if (username === 'admin') {
+        const settingsCollection = database.getSettingsCollection();
+        const settings = await settingsCollection.findOne({});
+        
+        if (settings && settings.username === username) {
+          console.log('✅ Found admin user in settings collection');
+          return {
+            _id: settings._id,
+            username: settings.username,
+            password: settings.password,
+            name: 'Admin User',
+            role: 'admin',
+            email: settings.adminEmail
+          };
+        }
+      }
+      
+      // For other users, check users collection
       const collection = database.getUsersCollection();
       const user = await collection.findOne({ username });
-      return user;
+      if (user) {
+        console.log('✅ Found user in users collection');
+        return user;
+      }
+      
     } catch (error) {
       console.error('Error fetching user:', error);
-      // Fallback: return default user if database is not available
-      if (username === 'admin') {
-        return {
-          _id: 'default-admin',
-          username: 'admin',
-          password: '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // admin123
-          name: 'Admin User',
-          role: 'admin'
-        };
-      }
-      throw new Error('Failed to fetch user');
     }
+    
+    // Fallback: return default user if database is not available
+    if (username === 'admin') {
+      console.log('⚠️ Using fallback admin credentials');
+      return {
+        _id: 'default-admin',
+        username: 'admin',
+        password: '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // admin123
+        name: 'Admin User',
+        role: 'admin'
+      };
+    }
+    
+    console.log('❌ User not found:', username);
+    return null;
   }
 
   async createUser(userData) {
