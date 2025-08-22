@@ -206,15 +206,7 @@ class BooksPage extends Component {
       className: 'books-categories-container'
     });
 
-    // Adult Fiction Section
-    console.log('🎨 Checking adults section:', this.booksData.adults);
-    if (this.booksData.adults && this.booksData.adults.length > 0) {
-      console.log('🎨 Creating adult section with', this.booksData.adults.length, 'books');
-      const adultSection = this.createCategorySection('Adult Fiction', this.booksData.adults);
-      categoriesContainer.appendChild(adultSection);
-    }
-
-    // Children's Fiction Section
+    // Children's Fiction Section (First)
     console.log('🎨 Checking children section:', this.booksData.children);
     if (this.booksData.children && this.booksData.children.length > 0) {
       console.log('🎨 Creating children section with', this.booksData.children.length, 'books');
@@ -224,7 +216,15 @@ class BooksPage extends Component {
       console.log('🎨 No children books to display');
     }
 
-    // Young Adult Fiction Section
+    // Adult Fiction Section (Second)
+    console.log('🎨 Checking adults section:', this.booksData.adults);
+    if (this.booksData.adults && this.booksData.adults.length > 0) {
+      console.log('🎨 Creating adult section with', this.booksData.adults.length, 'books');
+      const adultSection = this.createCategorySection('Adult Fiction', this.booksData.adults);
+      categoriesContainer.appendChild(adultSection);
+    }
+
+    // Young Adult Fiction Section (Third)
     console.log('🎨 Checking young-adult section:', this.booksData['young-adult']);
     if (this.booksData['young-adult'] && this.booksData['young-adult'].length > 0) {
       console.log('🎨 Creating young-adult section with', this.booksData['young-adult'].length, 'books');

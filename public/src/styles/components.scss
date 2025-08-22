@@ -574,12 +574,18 @@
     
     .books-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 40px;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 30px;
+      justify-content: center;
       
       @media (max-width: 768px) {
+        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+        gap: 25px;
+      }
+      
+      @media (max-width: 480px) {
         grid-template-columns: 1fr;
-        gap: 30px;
+        gap: 25px;
       }
     }
     
@@ -596,7 +602,7 @@
       }
       
       .book-cover {
-        height: 300px;
+        height: 250px;
         background: linear-gradient(135deg, $primary-color 0%, $accent-color 100%);
         display: flex;
         align-items: center;
@@ -622,7 +628,7 @@
       }
       
       .book-info {
-        padding: 30px;
+        padding: 20px;
         
         .book-title {
           font-family: $font-serif;
