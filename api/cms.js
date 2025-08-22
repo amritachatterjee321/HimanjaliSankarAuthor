@@ -873,6 +873,7 @@ async function handleHomepageConfig(req, res) {
   console.log('🏠 URL:', req.url);
   console.log('🏠 Query params:', req.query);
   console.log('🏠 Headers:', req.headers);
+  console.log('🏠 Request body:', req.body);
   
   try {
     if (req.method === 'GET') {
@@ -928,6 +929,8 @@ async function handleHomepageConfig(req, res) {
         return res.status(401).json({ error: 'Authentication token required' });
       }
       
+      console.log('✅ Authentication passed, proceeding with update');
+      
       if (!isMongoDBAvailable()) {
         console.log('❌ MongoDB not available');
         return res.status(500).json({ error: 'MongoDB not available' });
@@ -944,6 +947,7 @@ async function handleHomepageConfig(req, res) {
       
       // Validate featured book if updating
       if (updates.featuredBook && updates.featuredBook.trim() !== '') {
+        console.log('🏠 Validating featured book ID:', updates.featuredBook);
         // Check if the featured book exists in books collection
         try {
           const client = await clientPromise;
@@ -953,31 +957,41 @@ async function handleHomepageConfig(req, res) {
           
           // Validate ObjectId format first
           if (!ObjectId.isValid(updates.featuredBook)) {
+            console.log('❌ Invalid ObjectId format:', updates.featuredBook);
             return res.status(400).json({ error: 'Invalid featured book ID format' });
           }
           
+          console.log('🏠 Checking if book exists in database...');
           const bookExists = await booksCollection.findOne({ _id: new ObjectId(updates.featuredBook) });
           if (!bookExists) {
+            console.log('❌ Book not found in database:', updates.featuredBook);
             return res.status(400).json({ error: 'Featured book not found in database' });
           }
+          console.log('✅ Featured book validation passed');
         } catch (error) {
-          console.error('Error validating featured book:', error);
+          console.error('❌ Error validating featured book:', error);
+          console.error('❌ Validation error stack:', error.stack);
           return res.status(400).json({ error: 'Invalid featured book ID format' });
         }
       } else {
         // If featuredBook is empty/null, set it to null explicitly
+        console.log('🏠 Featured book is empty, setting to null');
         updates.featuredBook = null;
       }
       
       // Save to database
       let client, db, configCollection;
       try {
+        console.log('🏠 Connecting to MongoDB...');
         client = await clientPromise;
         const dbName = getDatabaseName();
+        console.log('🏠 Database name:', dbName);
         db = client.db(dbName);
         configCollection = db.collection('homepageConfig');
+        console.log('🏠 Successfully connected to homepageConfig collection');
       } catch (dbError) {
         console.error('❌ Database connection error:', dbError);
+        console.error('❌ Database error stack:', dbError.stack);
         throw dbError;
       }
       
@@ -986,6 +1000,7 @@ async function handleHomepageConfig(req, res) {
       
       // Upsert the configuration (create if doesn't exist, update if it does)
       try {
+        console.log('🏠 Attempting to update homepage config with data:', updates);
         const result = await configCollection.updateOne(
           {}, // Empty filter to match any document
           { $set: updates },
@@ -993,6 +1008,7 @@ async function handleHomepageConfig(req, res) {
         );
         
         console.log('✅ Homepage config updated successfully');
+        console.log('🏠 Update result:', result);
         res.json({
           success: true,
           message: 'Homepage configuration updated successfully',
@@ -1000,6 +1016,7 @@ async function handleHomepageConfig(req, res) {
         });
       } catch (updateError) {
         console.error('❌ Database update error:', updateError);
+        console.error('❌ Update error stack:', updateError.stack);
         throw updateError;
       }
     } else {
@@ -1007,7 +1024,17 @@ async function handleHomepageConfig(req, res) {
     }
   } catch (error) {
     console.error('Homepage config API error:', error);
-    res.status(500).json({ error: 'Homepage configuration operation failed' });
+    console.error('Error stack:', error.stack);
+    console.error('Error details:', {
+      message: error.message,
+      name: error.name,
+      code: error.code
+    });
+    res.status(500).json({ 
+      error: 'Homepage configuration operation failed',
+      message: error.message,
+      details: process.env.NODE_ENV === 'development' ? error.stack : undefined
+    });
   }
 }
 

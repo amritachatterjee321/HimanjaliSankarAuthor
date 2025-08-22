@@ -128,15 +128,6 @@ class CMS {
     async checkAuth() {
         console.log('🔐 Checking authentication...');
         
-        // Clear any existing tokens to force login
-        localStorage.removeItem('cms_token');
-        console.log('🔐 Cleared any existing tokens');
-        
-        // Always show login screen for now
-        console.log('🔐 Forcing login screen');
-        this.showLogin();
-        return;
-        
         const token = localStorage.getItem('cms_token');
         console.log('🔐 Token in localStorage:', token ? 'Present' : 'Not present');
         
@@ -199,7 +190,9 @@ class CMS {
             if (response.ok) {
                 const data = await response.json();
                 console.log('🔐 Login successful, storing token');
+                console.log('🔐 Token received:', data.token ? 'Present' : 'Missing');
                 localStorage.setItem('cms_token', data.token);
+                console.log('🔐 Token stored in localStorage');
                 this.isAuthenticated = true;
                 this.currentUser = data.user;
                 console.log('🔐 Showing dashboard after successful login');
@@ -1072,6 +1065,8 @@ class CMS {
     }
 
     async saveHomepageConfig() {
+        console.log('🏠 Saving homepage config...');
+        console.log('🏠 Current homepage config:', this.homepageConfig);
         try {
             await this.apiRequest('/homepage-config', 'PUT', this.homepageConfig);
             this.showNotification('Homepage configuration saved successfully!', 'success');
@@ -1156,6 +1151,10 @@ class CMS {
 
     async apiRequest(endpoint, method = 'GET', data = null, isFile = false) {
         const token = localStorage.getItem('cms_token');
+        console.log('🔍 API Request - Endpoint:', endpoint);
+        console.log('🔍 API Request - Method:', method);
+        console.log('🔍 API Request - Token present:', token ? 'Yes' : 'No');
+        console.log('🔍 API Request - Data:', data);
         
         // Map CMS endpoints to the correct API paths
         let apiPath = endpoint;
@@ -1196,13 +1195,25 @@ class CMS {
         }
         
         try {
+            console.log('🔍 Sending request with options:', {
+                method: options.method,
+                headers: options.headers,
+                body: options.body ? 'Present' : 'Not present'
+            });
+            
             const response = await fetch(url, options);
+            console.log('🔍 Response status:', response.status);
+            console.log('🔍 Response headers:', Object.fromEntries(response.headers.entries()));
             
             if (!response.ok) {
+                console.error('🔍 Response not OK:', response.status, response.statusText);
+                const errorText = await response.text();
+                console.error('🔍 Error response body:', errorText);
                 throw new Error(`HTTP ${response.status}: ${response.statusText}`);
             }
             
             const responseData = await response.json();
+            console.log('🔍 Response data:', responseData);
             return responseData;
         } catch (error) {
             console.error('API request failed:', error);
