@@ -34,6 +34,14 @@ class BooksGrid extends Component {
           }
         });
       }
+      
+      if (this.booksData['young-adult']) {
+        this.booksData['young-adult'].forEach(book => {
+          if (book.coverImage && book.coverImage.url) {
+            book.coverImage.url = this.fixCoverImageUrl(book.coverImage.url);
+          }
+        });
+      }
     } catch (error) {
       console.error('Failed to fetch books:', error);
       // Fallback to static data
@@ -59,7 +67,8 @@ class BooksGrid extends Component {
             description: "A delightful story about friendship.",
             amazonLink: "https://amazon.com/magic-garden"
           }
-        ]
+        ],
+        'young-adult': []
       };
       
 
@@ -100,7 +109,8 @@ class BooksGrid extends Component {
     // Previous Works Section - Show all books
     const allBooks = [
       ...(this.booksData.adults || []),
-      ...(this.booksData.children || [])
+      ...(this.booksData.children || []),
+      ...(this.booksData['young-adult'] || [])
     ];
     
     if (allBooks.length > 0) {
@@ -286,6 +296,8 @@ class BooksGrid extends Component {
       return 'adult-1';
     } else if (book.category === 'children') {
       return 'children-1';
+    } else if (book.category === 'young-adult') {
+      return 'young-adult-1';
     } else {
       // Generate a hash-based class for consistent styling
       const hash = book.title.split('').reduce((a, b) => {

@@ -36,13 +36,14 @@ class BooksPage extends Component {
       console.log('📚 Response type:', typeof response);
       console.log('📚 Response keys:', Object.keys(response));
       
-      // The API returns { adults: [...], children: [...], latest: {...} }
+      // The API returns { adults: [...], children: [...], young-adult: [...], latest: {...} }
       if (response && typeof response === 'object') {
-        if (response.adults || response.children) {
-          console.log('📚 Found structured response with adults/children arrays');
+        if (response.adults || response.children || response['young-adult']) {
+          console.log('📚 Found structured response with adults/children/young-adult arrays');
           this.booksData = {
             adults: response.adults || [],
-            children: response.children || []
+            children: response.children || [],
+            'young-adult': response['young-adult'] || []
           };
           console.log('📚 Direct assignment from API response:', this.booksData);
         } else {
@@ -106,7 +107,8 @@ class BooksPage extends Component {
             description: "A delightful story about friendship.",
             amazonLink: "https://amazon.com/magic-garden"
           }
-        ]
+        ],
+        'young-adult': []
       };
     }
   }
@@ -118,17 +120,18 @@ class BooksPage extends Component {
     
     if (!Array.isArray(books)) {
       console.log('🔄 Not an array, returning empty data');
-      return { adults: [], children: [] };
+      return { adults: [], children: [], 'young-adult': [] };
     }
     
     if (books.length === 0) {
       console.log('🔄 Empty books array, returning empty data');
-      return { adults: [], children: [] };
+      return { adults: [], children: [], 'young-adult': [] };
     }
     
     console.log('🔄 Processing', books.length, 'books');
     const adults = [];
     const children = [];
+    const youngAdult = [];
     
     books.forEach((book, index) => {
       console.log(`🔄 Processing book ${index}:`, book);
@@ -161,14 +164,17 @@ class BooksPage extends Component {
       if (normalizedCategory === 'children' || normalizedCategory === 'childrens') {
         children.push(transformedBook);
         console.log(`🔄 Added to children array`);
+      } else if (normalizedCategory === 'young-adult' || normalizedCategory === 'youngadult') {
+        youngAdult.push(transformedBook);
+        console.log(`🔄 Added to young-adult array`);
       } else {
         adults.push(transformedBook);
         console.log(`🔄 Added to adults array`);
       }
     });
     
-    console.log('🔄 Final transformed data:', { adults, children });
-    return { adults, children };
+    console.log('🔄 Final transformed data:', { adults, children, 'young-adult': youngAdult });
+    return { adults, children, 'young-adult': youngAdult };
   }
 
   render() {
@@ -218,11 +224,22 @@ class BooksPage extends Component {
       console.log('🎨 No children books to display');
     }
 
+    // Young Adult Fiction Section
+    console.log('🎨 Checking young-adult section:', this.booksData['young-adult']);
+    if (this.booksData['young-adult'] && this.booksData['young-adult'].length > 0) {
+      console.log('🎨 Creating young-adult section with', this.booksData['young-adult'].length, 'books');
+      const youngAdultSection = this.createCategorySection("Young Adult Fiction", this.booksData['young-adult']);
+      categoriesContainer.appendChild(youngAdultSection);
+    } else {
+      console.log('🎨 No young-adult books to display');
+    }
+
     container.appendChild(categoriesContainer);
     
     // Check if we have any books to display
     if ((!this.booksData.adults || this.booksData.adults.length === 0) && 
-        (!this.booksData.children || this.booksData.children.length === 0)) {
+        (!this.booksData.children || this.booksData.children.length === 0) &&
+        (!this.booksData['young-adult'] || this.booksData['young-adult'].length === 0)) {
       console.log('🎨 No books found, showing empty state');
       const emptyState = Utils.createElement('div', {
         className: 'empty-state',

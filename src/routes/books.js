@@ -142,6 +142,19 @@ router.get('/', async (req, res) => {
         awards: book.awards || [],
         coverImage: book.coverImage,
         coverClass: book.coverClass
+      })),
+      'young-adult': books.filter(book => book.category === 'young-adult').map(book => ({
+        id: book._id?.toString() || book.id,
+        title: book.title,
+        year: book.year,
+        genre: book.genre,
+        category: book.category,
+        description: book.description,
+        shortDescription: book.shortDescription,
+        amazonLink: book.amazonLink,
+        awards: book.awards || [],
+        coverImage: book.coverImage,
+        coverClass: book.coverClass
       }))
     };
     
