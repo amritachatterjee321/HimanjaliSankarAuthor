@@ -318,21 +318,29 @@ class BooksPage extends Component {
     if (book.coverImage && book.coverImage.url) {
       // Use actual book cover image from CMS
       console.log('🖼️ Using CMS cover image:', book.coverImage.url);
-      bookCover = Utils.createElement('img', {
+      bookCover = Utils.createElement('div', {
+        className: 'book-cover has-cover-image'
+      });
+      const coverImage = Utils.createElement('img', {
         className: 'book-cover-image',
         src: book.coverImage.url,
         alt: `Cover of ${book.title}`,
         loading: 'lazy'
       });
+      bookCover.appendChild(coverImage);
     } else if (book.coverImage && typeof book.coverImage === 'string') {
       // Handle case where coverImage is directly a string URL
       console.log('🖼️ Using direct cover image URL:', book.coverImage);
-      bookCover = Utils.createElement('img', {
+      bookCover = Utils.createElement('div', {
+        className: 'book-cover has-cover-image'
+      });
+      const coverImage = Utils.createElement('img', {
         className: 'book-cover-image',
         src: book.coverImage,
         alt: `Cover of ${book.title}`,
         loading: 'lazy'
       });
+      bookCover.appendChild(coverImage);
     } else {
       // Fallback to CSS-based cover
       console.log('🖼️ No cover image, using fallback CSS class');
