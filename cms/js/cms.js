@@ -30,6 +30,12 @@ class CMS {
       logoutBtn.addEventListener('click', () => this.handleLogout());
     }
 
+    // Save settings button
+    const saveSettingsBtn = document.getElementById('save-settings-btn');
+    if (saveSettingsBtn) {
+      saveSettingsBtn.addEventListener('click', (e) => this.handleSettingsSubmit(e));
+    }
+
     // Navigation
     const navLinks = document.querySelectorAll('.nav-link');
     navLinks.forEach(link => {
@@ -109,15 +115,29 @@ class CMS {
     const username = formData.get('username');
     const password = formData.get('password');
 
-    // Simple authentication (in production, use proper auth)
-    if (username === 'admin' && password === 'admin123') {
-      localStorage.setItem('cms_token', 'dummy_token');
-      this.isAuthenticated = true;
-      this.currentUser = { username };
-      this.showCMSInterface();
-      this.showNotification('Login successful!', 'success');
-    } else {
-      this.showNotification('Invalid credentials!', 'error');
+    try {
+      const response = await fetch('/api/cms/auth/login', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ username, password })
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        localStorage.setItem('cms_token', data.token);
+        this.isAuthenticated = true;
+        this.currentUser = { username: data.username, email: data.email };
+        this.showCMSInterface();
+        this.showNotification('Login successful!', 'success');
+      } else {
+        const errorData = await response.json();
+        this.showNotification(errorData.error || 'Invalid credentials!', 'error');
+      }
+    } catch (error) {
+      console.error('Login error:', error);
+      this.showNotification('Login failed. Please try again.', 'error');
     }
   }
 
@@ -129,7 +149,7 @@ class CMS {
     this.showNotification('Logged out successfully!', 'success');
   }
 
-  showSection(sectionName) {
+  async showSection(sectionName) {
     // Hide all sections
     document.querySelectorAll('.content-section').forEach(section => {
       section.classList.remove('active');
@@ -176,7 +196,7 @@ class CMS {
         this.loadContactData();
         break;
       case 'settings':
-        this.loadSettingsData();
+        await this.loadSettingsData();
         break;
     }
   }
@@ -652,12 +672,41 @@ class CMS {
   }
 
   // Settings Functions
-  loadSettingsData() {
+  async loadSettingsData() {
+    try {
+      const token = localStorage.getItem('cms_token');
+      const response = await fetch('/api/cms?endpoint=settings', {
+        headers: {
+          'Authorization': `Bearer ${token}`
+        }
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        this.settings = data.settings;
+        this.populateSettingsForm();
+        console.log('✅ Settings loaded from database');
+      } else {
+        console.error('Failed to load settings:', response.status);
+        this.showNotification('Failed to load settings', 'error');
+      }
+    } catch (error) {
+      console.error('Error loading settings:', error);
+      this.showNotification('Error loading settings', 'error');
+    }
+  }
+
+  populateSettingsForm() {
     const form = document.getElementById('settings-form');
     if (form && this.settings) {
+      document.getElementById('cms-username').value = this.settings.username || '';
+      document.getElementById('admin-email').value = this.settings.adminEmail || '';
       document.getElementById('site-title').value = this.settings.siteTitle || '';
       document.getElementById('site-description').value = this.settings.siteDescription || '';
-      document.getElementById('admin-username').value = this.settings.adminUsername || '';
+      
+      // Clear password fields for security
+      document.getElementById('cms-password').value = '';
+      document.getElementById('cms-confirm-password').value = '';
     }
   }
 
@@ -665,17 +714,57 @@ class CMS {
     e.preventDefault();
     const formData = new FormData(e.target);
     
-    this.settings.siteTitle = formData.get('siteTitle');
-    this.settings.siteDescription = formData.get('siteDescription');
-    this.settings.adminUsername = formData.get('adminUsername');
-
-    const newPassword = formData.get('adminPassword');
-    if (newPassword) {
-      this.settings.adminPassword = newPassword;
+    // Validate password confirmation
+    const password = formData.get('password');
+    const confirmPassword = formData.get('confirmPassword');
+    
+    if (password && password !== confirmPassword) {
+      this.showNotification('Passwords do not match!', 'error');
+      return;
+    }
+    
+    if (password && password.length < 6) {
+      this.showNotification('Password must be at least 6 characters long!', 'error');
+      return;
     }
 
-    this.saveToStorage('settings', this.settings);
-    this.showNotification('Settings saved successfully!', 'success');
+    const settingsData = {
+      username: formData.get('username'),
+      password: password, // Will be hashed on the server
+      adminEmail: formData.get('adminEmail'),
+      siteTitle: formData.get('siteTitle'),
+      siteDescription: formData.get('siteDescription')
+    };
+
+    try {
+      const token = localStorage.getItem('cms_token');
+      const response = await fetch('/api/cms?endpoint=settings', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(settingsData)
+      });
+
+      if (response.ok) {
+        const result = await response.json();
+        this.settings = result.settings;
+        this.showNotification('Settings saved successfully!', 'success');
+        
+        // Clear password fields after successful save
+        document.getElementById('cms-password').value = '';
+        document.getElementById('cms-confirm-password').value = '';
+        
+        console.log('✅ Settings updated in database');
+      } else {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to save settings');
+      }
+    } catch (error) {
+      console.error('Error saving settings:', error);
+      this.showNotification(`Error saving settings: ${error.message}`, 'error');
+    }
   }
 
   // Utility Functions
@@ -704,7 +793,9 @@ class CMS {
 
 // Global functions for onclick handlers
 window.showSection = function(sectionName) {
-  cms.showSection(sectionName);
+  cms.showSection(sectionName).catch(error => {
+    console.error('Error showing section:', error);
+  });
 };
 
 window.showBookForm = function() {

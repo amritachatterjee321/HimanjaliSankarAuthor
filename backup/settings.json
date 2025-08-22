@@ -1,5 +1,9 @@
 {
+  "_id": "cms-settings",
   "username": "admin",
-  "password": "admin123",
-  "apiBaseUrl": "http://localhost:3001/api/cms"
+  "password": "$2b$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj4J/8KzqKqK",
+  "adminEmail": "admin@himanjali.com",
+  "siteTitle": "Himanjali Sankar - Author",
+  "siteDescription": "Official website of author Himanjali Sankar",
+  "updatedAt": "2024-01-15T00:00:00.000Z"
 } 
