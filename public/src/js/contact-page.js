@@ -364,13 +364,33 @@ class ContactPage extends Component {
       innerHTML: label
     });
 
+    // Convert handle to proper URL
+    let url = handle;
+    if (label === 'Instagram') {
+      // Remove @ if present and create Instagram URL
+      const username = handle.startsWith('@') ? handle.substring(1) : handle;
+      url = `https://instagram.com/${username}`;
+    } else if (label === 'Facebook') {
+      // Create Facebook URL
+      url = `https://facebook.com/${handle}`;
+    }
+
+    // Create clickable link for social media
+    const methodLink = Utils.createElement('a', {
+      href: url,
+      target: '_blank',
+      rel: 'noopener noreferrer',
+      className: 'method-link'
+    });
+
     const methodDetail = Utils.createElement('p', {
       className: 'method-detail',
       innerHTML: handle
     });
 
+    methodLink.appendChild(methodDetail);
     info.appendChild(methodLabel);
-    info.appendChild(methodDetail);
+    info.appendChild(methodLink);
     method.appendChild(icon);
     method.appendChild(info);
 

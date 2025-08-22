@@ -1135,6 +1135,27 @@
             color: $gray-medium;
             margin: 0;
           }
+          
+          .method-link {
+            text-decoration: none;
+            color: inherit;
+            transition: color 0.3s ease;
+            
+            &:hover {
+              color: $primary-color;
+            }
+            
+            .method-detail {
+              font-size: 1rem;
+              color: $gray-medium;
+              margin: 0;
+              transition: color 0.3s ease;
+            }
+            
+            &:hover .method-detail {
+              color: $primary-color;
+            }
+          }
         }
       }
     }
