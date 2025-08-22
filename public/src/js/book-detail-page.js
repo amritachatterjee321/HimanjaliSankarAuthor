@@ -214,15 +214,20 @@ class BookDetailPage extends Component {
         
         if (typeof review === 'string') {
           // Current format: review is a string like "xknxkvn - hey"
+          // Split by dash to separate review text and source
+          const parts = review.split(' - ');
+          const reviewContent = parts[0] || review; // Use first part or full string if no dash
+          const reviewSourceText = parts[1] || 'Review'; // Use second part or 'Review' if no dash
+          
           reviewText = Utils.createElement('p', {
             className: 'review-text',
-            innerHTML: `"${review}"`
+            innerHTML: `"${reviewContent}"`
           });
           
-          // No source link for string reviews
+          // Display the source without hyperlink
           reviewSource = Utils.createElement('p', {
             className: 'review-source',
-            innerHTML: `— Review`
+            innerHTML: `— ${reviewSourceText}`
           });
         } else if (typeof review === 'object' && review.text) {
           // Future format: review is an object with text and source properties
