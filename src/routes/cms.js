@@ -399,6 +399,7 @@ router.get('/homepage-config', authenticateToken, async (req, res) => {
 
 router.put('/homepage-config', authenticateToken, async (req, res) => {
   try {
+    console.log('🏠 Received homepage config update request:', req.body);
     const result = await cmsService.updateHomepageConfig(req.body);
     res.json({ 
       message: 'Homepage configuration updated successfully',
@@ -406,7 +407,10 @@ router.put('/homepage-config', authenticateToken, async (req, res) => {
     });
   } catch (error) {
     console.error('Error updating homepage config:', error);
-    res.status(500).json({ error: 'Failed to update homepage configuration' });
+    res.status(500).json({ 
+      error: 'Homepage configuration operation failed',
+      message: error.message 
+    });
   }
 });
 

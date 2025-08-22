@@ -336,29 +336,25 @@ class CMSService {
     try {
       const collection = database.getHomepageConfigCollection();
       
-      // Filter out _id field to prevent MongoDB immutable field error
-      const { _id, ...cleanConfigData } = configData;
+      // Filter out MongoDB-specific fields and timestamp fields to prevent conflicts
+      const { _id, __v, createdAt, updatedAt, homepageBooks, ...cleanConfigData } = configData;
       
-      const existingConfig = await collection.findOne({});
+      console.log('🔍 Updating homepage config with clean data:', cleanConfigData);
       
-      if (existingConfig) {
-        // Update existing
-        const result = await collection.findOneAndUpdate(
-          {},
-          { $set: { ...cleanConfigData, updatedAt: new Date() } },
-          { returnDocument: 'after' }
-        );
-        return result.value;
-      } else {
-        // Create new
-        const newConfig = {
-          ...cleanConfigData,
-          createdAt: new Date(),
-          updatedAt: new Date()
-        };
-        const result = await collection.insertOne(newConfig);
-        return { ...newConfig, _id: result.insertedId };
-      }
+      // Use upsert to either update existing or create new
+      const result = await collection.findOneAndUpdate(
+        {},
+        { 
+          $set: { ...cleanConfigData, updatedAt: new Date() },
+          $setOnInsert: { createdAt: new Date() }
+        },
+        { 
+          upsert: true, 
+          returnDocument: 'after' 
+        }
+      );
+      
+      return result.value;
     } catch (error) {
       console.error('Error updating homepage config:', error);
       throw new Error('Failed to update homepage configuration');

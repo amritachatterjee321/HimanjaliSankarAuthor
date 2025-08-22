@@ -1068,7 +1068,9 @@ class CMS {
         console.log('🏠 Saving homepage config...');
         console.log('🏠 Current homepage config:', this.homepageConfig);
         try {
-            await this.apiRequest('/homepage-config', 'PUT', this.homepageConfig);
+            // Only send the fields that should be updated, excluding database metadata
+            const { _id, __v, createdAt, updatedAt, homepageBooks, ...cleanConfig } = this.homepageConfig;
+            await this.apiRequest('/homepage-config', 'PUT', cleanConfig);
             this.showNotification('Homepage configuration saved successfully!', 'success');
         } catch (error) {
             console.error('Failed to save homepage config:', error);
@@ -1235,10 +1237,11 @@ class CMS {
     async loadHomepageConfig() {
         try {
             const response = await this.apiRequest('/homepage-config');
-            this.homepageConfig = response.config || {
+            this.homepageConfig = response.homepageConfig || {
                 featuredBook: null,
                 latestReleaseText: 'LATEST RELEASE'
             };
+            console.log('🏠 Loaded homepage config:', this.homepageConfig);
             this.renderHomepageConfig();
         } catch (error) {
             console.error('Failed to load homepage config:', error);
@@ -1268,9 +1271,10 @@ class CMS {
         // Add book options
         this.books.forEach(book => {
             const option = document.createElement('option');
-            option.value = book.id || book._id;
+            const bookId = book._id || book.id;
+            option.value = bookId;
             option.textContent = book.title;
-            if (this.homepageConfig.featuredBook === (book.id || book._id)) {
+            if (this.homepageConfig.featuredBook === bookId) {
                 option.selected = true;
             }
             select.appendChild(option);
@@ -1283,7 +1287,7 @@ class CMS {
 
         if (this.homepageConfig.featuredBook) {
             const featuredBook = this.books.find(book => 
-                (book.id || book._id) === this.homepageConfig.featuredBook
+                (book._id || book.id) === this.homepageConfig.featuredBook
             );
 
             if (featuredBook) {

@@ -955,14 +955,26 @@ async function handleHomepageConfig(req, res) {
           const db = client.db(dbName);
           const booksCollection = db.collection('books');
           
-          // Validate ObjectId format first
-          if (!ObjectId.isValid(updates.featuredBook)) {
-            console.log('❌ Invalid ObjectId format:', updates.featuredBook);
-            return res.status(400).json({ error: 'Invalid featured book ID format' });
+          // Try to find the book by either ObjectId or string ID
+          let bookExists = null;
+          
+          // First try as ObjectId if it's a valid ObjectId format
+          if (ObjectId.isValid(updates.featuredBook)) {
+            console.log('🏠 Checking if book exists as ObjectId...');
+            bookExists = await booksCollection.findOne({ _id: new ObjectId(updates.featuredBook) });
           }
           
-          console.log('🏠 Checking if book exists in database...');
-          const bookExists = await booksCollection.findOne({ _id: new ObjectId(updates.featuredBook) });
+          // If not found as ObjectId, try as string ID
+          if (!bookExists) {
+            console.log('🏠 Checking if book exists as string ID...');
+            bookExists = await booksCollection.findOne({ 
+              $or: [
+                { _id: updates.featuredBook },
+                { id: updates.featuredBook }
+              ]
+            });
+          }
+          
           if (!bookExists) {
             console.log('❌ Book not found in database:', updates.featuredBook);
             return res.status(400).json({ error: 'Featured book not found in database' });
