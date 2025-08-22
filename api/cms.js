@@ -134,15 +134,15 @@ async function handleLogin(req, res) {
       }
     }
     
-    // Fallback to default admin/admin123 for development
-    if (username === 'admin' && password === 'admin123') {
+    // Fallback to default admin/admin123 for development only
+    if (username === 'admin' && password === 'admin123' && process.env.NODE_ENV === 'development') {
       const token = jwt.sign(
         { userId: 'default-admin', username: 'admin' },
         process.env.JWT_SECRET || 'your-secret-key',
         { expiresIn: '24h' }
       );
 
-      console.log('✅ Login successful for default admin user');
+      console.log('✅ Development mode - Login successful for default admin user');
       res.json({ 
         token,
         user: {

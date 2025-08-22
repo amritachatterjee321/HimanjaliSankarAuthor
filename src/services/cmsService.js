@@ -426,6 +426,9 @@ class CMSService {
             role: 'admin',
             email: settings.adminEmail
           };
+        } else {
+          console.log('❌ Admin user not found in settings collection');
+          return null; // Don't fall back to hardcoded credentials
         }
       }
       
@@ -439,18 +442,18 @@ class CMSService {
       
     } catch (error) {
       console.error('Error fetching user:', error);
-    }
-    
-    // Fallback: return default user if database is not available
-    if (username === 'admin') {
-      console.log('⚠️ Using fallback admin credentials');
-      return {
-        _id: 'default-admin',
-        username: 'admin',
-        password: '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // admin123
-        name: 'Admin User',
-        role: 'admin'
-      };
+      
+      // Only fall back to hardcoded credentials in development mode
+      if (username === 'admin' && process.env.NODE_ENV === 'development') {
+        console.log('⚠️ Development mode - using fallback admin credentials');
+        return {
+          _id: 'default-admin',
+          username: 'admin',
+          password: '$2a$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', // admin123
+          name: 'Admin User',
+          role: 'admin'
+        };
+      }
     }
     
     console.log('❌ User not found:', username);

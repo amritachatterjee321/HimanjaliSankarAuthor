@@ -63,8 +63,8 @@ router.post('/auth/login', async (req, res) => {
   try {
     const { username, password } = req.body;
     
-    // Development fallback: allow admin/admin123 without database
-    if (username === 'admin' && password === 'admin123') {
+    // Development fallback: allow admin/admin123 without database (development only)
+    if (username === 'admin' && password === 'admin123' && process.env.NODE_ENV === 'development') {
       const token = jwt.sign(
         { userId: 'default-admin', username: 'admin' },
         process.env.JWT_SECRET || 'your-secret-key',
@@ -78,7 +78,7 @@ router.post('/auth/login', async (req, res) => {
           username: 'admin',
           name: 'Admin User'
         },
-        message: 'Login successful'
+        message: 'Login successful (development mode)'
       });
       return;
     }
