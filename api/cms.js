@@ -202,14 +202,10 @@ async function handleDashboard(req, res) {
 
   try {
     if (!isMongoDBAvailable()) {
-      console.log('❌ MongoDB not configured, using fallback dashboard data');
-      return res.json({
-        stats: {
-          totalBooks: 0,
-          totalMedia: 0,
-          recentActivity: []
-        },
-        message: 'Dashboard endpoint working (fallback mode)'
+      console.log('❌ MongoDB not configured - CMS requires database connection');
+      return res.status(503).json({ 
+        error: 'Database service unavailable',
+        message: 'Dashboard requires MongoDB connection to function'
       });
     }
 
@@ -280,8 +276,11 @@ async function handleBooks(req, res) {
     if (req.method === 'GET') {
       // Get books list from MongoDB
       if (!isMongoDBAvailable()) {
-        console.log('❌ MongoDB not configured, using fallback data');
-        return res.json({ books: getMockBooks() });
+        console.log('❌ MongoDB not configured - CMS requires database connection');
+        return res.status(503).json({ 
+          error: 'Database service unavailable',
+          message: 'CMS requires MongoDB connection to function'
+        });
       }
 
       console.log('✅ MongoDB is available, fetching books from database...');
@@ -591,8 +590,11 @@ async function handleMedia(req, res) {
     if (req.method === 'GET') {
       // Get media list from MongoDB
       if (!isMongoDBAvailable()) {
-        console.log('❌ MongoDB not configured, using fallback data');
-        return res.json({ media: getMockMedia() });
+        console.log('❌ MongoDB not configured - CMS requires database connection');
+        return res.status(503).json({ 
+          error: 'Database service unavailable',
+          message: 'CMS requires MongoDB connection to function'
+        });
       }
 
       console.log('✅ MongoDB is available, fetching media from database...');
@@ -731,8 +733,11 @@ async function handleAuthor(req, res) {
     if (req.method === 'GET') {
       // Get author info from MongoDB
       if (!isMongoDBAvailable()) {
-        console.log('❌ MongoDB not configured, using fallback data');
-        return res.json({ author: getMockAuthor() });
+        console.log('❌ MongoDB not configured - CMS requires database connection');
+        return res.status(503).json({ 
+          error: 'Database service unavailable',
+          message: 'CMS requires MongoDB connection to function'
+        });
       }
 
       console.log('✅ MongoDB is available, fetching author info from database...');
@@ -746,8 +751,11 @@ async function handleAuthor(req, res) {
         console.log('✅ Found author info in database');
         res.json({ author: author });
       } else {
-        console.log('⚠️ No author info found in database, using fallback');
-        res.json({ author: getMockAuthor() });
+        console.log('⚠️ No author info found in database');
+        res.status(404).json({ 
+          error: 'Author data not found',
+          message: 'Author information has not been configured yet. Please use the CMS to add author details.'
+        });
       }
     } else if (req.method === 'PUT') {
       // Update author info in MongoDB
@@ -811,8 +819,11 @@ async function handleSocial(req, res) {
     if (req.method === 'GET') {
       // Get social media links from MongoDB
       if (!isMongoDBAvailable()) {
-        console.log('❌ MongoDB not configured, using fallback data');
-        return res.json({ social: getMockSocial() });
+        console.log('❌ MongoDB not configured - CMS requires database connection');
+        return res.status(503).json({ 
+          error: 'Database service unavailable',
+          message: 'CMS requires MongoDB connection to function'
+        });
       }
 
       console.log('✅ MongoDB is available, fetching social media from database...');
@@ -826,8 +837,11 @@ async function handleSocial(req, res) {
         console.log('✅ Found social media info in database');
         res.json({ social: social });
       } else {
-        console.log('⚠️ No social media info found in database, using fallback');
-        res.json({ social: getMockSocial() });
+        console.log('⚠️ No social media info found in database');
+        res.status(404).json({ 
+          error: 'Social media data not found',
+          message: 'Social media information has not been configured yet. Please use the CMS to add social media links.'
+        });
       }
     } else if (req.method === 'PUT') {
       // Update social media links in MongoDB
@@ -874,8 +888,11 @@ async function handleContact(req, res) {
     if (req.method === 'GET') {
       // Get contact information from MongoDB
       if (!isMongoDBAvailable()) {
-        console.log('❌ MongoDB not configured, using fallback data');
-        return res.json({ contact: getMockContact() });
+        console.log('❌ MongoDB not configured - CMS requires database connection');
+        return res.status(503).json({ 
+          error: 'Database service unavailable',
+          message: 'CMS requires MongoDB connection to function'
+        });
       }
 
       console.log('✅ MongoDB is available, fetching contact info from database...');
@@ -889,8 +906,11 @@ async function handleContact(req, res) {
         console.log('✅ Found contact info in database');
         res.json({ contact: contact });
       } else {
-        console.log('⚠️ No contact info found in database, using fallback');
-        res.json({ contact: getMockContact() });
+        console.log('⚠️ No contact info found in database');
+        res.status(404).json({ 
+          error: 'Contact data not found',
+          message: 'Contact information has not been configured yet. Please use the CMS to add contact details.'
+        });
       }
     } else if (req.method === 'PUT') {
       // Update contact information in MongoDB
@@ -944,9 +964,11 @@ async function handleHomepageConfig(req, res) {
     if (req.method === 'GET') {
       // Get homepage configuration from MongoDB
       if (!isMongoDBAvailable()) {
-        console.log('❌ MongoDB not configured, using fallback data');
-        const fallbackConfig = getMockHomepageConfig();
-        return res.json({ config: fallbackConfig });
+        console.log('❌ MongoDB not configured - CMS requires database connection');
+        return res.status(503).json({ 
+          error: 'Database service unavailable',
+          message: 'CMS requires MongoDB connection to function'
+        });
       }
 
       console.log('✅ MongoDB is available, fetching homepage config from database...');
@@ -963,9 +985,11 @@ async function handleHomepageConfig(req, res) {
         console.log('✅ Found homepage config in database:', configData);
         res.json({ config: configData });
       } else {
-        console.log('⚠️ No homepage config found in database, using fallback');
-        const fallbackConfig = getMockHomepageConfig();
-        res.json({ config: fallbackConfig });
+        console.log('⚠️ No homepage config found in database');
+        res.status(404).json({ 
+          error: 'Homepage configuration not found',
+          message: 'Homepage configuration has not been set up yet. Please use the CMS to configure the homepage.'
+        });
       }
     } else if (req.method === 'PUT') {
       // Update homepage configuration in MongoDB
@@ -1121,9 +1145,11 @@ async function handleSettings(req, res) {
     if (req.method === 'GET') {
       // Get settings from MongoDB
       if (!isMongoDBAvailable()) {
-        console.log('⚠️ MongoDB not available, returning mock settings');
-        const settings = getMockSettings();
-        return res.json({ settings: settings });
+        console.log('❌ MongoDB not configured - CMS requires database connection');
+        return res.status(503).json({ 
+          error: 'Database service unavailable',
+          message: 'Settings management requires MongoDB connection to function'
+        });
       }
 
       const client = await clientPromise;
@@ -1207,130 +1233,12 @@ async function handleSettings(req, res) {
   }
 }
 
-// Mock data functions
-function getMockBooks() {
-  return [
-    {
-      _id: 'book-1',
-      title: 'Whispers in the Rain',
-      subtitle: 'A Collection of Short Stories',
-      description: 'A compelling collection of interconnected short stories.',
-      year: '2023',
-      genre: 'Contemporary Fiction',
-      category: 'adults',
-      amazonLink: 'https://amazon.com/whispers-rain',
-      coverImage: {
-        url: 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=400&h=600&fit=crop'
-      },
-      createdAt: new Date().toISOString()
-    },
-    {
-      _id: 'book-2',
-      title: 'The Magic Garden',
-      subtitle: "Children's Adventure",
-      description: 'A delightful story about friendship and discovery.',
-      year: '2023',
-      genre: "Children's Literature",
-      category: 'children',
-      amazonLink: 'https://amazon.com/magic-garden',
-      coverImage: {
-        url: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=400&h=600&fit=crop'
-      },
-      createdAt: new Date().toISOString()
-    }
-  ];
-}
-
-function getMockMedia() {
-  return [
-    {
-      _id: 'media-1',
-      title: 'Short story for BLink',
-      type: 'short-work',
-      source: 'BLink - The Hindu Business Line',
-      url: 'https://www.thehindubusinessline.com/blink/cover/pinky-chadha-is-patriotic/article9490451.ece',
-      date: '2024-02-05',
-      description: 'A compelling short story exploring themes of patriotism and identity.',
-      createdAt: new Date().toISOString()
-    },
-    {
-      _id: 'media-2',
-      title: 'Book Review - Literary Magazine',
-      type: 'review',
-      source: 'Literary Magazine',
-      url: 'https://example.com/review',
-      date: '2024-01-15',
-      description: 'A comprehensive review of the latest release.',
-      createdAt: new Date().toISOString()
-    }
-  ];
-}
-
-function getMockAuthor() {
-  return {
-    name: 'HIMANJALI SANKAR',
-    bio: 'A passionate author who writes compelling narratives that explore themes of resilience, hope, and human connection. Her work spans both adult and children\'s literature, offering readers of all ages meaningful stories that resonate with the human experience.',
-    shortBio: 'Award-winning author crafting heartwarming stories that bridge generations and cultures.',
-    email: 'himanjali@example.com',
-    website: 'https://himanjalisankar.com',
-    location: 'India',
-    genres: ['Contemporary Fiction', 'Children\'s Literature', 'Short Stories', 'Literary Fiction'],
-    achievements: [
-      'Multiple published works across different genres',
-      'Recognition for storytelling excellence',
-      'Growing reader community worldwide'
-    ],
-    image: {
-      url: 'https://images.unsplash.com/photo-1494790108755-2616b612b786?w=400&h=400&fit=crop'
-    }
-  };
-}
-
-function getMockSocial() {
-  return {
-    instagram: 'https://instagram.com/himanjalisankar',
-    facebook: 'https://facebook.com/himanjali.author',
-    twitter: 'https://twitter.com/himanjali_author'
-  };
-}
-
-function getMockContact() {
-  return {
-    email: 'himanjali@example.com',
-    instagram: '@himanjalisankar',
-    facebook: 'himanjali.author',
-    description: 'I\'d love to hear from you! Whether you have a question about my books, want to discuss a collaboration, or just want to say hello, feel free to reach out.',
-    successMessage: 'Thank you for your message! I\'ll get back to you soon.',
-    updatedAt: new Date().toISOString()
-  };
-}
-
-function getMockHomepageConfig() {
-  return {
-    featuredBook: 'book-1',
-    latestReleaseText: 'LATEST RELEASE',
-    heroTitle: 'Welcome to the World of Himanjali Sankar',
-    heroSubtitle: 'Discover stories that touch the heart and inspire the mind',
-    updatedAt: new Date().toISOString()
-  };
-}
-
+// Settings helper functions
 function getDefaultSettings() {
   return {
     _id: 'cms-settings',
     username: 'admin',
     password: bcrypt.hashSync('admin123', 12), // Default password
-    adminEmail: 'admin@example.com',
-    siteTitle: 'Himanjali Sankar - Author',
-    siteDescription: 'Official website of author Himanjali Sankar',
-    updatedAt: new Date().toISOString()
-  };
-}
-
-function getMockSettings() {
-  return {
-    _id: 'cms-settings',
-    username: 'admin',
     adminEmail: 'admin@example.com',
     siteTitle: 'Himanjali Sankar - Author',
     siteDescription: 'Official website of author Himanjali Sankar',

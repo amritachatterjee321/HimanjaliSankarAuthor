@@ -405,26 +405,12 @@ async function handleAbout(req, res) {
       console.log('🏠 About API called - building response...');
       
       if (!isMongoDBAvailable()) {
-        console.log('❌ MongoDB not configured, using fallback data');
-        const fallbackAuthorInfo = {
-          name: "HIMANJALI SANKAR",
-          bio: "A passionate author who writes compelling narratives that explore themes of resilience, hope, and human connection. Her work spans both adult and children's literature, offering readers of all ages meaningful stories that resonate with the human experience.",
-          achievements: [
-            "Published author with works in multiple genres",
-            "Contributor to prestigious anthologies",
-            "Recipient of literary recognition and awards"
-          ],
-          genres: ["Contemporary Fiction", "Children's Literature", "Short Stories"],
-          website: "https://himanjalisankar.com"
-        };
-        
-        const response = {
-          success: true,
-          data: fallbackAuthorInfo
-        };
-        
-        console.log('🏠 About API using fallback data');
-        return res.status(200).json(response);
+        console.log('❌ MongoDB not configured - returning error in production');
+        return res.status(503).json({ 
+          success: false, 
+          error: 'Database service unavailable',
+          message: 'Author information is currently unavailable. Please try again later.'
+        });
       }
 
       console.log('✅ MongoDB is available, fetching author data from database...');
@@ -477,42 +463,20 @@ async function handleAbout(req, res) {
         console.log('🏠 About API sending response from database:', response);
         res.status(200).json(response);
       } else {
-        console.log('⚠️ No author data found in database, using fallback');
-        const fallbackAuthorInfo = {
-          name: "HIMANJALI SANKAR",
-          bio: "A passionate author who writes compelling narratives that explore themes of resilience, hope, and human connection. Her work spans both adult and children's literature, offering readers of all ages meaningful stories that resonate with the human experience.",
-          awards: [
-            "Published author with works in multiple genres",
-            "Contributor to prestigious anthologies",
-            "Recipient of literary recognition and awards"
-          ],
-          genres: ["Contemporary Fiction", "Children's Literature", "Short Stories"],
-          website: "https://himanjalisankar.com"
-        };
-        
-        const response = {
-          success: true,
-          data: fallbackAuthorInfo
-        };
-        
-        console.log('🏠 About API sending fallback response:', response);
-        res.status(200).json(response);
+        console.log('⚠️ No author data found in database - returning error');
+        return res.status(404).json({ 
+          success: false, 
+          error: 'Author data not found',
+          message: 'Author information has not been configured yet.'
+        });
       }
     } catch (error) {
       console.error('About API error:', error);
-      const fallbackResponse = {
-        success: true,
-        data: {
-          name: "HIMANJALI SANKAR",
-          bio: "A passionate author who writes compelling narratives.",
-          awards: ["Published author", "Contributor to anthologies"],
-          genres: ["Contemporary Fiction", "Children's Literature"],
-          website: "https://himanjalisankar.com"
-        }
-      };
-      
-      console.log('🏠 About API sending fallback response due to error:', fallbackResponse);
-      res.status(200).json(fallbackResponse);
+      return res.status(500).json({ 
+        success: false, 
+        error: 'Internal server error',
+        message: 'Unable to retrieve author information at this time.'
+      });
     }
   } else {
     res.status(405).json({ message: 'Method not allowed' });
