@@ -165,6 +165,21 @@
   .author-photo {
     text-align: center;
 
+    .author-image {
+      width: 300px;
+      height: 400px;
+      border-radius: 15px;
+      object-fit: cover;
+      object-position: center;
+      margin: 0 auto;
+      box-shadow: $shadow-heavy;
+
+      @media (max-width: 768px) {
+        width: 250px;
+        height: 330px;
+      }
+    }
+
     .photo-placeholder {
       width: 300px;
       height: 400px;
@@ -459,6 +474,21 @@
     }
     
     .author-photo {
+      .author-image {
+        width: 400px;
+        height: 500px;
+        border-radius: 20px;
+        object-fit: cover;
+        object-position: center;
+        margin: 0 auto;
+        box-shadow: $shadow-heavy;
+        
+        @media (max-width: 768px) {
+          width: 300px;
+          height: 380px;
+        }
+      }
+      
       .photo-placeholder {
         width: 400px;
         height: 500px;
@@ -478,6 +508,7 @@
       }
       
       .bio-text {
+        font-family: $font-serif;
         font-size: 1.2rem;
         line-height: 1.9;
         margin-bottom: 0;
