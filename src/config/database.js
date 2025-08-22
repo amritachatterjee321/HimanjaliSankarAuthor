@@ -105,6 +105,10 @@ class Database {
     return this.getDb().collection('homepageConfig');
   }
 
+  getContactCollection() {
+    return this.getDb().collection('contact');
+  }
+
 }
 
 // Create a singleton instance

@@ -69,6 +69,12 @@ class CMS {
       socialForm.addEventListener('submit', (e) => this.handleSocialSubmit(e));
     }
 
+    // Contact form
+    const contactForm = document.getElementById('contact-form');
+    if (contactForm) {
+      contactForm.addEventListener('submit', (e) => this.handleContactSubmit(e));
+    }
+
     // Settings form
     const settingsForm = document.getElementById('settings-form');
     if (settingsForm) {
@@ -165,6 +171,9 @@ class CMS {
         break;
       case 'social':
         this.loadSocialData();
+        break;
+      case 'contact':
+        this.loadContactData();
         break;
       case 'settings':
         this.loadSettingsData();
@@ -583,6 +592,63 @@ class CMS {
 
     this.saveToStorage('settings', this.settings);
     this.showNotification('Social media links saved successfully!', 'success');
+  }
+
+  // Contact Functions
+  async loadContactData() {
+    try {
+      const response = await fetch('/api/cms?endpoint=contact');
+      if (response.ok) {
+        const data = await response.json();
+        const contact = data.contact || {};
+        
+        const form = document.getElementById('contact-form');
+        if (form) {
+          document.getElementById('contact-email').value = contact.email || '';
+          document.getElementById('contact-instagram').value = contact.instagram || '';
+          document.getElementById('contact-facebook').value = contact.facebook || '';
+          document.getElementById('contact-description').value = contact.description || '';
+          document.getElementById('contact-success-message').value = contact.successMessage || '';
+        }
+      }
+    } catch (error) {
+      console.error('Error loading contact data:', error);
+      this.showNotification('Error loading contact data!', 'error');
+    }
+  }
+
+  async handleContactSubmit(e) {
+    e.preventDefault();
+    const formData = new FormData(e.target);
+    
+    const contactData = {
+      email: formData.get('email'),
+      instagram: formData.get('instagram'),
+      facebook: formData.get('facebook'),
+      description: formData.get('description'),
+      successMessage: formData.get('successMessage')
+    };
+
+    try {
+      const token = localStorage.getItem('cms_token');
+      const response = await fetch('/api/cms?endpoint=contact', {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
+        },
+        body: JSON.stringify(contactData)
+      });
+
+      if (response.ok) {
+        this.showNotification('Contact information saved successfully!', 'success');
+      } else {
+        throw new Error('Failed to save contact information');
+      }
+    } catch (error) {
+      console.error('Error saving contact information:', error);
+      this.showNotification('Error saving contact information!', 'error');
+    }
   }
 
   // Settings Functions

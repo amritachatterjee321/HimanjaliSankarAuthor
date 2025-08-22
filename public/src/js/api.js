@@ -54,6 +54,10 @@ class ApiService {
   }
 
   // Contact API
+  async getContactInfo() {
+    return this.request('/api/cms?endpoint=contact');
+  }
+
   async submitContactForm(formData) {
     return this.request('/api/contact', {
       method: 'POST',

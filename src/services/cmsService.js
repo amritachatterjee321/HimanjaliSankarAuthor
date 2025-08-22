@@ -532,6 +532,39 @@ class CMSService {
       throw new Error('Failed to delete image');
     }
   }
+
+  // Contact operations
+  async getContact() {
+    try {
+      const collection = database.getContactCollection();
+      const contact = await collection.findOne({});
+      return contact;
+    } catch (error) {
+      console.error('Error fetching contact:', error);
+      throw new Error('Failed to fetch contact');
+    }
+  }
+
+  async updateContact(contactData) {
+    try {
+      const collection = database.getContactCollection();
+      const updateData = {
+        ...contactData,
+        updatedAt: new Date()
+      };
+      
+      const result = await collection.updateOne(
+        {}, // Empty filter to match any document
+        { $set: updateData },
+        { upsert: true }
+      );
+      
+      return result;
+    } catch (error) {
+      console.error('Error updating contact:', error);
+      throw new Error('Failed to update contact');
+    }
+  }
 }
 
 export default new CMSService(); 

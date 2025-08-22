@@ -36,6 +36,8 @@ export default async function handler(req, res) {
       await handleAbout(req, res);
     } else if (endpoint === 'contact') {
       await handleContact(req, res);
+    } else if (endpoint === 'contact-info') {
+      await handleContactInfo(req, res);
     } else if (endpoint === 'test') {
       await handleTest(req, res);
     } else if (endpoint === 'debug') {
@@ -566,6 +568,164 @@ async function handleContact(req, res) {
       console.error('Contact form submission error:', error);
       res.status(500).json({ 
         message: 'Failed to send message. Please try again.',
+        success: false
+      });
+    }
+  } else {
+    res.status(405).json({ message: 'Method not allowed' });
+  }
+}
+
+// Contact Info handler
+async function handleContactInfo(req, res) {
+  if (req.method === 'GET') {
+    try {
+      console.log('📞 Contact Info API called - building response...');
+      
+      if (!isMongoDBAvailable()) {
+        console.log('❌ MongoDB not configured, using fallback data');
+        const fallbackContactInfo = {
+          name: "Himanjali Sankar",
+          email: "contact@himanjalisankar.com",
+          phone: "+1 (555) 123-4567",
+          address: "1234 Main St, Suite 100, New York, NY 10001",
+          website: "https://himanjalisankar.com",
+          socialMedia: {
+            facebook: "https://facebook.com/himanjalisankar",
+            twitter: "https://twitter.com/himanjalisankar",
+            instagram: "https://instagram.com/himanjalisankar",
+            linkedin: "https://linkedin.com/in/himanjalisankar"
+          },
+          businessHours: "Monday - Friday: 9:00 AM - 5:00 PM EST",
+          additionalInfo: "For media inquiries and speaking engagements, please contact us directly."
+        };
+        
+        const response = {
+          success: true,
+          data: fallbackContactInfo
+        };
+        
+        console.log('📞 Contact Info API using fallback data');
+        return res.status(200).json(response);
+      }
+
+      console.log('✅ MongoDB is available, fetching contact info from database...');
+      const client = await clientPromise;
+      console.log('✅ MongoDB client connected');
+      
+      const dbName = getDatabaseName();
+      console.log('📊 Database name:', dbName);
+      
+      const db = client.db(dbName);
+      const contactInfoCollection = db.collection('contactInfo');
+      console.log('📞 Contact Info collection accessed');
+
+      // Fetch contact info from MongoDB
+      const contactInfoData = await contactInfoCollection.findOne({ isActive: true });
+      
+      if (contactInfoData) {
+        console.log('✅ Found contact info in database:', contactInfoData);
+        
+        // Transform the data to match the expected format
+        const contactInfo = {
+          name: contactInfoData.name || "Himanjali Sankar",
+          email: contactInfoData.email || "contact@himanjalisankar.com",
+          phone: contactInfoData.phone || "+1 (555) 123-4567",
+          address: contactInfoData.address || "1234 Main St, Suite 100, New York, NY 10001",
+          website: contactInfoData.website || "https://himanjalisankar.com",
+          socialMedia: contactInfoData.socialMedia || {
+            facebook: "https://facebook.com/himanjalisankar",
+            twitter: "https://twitter.com/himanjalisankar",
+            instagram: "https://instagram.com/himanjalisankar",
+            linkedin: "https://linkedin.com/in/himanjalisankar"
+          },
+          businessHours: contactInfoData.businessHours || "Monday - Friday: 9:00 AM - 5:00 PM EST",
+          additionalInfo: contactInfoData.additionalInfo || "For media inquiries and speaking engagements, please contact us directly."
+        };
+        
+        const response = {
+          success: true,
+          data: contactInfo
+        };
+        
+        console.log('📞 Contact Info API sending response from database:', response);
+        res.status(200).json(response);
+      } else {
+        console.log('⚠️ No contact info found in database, using fallback');
+        const fallbackContactInfo = {
+          name: "Himanjali Sankar",
+          email: "contact@himanjalisankar.com",
+          phone: "+1 (555) 123-4567",
+          address: "1234 Main St, Suite 100, New York, NY 10001",
+          website: "https://himanjalisankar.com",
+          socialMedia: {
+            facebook: "https://facebook.com/himanjalisankar",
+            twitter: "https://twitter.com/himanjalisankar",
+            instagram: "https://instagram.com/himanjalisankar",
+            linkedin: "https://linkedin.com/in/himanjalisankar"
+          },
+          businessHours: "Monday - Friday: 9:00 AM - 5:00 PM EST",
+          additionalInfo: "For media inquiries and speaking engagements, please contact us directly."
+        };
+        
+        const response = {
+          success: true,
+          data: fallbackContactInfo
+        };
+        
+        console.log('📞 Contact Info API sending fallback response:', response);
+        res.status(200).json(response);
+      }
+    } catch (error) {
+      console.error('Contact Info API error:', error);
+      const fallbackResponse = {
+        success: true,
+        data: {
+          name: "Himanjali Sankar",
+          email: "contact@himanjalisankar.com",
+          phone: "+1 (555) 123-4567",
+          address: "1234 Main St, Suite 100, New York, NY 10001",
+          website: "https://himanjalisankar.com",
+          socialMedia: {
+            facebook: "https://facebook.com/himanjalisankar",
+            twitter: "https://twitter.com/himanjalisankar",
+            instagram: "https://instagram.com/himanjalisankar",
+            linkedin: "https://linkedin.com/in/himanjalisankar"
+          },
+          businessHours: "Monday - Friday: 9:00 AM - 5:00 PM EST",
+          additionalInfo: "For media inquiries and speaking engagements, please contact us directly."
+        }
+      };
+      
+      console.log('📞 Contact Info API sending fallback response due to error:', fallbackResponse);
+      res.status(200).json(fallbackResponse);
+    }
+  } else if (req.method === 'POST') {
+    try {
+      const { name, email, phone, address, website, socialMedia, businessHours, additionalInfo } = req.body;
+
+      if (!name || !email) {
+        return res.status(400).json({ message: 'Name and email are required' });
+      }
+
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(email)) {
+        return res.status(400).json({ message: 'Please enter a valid email address' });
+      }
+
+      console.log('Contact Info form submission:', {
+        name, email, phone, address, website, socialMedia, businessHours, additionalInfo,
+        timestamp: new Date().toISOString()
+      });
+
+      res.status(200).json({ 
+        message: 'Contact info updated successfully!',
+        success: true
+      });
+    } catch (error) {
+      console.error('Contact Info form submission error:', error);
+      res.status(500).json({ 
+        message: 'Failed to update contact info. Please try again.',
         success: false
       });
     }

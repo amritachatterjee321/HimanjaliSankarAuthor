@@ -90,7 +90,9 @@ class CMS {
             this.saveSocial();
         });
 
-
+        document.getElementById('save-contact-btn').addEventListener('click', () => {
+            this.saveContact();
+        });
 
         document.getElementById('save-settings-btn').addEventListener('click', () => {
             this.saveSettings();
@@ -356,7 +358,14 @@ class CMS {
         }
     }
 
-
+    async loadContact() {
+        try {
+            const response = await this.apiRequest('/contact');
+            this.populateContactForm(response.contact || {});
+        } catch (error) {
+            console.error('Failed to load contact information:', error);
+        }
+    }
 
     renderBooks() {
         const grid = document.getElementById('books-grid');
@@ -480,7 +489,14 @@ class CMS {
         document.getElementById('linkedin-url').value = social.linkedin || '';
     }
 
-
+    populateContactForm(contact) {
+        document.getElementById('contact-email').value = contact.email || '';
+        document.getElementById('contact-instagram').value = contact.instagram || '';
+        document.getElementById('contact-facebook').value = contact.facebook || '';
+        document.getElementById('contact-location').value = contact.location || '';
+        document.getElementById('contact-description').value = contact.description || '';
+        document.getElementById('contact-success-message').value = contact.successMessage || '';
+    }
 
     showBookModal(book = null) {
         const modal = document.getElementById('book-modal');
@@ -1022,8 +1038,28 @@ class CMS {
         }
     }
 
+    async saveContact() {
+        const form = document.getElementById('contact-form');
+        const formData = new FormData(form);
+        
+        const contactData = {
+            email: formData.get('email'),
+            instagram: formData.get('instagram'),
+            facebook: formData.get('facebook'),
+            location: formData.get('location'),
+            description: formData.get('description'),
+            successMessage: formData.get('successMessage')
+        };
 
-
+        try {
+            await this.apiRequest('/contact', 'PUT', contactData);
+            this.showNotification('Contact information saved successfully!', 'success');
+            this.loadContact();
+        } catch (error) {
+            console.error('Failed to save contact:', error);
+            this.showNotification('Failed to save contact information', 'error');
+        }
+    }
 
     async saveSettings() {
         const password = document.getElementById('cms-password').value;

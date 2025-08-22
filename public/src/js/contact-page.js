@@ -10,6 +10,7 @@ class ContactPage extends Component {
   constructor(container, eventBus, apiService) {
     super(container, eventBus);
     this.apiService = apiService;
+    this.contactInfo = {};
     this.formData = {
       name: '',
       email: '',
@@ -46,7 +47,7 @@ class ContactPage extends Component {
 
     const infoDescription = Utils.createElement('p', {
       className: 'info-description',
-      innerHTML: 'I\'d love to hear from you! Whether you have a question about my books, want to discuss a collaboration, or just want to say hello, feel free to reach out.'
+      innerHTML: this.contactInfo.description || 'I\'d love to hear from you! Whether you have a question about my books, want to discuss a collaboration, or just want to say hello, feel free to reach out.'
     });
 
     const contactMethods = Utils.createElement('div', {
@@ -73,7 +74,7 @@ class ContactPage extends Component {
 
     const emailAddress = Utils.createElement('p', {
       className: 'method-detail',
-      innerHTML: 'himanjali@example.com'
+      innerHTML: this.contactInfo.email || 'himanjali@example.com'
     });
 
     emailInfo.appendChild(emailLabel);
@@ -81,36 +82,20 @@ class ContactPage extends Component {
     emailMethod.appendChild(emailIcon);
     emailMethod.appendChild(emailInfo);
 
-    // Location Method
-    const locationMethod = Utils.createElement('div', {
-      className: 'contact-method'
-    });
 
-    const locationIcon = Utils.createElement('i', {
-      className: 'fas fa-map-marker-alt contact-icon'
-    });
-
-    const locationInfo = Utils.createElement('div', {
-      className: 'method-info'
-    });
-
-    const locationLabel = Utils.createElement('h3', {
-      className: 'method-label',
-      innerHTML: 'Location'
-    });
-
-    const locationDetail = Utils.createElement('p', {
-      className: 'method-detail',
-      innerHTML: 'India'
-    });
-
-    locationInfo.appendChild(locationLabel);
-    locationInfo.appendChild(locationDetail);
-    locationMethod.appendChild(locationIcon);
-    locationMethod.appendChild(locationInfo);
 
     contactMethods.appendChild(emailMethod);
-    contactMethods.appendChild(locationMethod);
+
+    // Add social media contact methods if available
+    if (this.contactInfo.instagram) {
+      const instagramMethod = this.createSocialMethod('Instagram', this.contactInfo.instagram, 'fab fa-instagram');
+      contactMethods.appendChild(instagramMethod);
+    }
+
+    if (this.contactInfo.facebook) {
+      const facebookMethod = this.createSocialMethod('Facebook', this.contactInfo.facebook, 'fab fa-facebook');
+      contactMethods.appendChild(facebookMethod);
+    }
 
     contactInfo.appendChild(infoTitle);
     contactInfo.appendChild(infoDescription);
@@ -338,12 +323,58 @@ class ContactPage extends Component {
 
   async mount() {
     try {
+      await this.loadContactInfo();
       const element = this.render();
       this.container.appendChild(element);
       this.bindEvents();
     } catch (error) {
       console.error('Error mounting ContactPage:', error);
     }
+  }
+
+  async loadContactInfo() {
+    try {
+      const response = await this.apiService.getContactInfo();
+      this.contactInfo = response.contact || {};
+      console.log('✅ Contact info loaded:', this.contactInfo);
+    } catch (error) {
+      console.error('⚠️ Error loading contact info, using defaults:', error);
+      this.contactInfo = {
+        email: 'himanjali@example.com',
+        description: 'I\'d love to hear from you! Whether you have a question about my books, want to discuss a collaboration, or just want to say hello, feel free to reach out.'
+      };
+    }
+  }
+
+  createSocialMethod(label, handle, iconClass) {
+    const method = Utils.createElement('div', {
+      className: 'contact-method'
+    });
+
+    const icon = Utils.createElement('i', {
+      className: `${iconClass} contact-icon`
+    });
+
+    const info = Utils.createElement('div', {
+      className: 'method-info'
+    });
+
+    const methodLabel = Utils.createElement('h3', {
+      className: 'method-label',
+      innerHTML: label
+    });
+
+    const methodDetail = Utils.createElement('p', {
+      className: 'method-detail',
+      innerHTML: handle
+    });
+
+    info.appendChild(methodLabel);
+    info.appendChild(methodDetail);
+    method.appendChild(icon);
+    method.appendChild(info);
+
+    return method;
   }
 
   bindEvents() {

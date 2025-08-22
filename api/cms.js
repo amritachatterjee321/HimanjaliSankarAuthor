@@ -52,6 +52,8 @@ export default async function handler(req, res) {
       await handleAuthor(req, res);
     } else if (endpoint === 'social' || req.url?.includes('/social')) {
       await handleSocial(req, res);
+    } else if (endpoint === 'contact' || req.url?.includes('/contact')) {
+      await handleContact(req, res);
     } else if (endpoint === 'homepage-config' || req.url?.includes('/homepage-config')) {
       console.log('🏠 Routing to homepage-config handler');
       await handleHomepageConfig(req, res);
@@ -866,6 +868,69 @@ async function handleSocial(req, res) {
   }
 }
 
+// Handle contact information
+async function handleContact(req, res) {
+  try {
+    if (req.method === 'GET') {
+      // Get contact information from MongoDB
+      if (!isMongoDBAvailable()) {
+        console.log('❌ MongoDB not configured, using fallback data');
+        return res.json({ contact: getMockContact() });
+      }
+
+      console.log('✅ MongoDB is available, fetching contact info from database...');
+      const client = await clientPromise;
+      const dbName = getDatabaseName();
+      const db = client.db(dbName);
+      const contactCollection = db.collection('contact');
+      
+      const contact = await contactCollection.findOne({});
+      if (contact) {
+        console.log('✅ Found contact info in database');
+        res.json({ contact: contact });
+      } else {
+        console.log('⚠️ No contact info found in database, using fallback');
+        res.json({ contact: getMockContact() });
+      }
+    } else if (req.method === 'PUT') {
+      // Update contact information in MongoDB
+      if (!isMongoDBAvailable()) {
+        return res.status(500).json({ error: 'MongoDB not available' });
+      }
+
+      const updates = req.body;
+      console.log('📧 Updating contact information:', updates);
+      
+      const client = await clientPromise;
+      const dbName = getDatabaseName();
+      const db = client.db(dbName);
+      const contactCollection = db.collection('contact');
+      
+      // Add update timestamp
+      updates.updatedAt = new Date();
+      
+      // Use upsert to create if doesn't exist, update if it does
+      const result = await contactCollection.updateOne(
+        {}, // Empty filter to match any document
+        { $set: updates },
+        { upsert: true }
+      );
+      
+      console.log('✅ Contact information updated successfully');
+      res.json({
+        success: true,
+        message: 'Contact information updated successfully',
+        updates
+      });
+    } else {
+      res.status(405).json({ error: 'Method not allowed' });
+    }
+  } catch (error) {
+    console.error('Contact API error:', error);
+    res.status(500).json({ error: 'Contact operation failed' });
+  }
+}
+
 // Handle homepage configuration
 async function handleHomepageConfig(req, res) {
   console.log('🏠 Homepage config handler called');
@@ -1226,6 +1291,17 @@ function getMockSocial() {
     instagram: 'https://instagram.com/himanjalisankar',
     facebook: 'https://facebook.com/himanjali.author',
     twitter: 'https://twitter.com/himanjali_author'
+  };
+}
+
+function getMockContact() {
+  return {
+    email: 'himanjali@example.com',
+    instagram: '@himanjalisankar',
+    facebook: 'himanjali.author',
+    description: 'I\'d love to hear from you! Whether you have a question about my books, want to discuss a collaboration, or just want to say hello, feel free to reach out.',
+    successMessage: 'Thank you for your message! I\'ll get back to you soon.',
+    updatedAt: new Date().toISOString()
   };
 }
 

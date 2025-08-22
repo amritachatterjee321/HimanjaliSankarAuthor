@@ -41,6 +41,7 @@
                     <button class="nav-btn" data-section="author">Author Info</button>
                     <button class="nav-btn" data-section="media">Media Coverage</button>
                     <button class="nav-btn" data-section="social">Social Media</button>
+                    <button class="nav-btn" data-section="contact">Contact Info</button>
                     <button class="nav-btn" data-section="settings">Settings</button>
                 </nav>
                 <button id="logout-btn" class="btn btn-secondary">Logout</button>
@@ -175,6 +176,57 @@
                     <div class="form-group">
                         <label for="linkedin-url">LinkedIn URL</label>
                         <input type="url" id="linkedin-url" name="linkedin">
+                    </div>
+                </form>
+            </section>
+
+            <!-- Contact Info Section -->
+            <section id="contact-section" class="content-section">
+                <div class="section-header">
+                    <h2>Contact Information</h2>
+                    <button id="save-contact-btn" class="btn btn-primary">Save Changes</button>
+                </div>
+                <form id="contact-form" class="form">
+                    <div class="form-section">
+                        <h3>Get in Touch</h3>
+                        <p class="section-description">Manage the contact information that appears in the "Get in Touch" section on your contact page.</p>
+                        
+                        <div class="form-group">
+                            <label for="contact-email">Email Address</label>
+                            <input type="email" id="contact-email" name="email" placeholder="your.email@example.com" required>
+                            <small class="form-help">This email will be displayed on the contact page</small>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="contact-instagram">Instagram Handle</label>
+                            <input type="text" id="contact-instagram" name="instagram" placeholder="@username or username">
+                            <small class="form-help">Enter your Instagram handle (with or without @)</small>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="contact-facebook">Facebook Handle</label>
+                            <input type="text" id="contact-facebook" name="facebook" placeholder="username or full URL">
+                            <small class="form-help">Enter your Facebook username or full profile URL</small>
+                        </div>
+                        
+
+                    </div>
+                    
+                    <div class="form-section">
+                        <h3>Contact Form Settings</h3>
+                        <p class="section-description">Configure additional contact form settings and messaging.</p>
+                        
+                        <div class="form-group">
+                            <label for="contact-description">Contact Description</label>
+                            <textarea id="contact-description" name="description" rows="3" placeholder="I'd love to hear from you! Whether you have a question about my books, want to discuss a collaboration, or just want to say hello, feel free to reach out."></textarea>
+                            <small class="form-help">This description appears in the "Get in Touch" section</small>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label for="contact-success-message">Success Message</label>
+                            <input type="text" id="contact-success-message" name="successMessage" placeholder="Thank you for your message! I'll get back to you soon.">
+                            <small class="form-help">Message shown when contact form is successfully submitted</small>
+                        </div>
                     </div>
                 </form>
             </section>

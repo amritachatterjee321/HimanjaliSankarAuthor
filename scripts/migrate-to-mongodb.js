@@ -81,6 +81,16 @@ async function migrateData() {
       console.log('⚠️ No social data found');
     }
     
+    // Migrate contact
+    const contactData = await readJsonFile(path.join(DATA_DIR, 'contact.json'));
+    if (contactData) {
+      console.log('📧 Migrating contact information...');
+      await cmsService.updateContact(contactData);
+      console.log('✅ Contact information migrated successfully');
+    } else {
+      console.log('⚠️ No contact data found');
+    }
+    
     // Migrate settings and create default user
     const settingsData = await readJsonFile(path.join(DATA_DIR, 'settings.json'));
     if (settingsData) {
