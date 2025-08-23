@@ -380,6 +380,10 @@ class CMS {
                     _id: book._id || book.id, // Ensure _id is always present
                     id: book._id || book.id   // Keep id for backward compatibility
                 };
+                // Ensure _id is always a string for consistent comparison
+                if (bookWithConsistentId._id) {
+                    bookWithConsistentId._id = bookWithConsistentId._id.toString();
+                }
                 console.log('Book with consistent ID:', bookWithConsistentId.title, 'ID:', bookWithConsistentId._id);
                 return bookWithConsistentId;
             });
@@ -1382,9 +1386,11 @@ class CMS {
         this.books.forEach(book => {
             const option = document.createElement('option');
             const bookId = book._id || book.id;
-            option.value = bookId;
+            // Convert to string for consistent comparison
+            const bookIdString = bookId?.toString() || bookId;
+            option.value = bookIdString;
             option.textContent = book.title;
-            if (this.homepageConfig.featuredBook === bookId) {
+            if (this.homepageConfig.featuredBook === bookIdString) {
                 option.selected = true;
             }
             select.appendChild(option);
@@ -1396,9 +1402,11 @@ class CMS {
         if (!preview) return;
 
         if (this.homepageConfig.featuredBook) {
-            const featuredBook = this.books.find(book => 
-                (book._id || book.id) === this.homepageConfig.featuredBook
-            );
+            const featuredBook = this.books.find(book => {
+                const bookId = book._id || book.id;
+                const bookIdString = bookId?.toString() || bookId;
+                return bookIdString === this.homepageConfig.featuredBook;
+            });
 
             if (featuredBook) {
                 preview.innerHTML = `

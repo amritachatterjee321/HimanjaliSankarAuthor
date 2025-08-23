@@ -323,6 +323,12 @@ class CMSService {
     try {
       const collection = database.getHomepageConfigCollection();
       const config = await collection.findOne({});
+      
+      // Ensure featuredBook is always a string for consistent comparison
+      if (config && config.featuredBook) {
+        config.featuredBook = config.featuredBook.toString();
+      }
+      
       return config || {
         featuredBook: null,
         latestReleaseText: 'LATEST RELEASE'
