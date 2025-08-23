@@ -7,6 +7,7 @@
     { "source": "/contact", "destination": "/contact.html" },
     { "source": "/sitemap.xml", "destination": "/api/sitemap" },
     { "source": "/robots.txt", "destination": "/api/robots" },
+    { "source": "/social-image.png", "destination": "/api/social-image" },
     { "source": "/cms", "destination": "/cms/index.html" },
     { "source": "/book/:id", "destination": "/book-detail.html" },
     { "source": "/api/books", "destination": "/api/main?endpoint=books" },
@@ -39,7 +40,8 @@
     "api/main.js": { "maxDuration": 10 },
     "api/cms.js": { "maxDuration": 10 },
     "api/sitemap.js": { "maxDuration": 5 },
-    "api/robots.js": { "maxDuration": 5 }
+    "api/robots.js": { "maxDuration": 5 },
+    "api/social-image.js": { "maxDuration": 10 }
   },
   "headers": [
     {
