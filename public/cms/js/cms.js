@@ -1270,6 +1270,7 @@ class CMS {
         console.log('🔍 API Request - Endpoint:', endpoint);
         console.log('🔍 API Request - Method:', method);
         console.log('🔍 API Request - Token present:', token ? 'Yes' : 'No');
+        console.log('🔍 API Request - Token value:', token ? token.substring(0, 20) + '...' : 'null');
         console.log('🔍 API Request - Data:', data);
         
         // Map CMS endpoints to the correct API paths
@@ -1350,7 +1351,10 @@ class CMS {
 
     async loadHomepageConfig() {
         try {
+            console.log('🏠 Loading homepage config from API...');
             const response = await this.apiRequest('/homepage-config');
+            console.log('🏠 API response:', response);
+            
             this.homepageConfig = response.homepageConfig || {
                 featuredBook: null,
                 latestReleaseText: 'LATEST RELEASE'
@@ -1359,6 +1363,7 @@ class CMS {
             this.renderHomepageConfig();
         } catch (error) {
             console.error('Failed to load homepage config:', error);
+            console.error('Error details:', error.message);
             // Use default config if API fails
             this.homepageConfig = {
                 featuredBook: null,

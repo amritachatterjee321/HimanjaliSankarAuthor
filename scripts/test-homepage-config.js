@@ -4,7 +4,14 @@ async function testHomepageConfig() {
   try {
     console.log('🔍 Testing homepage configuration data flow...');
     
+    // Check if MongoDB is available
+    if (!database) {
+      console.log('❌ Database module not available');
+      return;
+    }
+    
     // Connect to database
+    console.log('🔄 Attempting to connect to MongoDB...');
     await database.connect();
     console.log('✅ Connected to MongoDB');
     
@@ -51,13 +58,25 @@ async function testHomepageConfig() {
       }
     } else {
       console.log('❌ No homepage config found in database');
+      console.log('💡 This means the homepage configuration has not been set up yet');
+      console.log('🔧 You need to:');
+      console.log('   1. Access the CMS at /cms/');
+      console.log('   2. Login with admin/admin123');
+      console.log('   3. Go to the Homepage Configuration section');
+      console.log('   4. Select a featured book and save the configuration');
     }
     
   } catch (error) {
     console.error('❌ Error testing homepage config:', error);
+    console.error('🔧 Error details:', error.message);
+    console.error('🔧 Stack trace:', error.stack);
   } finally {
-    await database.disconnect();
-    console.log('\n✅ Test completed');
+    try {
+      await database.disconnect();
+      console.log('\n✅ Test completed');
+    } catch (disconnectError) {
+      console.log('\n⚠️ Error disconnecting from database:', disconnectError.message);
+    }
   }
 }
 

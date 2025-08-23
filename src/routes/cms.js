@@ -389,7 +389,12 @@ router.put('/social', async (req, res) => {
 // Homepage Configuration API
 router.get('/homepage-config', authenticateToken, async (req, res) => {
   try {
+    console.log('🏠 Homepage config API called by user:', req.user?.username);
     const homepageConfig = await cmsService.getHomepageConfig();
+    console.log('🏠 Homepage config retrieved:', {
+      featuredBook: homepageConfig?.featuredBook,
+      latestReleaseText: homepageConfig?.latestReleaseText
+    });
     res.json({ homepageConfig });
   } catch (error) {
     console.error('Error fetching homepage config:', error);

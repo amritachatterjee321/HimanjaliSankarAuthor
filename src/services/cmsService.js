@@ -321,18 +321,33 @@ class CMSService {
   // Homepage Configuration operations
   async getHomepageConfig() {
     try {
+      console.log('🔍 Getting homepage config from database...');
       const collection = database.getHomepageConfigCollection();
       const config = await collection.findOne({});
+      
+      console.log('🔍 Raw config from database:', config ? {
+        featuredBook: config.featuredBook,
+        latestReleaseText: config.latestReleaseText,
+        hasId: !!config._id
+      } : 'null');
       
       // Ensure featuredBook is always a string for consistent comparison
       if (config && config.featuredBook) {
         config.featuredBook = config.featuredBook.toString();
+        console.log('🔍 Featured book ID converted to string:', config.featuredBook);
       }
       
-      return config || {
+      const result = config || {
         featuredBook: null,
         latestReleaseText: 'LATEST RELEASE'
       };
+      
+      console.log('🔍 Returning homepage config:', {
+        featuredBook: result.featuredBook,
+        latestReleaseText: result.latestReleaseText
+      });
+      
+      return result;
     } catch (error) {
       console.error('Error fetching homepage config:', error);
       throw new Error('Failed to fetch homepage configuration');

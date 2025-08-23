@@ -7,7 +7,7 @@ A modern, responsive author website built with vanilla JavaScript, Express.js, a
 - **Modern Homepage Layout**: Latest book showcase with purchase links
 - **Book Categories**: Organized adult fiction and children's books
 - **Responsive Design**: Mobile-first approach with elegant animations
-- **Contact System**: Email-based contact form with validation
+- **Contact System**: Email-based contact form with automatic email notifications to admin
 - **API Integration**: RESTful API for dynamic content
 - **Performance Optimized**: Fast loading with efficient asset management
 - **SEO Ready**: Proper meta tags and structured markup
@@ -54,12 +54,16 @@ npm start
 NODE_ENV=development
 PORT=3000
 
-# Email (Gmail recommended)
-EMAIL_HOST=smtp.gmail.com
-EMAIL_PORT=587
+# Email Configuration (for contact form)
+SMTP_HOST=smtp.gmail.com
+SMTP_PORT=587
+SMTP_USER=your-email@gmail.com
+SMTP_PASS=your-app-password
+# Alternative email variables (if not using SMTP_ prefix)
 EMAIL_USER=your-email@gmail.com
 EMAIL_PASS=your-app-password
-EMAIL_TO=contact@himanjalisankar.com
+# Admin email for receiving contact form messages
+ADMIN_EMAIL=himanjali.sankar@gmail.com
 
 # Social Media Links
 TWITTER_URL=https://twitter.com/himanjalisankar
@@ -141,14 +145,24 @@ C:/projects/himanjali/
 - Safari 13+
 - Edge 80+
 
-## 📧 Contact Form
+## 📧 Contact Form & Email System
 
 The contact form includes:
 - Name and email validation
 - Inquiry type categorization
+- Organization field for business inquiries
 - Rate limiting (3 submissions per 15 minutes)
-- Email delivery with professional formatting
+- **Automatic email notifications** to admin
+- Professional HTML email formatting
 - Success/error feedback
+
+### Email Setup
+See [EMAIL_SETUP.md](./EMAIL_SETUP.md) for detailed email configuration instructions.
+
+**Quick Setup:**
+1. Configure SMTP settings in `.env`
+2. Set admin email in CMS settings
+3. Test with `node scripts/test-email.js`
 
 ## 🔮 Future Enhancements
 

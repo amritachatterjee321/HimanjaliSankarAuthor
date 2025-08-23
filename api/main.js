@@ -508,10 +508,11 @@ async function handleContact(req, res) {
     }
   } else if (req.method === 'POST') {
     try {
-      const { name, email, subject, message } = req.body;
+      const { name, email, subject, message, organization, inquiryType } = req.body;
 
-      if (!name || !email || !subject || !message) {
-        return res.status(400).json({ message: 'All fields are required' });
+      // Validate required fields
+      if (!name || !email || !message) {
+        return res.status(400).json({ message: 'Name, email, and message are required' });
       }
 
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -519,15 +520,59 @@ async function handleContact(req, res) {
         return res.status(400).json({ message: 'Please enter a valid email address' });
       }
 
-      console.log('Contact form submission:', {
-        name, email, subject, message,
+      console.log('📧 Contact form submission:', {
+        name, email, subject, message, organization, inquiryType,
         timestamp: new Date().toISOString()
       });
 
-      res.status(200).json({ 
-        message: 'Message sent successfully!',
-        success: true
-      });
+      // Get admin email from settings
+      let adminEmail = 'himanjali.sankar@gmail.com'; // Default fallback
+      
+      try {
+        if (isMongoDBAvailable()) {
+          const client = await clientPromise;
+          const dbName = getDatabaseName();
+          const db = client.db(dbName);
+          const settingsCollection = db.collection('settings');
+          
+          const settings = await settingsCollection.findOne({ _id: 'cms-settings' });
+          if (settings && settings.adminEmail) {
+            adminEmail = settings.adminEmail;
+            console.log('✅ Found admin email in settings:', adminEmail);
+          } else {
+            console.log('⚠️ No admin email found in settings, using default');
+          }
+        } else {
+          console.log('⚠️ MongoDB not available, using default admin email');
+        }
+      } catch (error) {
+        console.error('⚠️ Error fetching admin email from settings:', error);
+      }
+
+      // Send email
+      try {
+        const emailService = (await import('./lib/email.js')).default;
+        const emailResult = await emailService.sendContactFormEmail(
+          { name, email, subject, message, organization, inquiryType },
+          adminEmail
+        );
+        
+        console.log('✅ Email sent successfully:', emailResult.messageId);
+        
+        res.status(200).json({ 
+          message: 'Message sent successfully!',
+          success: true
+        });
+      } catch (emailError) {
+        console.error('❌ Email sending failed:', emailError);
+        
+        // Still return success to user but log the error
+        res.status(200).json({ 
+          message: 'Message received! We\'ll get back to you soon.',
+          success: true,
+          note: 'Email delivery may be delayed'
+        });
+      }
     } catch (error) {
       console.error('Contact form submission error:', error);
       res.status(500).json({ 
