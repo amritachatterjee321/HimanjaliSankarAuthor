@@ -301,7 +301,7 @@
 .book-subtitle {
   font-family: $font-sans;
   color: $primary-color;
-  font-size: 16px;
+  font-size: 1.4em;
   text-transform: uppercase;
   letter-spacing: 2px;
   margin-bottom: 30px;
@@ -313,12 +313,16 @@
     grid-row: 1;
     text-align: left;
     width: auto;
-    font-size: 16px;
-    margin-bottom: 5px; /* Reduced from 10px to 5px for tighter spacing */
+    font-size: 1.4em;
+    margin-bottom: 10px; /* Adjusted spacing for reduced font size */
+  }
+
+  @media (max-width: $tablet) {
+    font-size: 1.12em;
   }
 
   @media (max-width: $mobile) {
-    font-size: 14px;
+    font-size: 0.9em;
     margin-bottom: 20px;
     grid-area: subtitle;
   }
