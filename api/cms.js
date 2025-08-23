@@ -974,18 +974,23 @@ async function handleHomepageConfig(req, res) {
       console.log('✅ MongoDB is available, fetching homepage config from database...');
       const client = await clientPromise;
       const dbName = getDatabaseName();
+      console.log('🏠 Using database name:', dbName);
       const db = client.db(dbName);
       const configCollection = db.collection('homepageConfig');
       console.log('🏠 Homepage config collection accessed');
 
       // Get homepage configuration from MongoDB
+      console.log('🏠 Executing findOne({}) query on homepageConfig collection...');
       const configData = await configCollection.findOne({});
+      console.log('🏠 Query result:', configData);
       
       if (configData) {
         console.log('✅ Found homepage config in database:', configData);
+        console.log('🏠 Sending response with homepageConfig property');
         res.json({ homepageConfig: configData });
       } else {
         console.log('⚠️ No homepage config found in database');
+        console.log('🏠 Sending 404 response');
         res.status(404).json({ 
           error: 'Homepage configuration not found',
           message: 'Homepage configuration has not been set up yet. Please use the CMS to configure the homepage.'

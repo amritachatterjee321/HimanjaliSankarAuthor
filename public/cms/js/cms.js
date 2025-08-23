@@ -346,11 +346,15 @@ class CMS {
     }
 
     async loadData() {
+        // Load books first, then other data
+        await this.loadBooks();
+        
+        // Load other data in parallel
         await Promise.all([
-            this.loadBooks(),
             this.loadMedia(),
             this.loadAuthor(),
             this.loadSocial(),
+            this.loadContact(),
             this.loadHomepageConfig()
         ]);
     }
@@ -1346,6 +1350,7 @@ class CMS {
                 latestReleaseText: 'LATEST RELEASE'
             };
             console.log('🏠 Loaded homepage config:', this.homepageConfig);
+            console.log('🏠 Books available for rendering:', this.books.length);
             this.renderHomepageConfig();
         } catch (error) {
             console.error('Failed to load homepage config:', error);
@@ -1368,7 +1373,13 @@ class CMS {
 
     renderFeaturedBookSelect() {
         const select = document.getElementById('featured-book-select');
-        if (!select) return;
+        if (!select) {
+            console.log('🏠 Featured book select element not found');
+            return;
+        }
+
+        console.log('🏠 Rendering featured book select with', this.books.length, 'books');
+        console.log('🏠 Featured book ID:', this.homepageConfig.featuredBook);
 
         // Clear existing options
         select.innerHTML = '<option value="">Select a book...</option>';
@@ -1383,6 +1394,7 @@ class CMS {
             option.textContent = book.title;
             if (this.homepageConfig.featuredBook === bookIdString) {
                 option.selected = true;
+                console.log('🏠 Selected book:', book.title, 'with ID:', bookIdString);
             }
             select.appendChild(option);
         });
