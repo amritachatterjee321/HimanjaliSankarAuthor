@@ -258,3 +258,64 @@ async function startServer() {
 startServer();
 
 export default app;
+
+// Image optimization middleware
+const sharp = require('sharp');
+const path = require('path');
+
+// Serve optimized images
+app.get('/uploads/:filename', async (req, res) => {
+  try {
+    const filename = req.params.filename;
+    const filePath = path.join(__dirname, 'public', 'uploads', filename);
+    const { width, height, quality, format } = req.query;
+    
+    // Check if file exists
+    if (!require('fs').existsSync(filePath)) {
+      return res.status(404).send('Image not found');
+    }
+    
+    // If no optimization parameters, serve original
+    if (!width && !height && !quality && !format) {
+      return res.sendFile(filePath);
+    }
+    
+    // Create optimized image
+    let sharpInstance = sharp(filePath);
+    
+    // Resize if width or height specified
+    if (width || height) {
+      sharpInstance = sharpInstance.resize(
+        width ? parseInt(width) : null,
+        height ? parseInt(height) : null,
+        { fit: 'cover', withoutEnlargement: true }
+      );
+    }
+    
+    // Set quality
+    if (quality) {
+      sharpInstance = sharpInstance.jpeg({ quality: parseInt(quality) });
+    }
+    
+    // Convert format if specified
+    if (format === 'webp') {
+      sharpInstance = sharpInstance.webp({ quality: quality ? parseInt(quality) : 80 });
+    } else if (format === 'avif') {
+      sharpInstance = sharpInstance.avif({ quality: quality ? parseInt(quality) : 80 });
+    }
+    
+    // Set cache headers
+    res.set({
+      'Cache-Control': 'public, max-age=31536000', // 1 year
+      'Content-Type': format === 'webp' ? 'image/webp' : 
+                     format === 'avif' ? 'image/avif' : 'image/jpeg'
+    });
+    
+    // Stream the optimized image
+    sharpInstance.pipe(res);
+    
+  } catch (error) {
+    console.error('Image optimization error:', error);
+    res.status(500).send('Image processing error');
+  }
+});

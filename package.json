@@ -16,7 +16,8 @@
     "test": "vitest",
     "migrate": "node scripts/migrate-to-mongodb.js",
     "css:compile": "node scripts/compile-css.js",
-    "css:watch": "npx sass --watch public/src/styles/main.scss:public/src/styles/main.css"
+    "css:watch": "npx sass --watch public/src/styles/main.scss:public/src/styles/main.css",
+    "optimize:images": "node scripts/optimize-images.js"
   },
   "keywords": [
     "author",
@@ -42,7 +43,8 @@
     "morgan": "^1.10.0",
     "multer": "^2.0.2",
     "node-fetch": "^3.3.2",
-    "nodemailer": "^6.9.7"
+    "nodemailer": "^6.9.7",
+    "sharp": "^0.33.5"
   },
   "devDependencies": {
     "@vitejs/plugin-legacy": "^7.1.0",

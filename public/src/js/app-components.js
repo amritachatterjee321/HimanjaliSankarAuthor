@@ -4,6 +4,7 @@ import Utils from './utils.js';
 import { EventEmitter, NotificationSystem, FormValidator } from './services.js';
 import { Component, Header } from './components.js';
 import { LatestBook } from './book-components.js';
+import CloudinaryConfig from './cloudinary-config.js';
 
 // Books Grid Component
 class BooksGrid extends Component {
@@ -269,11 +270,27 @@ class BooksGrid extends Component {
 
     // Add book cover image if available, otherwise show title
     if (book.coverImage && book.coverImage.url) {
-      const img = Utils.createElement('img', {
-        src: book.coverImage.url,
-        alt: book.title,
-        className: 'book-cover-image'
+      // Optimize the image URL for book cards using Cloudinary
+      const optimizedUrl = CloudinaryConfig.getOptimizedUrl(book.coverImage.url, 'bookCard');
+      const lowResUrl = CloudinaryConfig.getProgressiveUrl(book.coverImage.url, 'bookCard');
+      const srcSet = CloudinaryConfig.generateSrcSet(book.coverImage.url, 'bookCard');
+      
+      // Create optimized image with lazy loading
+      const img = ImageOptimizer.createResponsiveImage(bookCover, {
+        url: optimizedUrl,
+        lowResUrl: lowResUrl
+      }, {
+        lazy: true,
+        progressive: true,
+        sizes: '(max-width: 768px) 140px, 300px',
+        alt: book.title
       });
+      
+      // Add srcset for responsive images
+      if (srcSet) {
+        img.srcset = srcSet;
+      }
+      
       bookCover.appendChild(img);
       bookCover.classList.add('has-cover-image');
     } else {
@@ -314,11 +331,11 @@ class BooksGrid extends Component {
       return url;
     }
     
-    // If it's a relative path starting with /uploads/, convert to a placeholder
+    // If it's a relative path starting with /uploads/, use optimized version
     if (url.startsWith('/uploads/')) {
-      // For now, use a placeholder image since Vercel can't serve /uploads/
-      // You can replace this with your actual image hosting service URL
-      return 'https://images.unsplash.com/photo-1544947950-fa07a98d237f?w=400&h=600&fit=crop';
+      // Convert to optimized WebP version
+      const optimizedUrl = url.replace('/uploads/', '/uploads/optimized/').replace(/\.(jpg|jpeg|png)$/i, '.webp');
+      return `${window.location.origin}${optimizedUrl}`;
     }
     
     // If it's a relative path without /uploads/, try to make it absolute

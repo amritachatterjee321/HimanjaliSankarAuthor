@@ -149,6 +149,38 @@
       display: block; // Ensure image displays properly
     }
     
+    // Lazy loading styles
+    .lazy {
+      opacity: 0;
+      transition: opacity 0.3s ease-in;
+      
+      &.loaded {
+        opacity: 1;
+      }
+    }
+    
+    // Progressive loading styles
+    .progressive-image {
+      &.low-res-loaded {
+        filter: blur(5px);
+        transition: filter 0.3s ease-out;
+      }
+      
+      &.high-res-loaded {
+        filter: blur(0);
+      }
+    }
+    
+    // Error state
+    .error {
+      background: #f0f0f0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #666;
+      font-size: 0.9em;
+    }
+    
     // Remove the cover content overlay completely
     // .book-cover-content {
     //   position: relative;

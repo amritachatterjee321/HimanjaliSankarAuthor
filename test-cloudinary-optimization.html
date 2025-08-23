@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cloudinary Image Optimization Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .test-section {
+            margin: 30px 0;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        .image-container {
+            display: flex;
+            gap: 20px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        .image-item {
+            text-align: center;
+        }
+        .image-item img {
+            max-width: 200px;
+            height: auto;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        .image-info {
+            margin-top: 10px;
+            font-size: 12px;
+            color: #666;
+        }
+        .url-display {
+            background: #f5f5f5;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 11px;
+            word-break: break-all;
+            margin: 10px 0;
+        }
+        .performance-info {
+            background: #e8f4fd;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Cloudinary Image Optimization Test</h1>
+    
+    <div class="performance-info">
+        <h3>Performance Information</h3>
+        <p>This page tests Cloudinary image optimization features:</p>
+        <ul>
+            <li>Automatic format selection (WebP/AVIF for modern browsers)</li>
+            <li>Responsive image sizing</li>
+            <li>Quality optimization</li>
+            <li>Progressive loading</li>
+        </ul>
+    </div>
+
+    <div class="test-section">
+        <h2>Book Cover Optimization Test</h2>
+        <p>Testing different image types and sizes:</p>
+        
+        <div class="image-container">
+            <div class="image-item">
+                <h4>Original Image</h4>
+                <img src="https://res.cloudinary.com/demo/image/upload/sample.jpg" alt="Original">
+                <div class="image-info">Original Cloudinary image</div>
+                <div class="url-display">https://res.cloudinary.com/demo/image/upload/sample.jpg</div>
+            </div>
+            
+            <div class="image-item">
+                <h4>Book Cover (400x600)</h4>
+                <img src="https://res.cloudinary.com/demo/image/upload/w_400,h_600,q_85,c_fill,g_auto,f_auto/sample.jpg" alt="Book Cover">
+                <div class="image-info">Optimized for book covers</div>
+                <div class="url-display">https://res.cloudinary.com/demo/image/upload/w_400,h_600,q_85,c_fill,g_auto,f_auto/sample.jpg</div>
+            </div>
+            
+            <div class="image-item">
+                <h4>Book Card (300x450)</h4>
+                <img src="https://res.cloudinary.com/demo/image/upload/w_300,h_450,q_80,c_fill,g_auto,f_auto/sample.jpg" alt="Book Card">
+                <div class="image-info">Optimized for book cards</div>
+                <div class="url-display">https://res.cloudinary.com/demo/image/upload/w_300,h_450,q_80,c_fill,g_auto,f_auto/sample.jpg</div>
+            </div>
+            
+            <div class="image-item">
+                <h4>Thumbnail (150x225)</h4>
+                <img src="https://res.cloudinary.com/demo/image/upload/w_150,h_225,q_70,c_fill,g_auto,f_auto/sample.jpg" alt="Thumbnail">
+                <div class="image-info">Optimized for thumbnails</div>
+                <div class="url-display">https://res.cloudinary.com/demo/image/upload/w_150,h_225,q_70,c_fill,g_auto,f_auto/sample.jpg</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>Format Optimization Test</h2>
+        <p>Testing different formats (WebP, JPEG, Auto):</p>
+        
+        <div class="image-container">
+            <div class="image-item">
+                <h4>WebP Format</h4>
+                <img src="https://res.cloudinary.com/demo/image/upload/w_300,h_450,q_80,c_fill,f_webp/sample.jpg" alt="WebP">
+                <div class="image-info">WebP format for modern browsers</div>
+                <div class="url-display">https://res.cloudinary.com/demo/image/upload/w_300,h_450,q_80,c_fill,f_webp/sample.jpg</div>
+            </div>
+            
+            <div class="image-item">
+                <h4>JPEG Format</h4>
+                <img src="https://res.cloudinary.com/demo/image/upload/w_300,h_450,q_80,c_fill,f_jpg/sample.jpg" alt="JPEG">
+                <div class="image-info">JPEG format for compatibility</div>
+                <div class="url-display">https://res.cloudinary.com/demo/image/upload/w_300,h_450,q_80,c_fill,f_jpg/sample.jpg</div>
+            </div>
+            
+            <div class="image-item">
+                <h4>Auto Format</h4>
+                <img src="https://res.cloudinary.com/demo/image/upload/w_300,h_450,q_80,c_fill,f_auto/sample.jpg" alt="Auto">
+                <div class="image-info">Auto format selection</div>
+                <div class="url-display">https://res.cloudinary.com/demo/image/upload/w_300,h_450,q_80,c_fill,f_auto/sample.jpg</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>Responsive Images Test</h2>
+        <p>Testing responsive image loading with srcset:</p>
+        
+        <div class="image-item">
+            <h4>Responsive Image</h4>
+            <img src="https://res.cloudinary.com/demo/image/upload/w_400,h_600,q_85,c_fill,f_auto/sample.jpg"
+                 srcset="https://res.cloudinary.com/demo/image/upload/w_280,h_420,q_85,c_fill,f_auto/sample.jpg 480w,
+                         https://res.cloudinary.com/demo/image/upload/w_320,h_480,q_85,c_fill,f_auto/sample.jpg 768w,
+                         https://res.cloudinary.com/demo/image/upload/w_400,h_600,q_85,c_fill,f_auto/sample.jpg 1024w"
+                 sizes="(max-width: 480px) 280px, (max-width: 768px) 320px, 400px"
+                 alt="Responsive Image">
+            <div class="image-info">Responsive image with multiple sizes</div>
+            <div class="url-display">
+                Mobile (480w): https://res.cloudinary.com/demo/image/upload/w_280,h_420,q_85,c_fill,f_auto/sample.jpg<br>
+                Tablet (768w): https://res.cloudinary.com/demo/image/upload/w_320,h_480,q_85,c_fill,f_auto/sample.jpg<br>
+                Desktop (1024w): https://res.cloudinary.com/demo/image/upload/w_400,h_600,q_85,c_fill,f_auto/sample.jpg
+            </div>
+        </div>
+    </div>
+
+    <div class="test-section">
+        <h2>Performance Monitoring</h2>
+        <div id="performance-metrics">
+            <p>Loading performance metrics...</p>
+        </div>
+    </div>
+
+    <script>
+        // Performance monitoring
+        window.addEventListener('load', () => {
+            const loadTime = performance.now();
+            const metricsDiv = document.getElementById('performance-metrics');
+            
+            // Get image loading metrics
+            const images = document.querySelectorAll('img');
+            let loadedImages = 0;
+            let totalImageSize = 0;
+            
+            images.forEach(img => {
+                if (img.complete) {
+                    loadedImages++;
+                    // Estimate image size
+                    const estimatedSize = img.naturalWidth * img.naturalHeight * 3 * 0.4; // Rough estimate
+                    totalImageSize += estimatedSize;
+                }
+            });
+            
+            metricsDiv.innerHTML = `
+                <h3>Performance Metrics</h3>
+                <p><strong>Page Load Time:</strong> ${loadTime.toFixed(2)}ms</p>
+                <p><strong>Images Loaded:</strong> ${loadedImages}/${images.length}</p>
+                <p><strong>Estimated Total Image Size:</strong> ${(totalImageSize / 1024 / 1024).toFixed(2)}MB</p>
+                <p><strong>Average Image Size:</strong> ${(totalImageSize / loadedImages / 1024).toFixed(1)}KB</p>
+            `;
+        });
+
+        // Test Cloudinary URL transformation
+        function testCloudinaryTransformation() {
+            const originalUrl = 'https://res.cloudinary.com/demo/image/upload/sample.jpg';
+            const transformedUrl = originalUrl.replace('/upload/', '/upload/w_400,h_600,q_85,c_fill,f_auto/');
+            console.log('Original URL:', originalUrl);
+            console.log('Transformed URL:', transformedUrl);
+        }
+
+        // Run test
+        testCloudinaryTransformation();
+    </script>
+</body>
+</html>

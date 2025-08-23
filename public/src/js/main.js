@@ -2,6 +2,7 @@ import CONFIG from './config.js';
 import ApiService from './api.js';
 import Utils from './utils.js';
 import { EventEmitter, NotificationSystem } from './services.js';
+import PerformanceMonitor from './performance-monitor.js';
 import { Header } from './components.js';
 import { LatestBook } from './book-components.js';
 import { BooksGrid, Footer, LoadingManager } from './app-components.js';
@@ -36,6 +37,9 @@ class App {
 
       // Simulate loading time
       await this.loadingManager.simulateLoading();
+
+      // Initialize image optimization
+      ImageOptimizer.init();
 
       // Bind global events
       this.bindGlobalEvents();
