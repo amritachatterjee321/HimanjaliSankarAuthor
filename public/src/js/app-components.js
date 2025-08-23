@@ -92,17 +92,6 @@ class BooksGrid extends Component {
       className: 'books-grid-container'
     });
 
-    const header = Utils.createElement('div', {
-      className: 'section-header'
-    });
-
-    const title = Utils.createElement('h2', {
-      className: 'section-title',
-      innerHTML: 'Previous Works'
-    });
-
-    header.appendChild(title);
-
     const categoriesContainer = Utils.createElement('div', {
       className: 'books-categories'
     });
@@ -119,7 +108,6 @@ class BooksGrid extends Component {
       categoriesContainer.appendChild(previousWorksSection);
     }
 
-    container.appendChild(header);
     container.appendChild(categoriesContainer);
     section.appendChild(container);
 
