@@ -1,0 +1,25 @@
+{
+  "name": "Himanjali Sankar - Author",
+  "short_name": "Himanjali Sankar",
+  "description": "Official website of author Himanjali Sankar",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#2c3e50",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/images/android-chrome-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/images/android-chrome-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ],
+  "categories": ["books", "education", "entertainment"],
+  "lang": "en",
+  "dir": "ltr"
+}
