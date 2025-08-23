@@ -41,6 +41,9 @@ class CMS {
             }, 2000);
         });
 
+        // Password toggle buttons
+        this.setupPasswordToggles();
+
         // Navigation
         document.querySelectorAll('.nav-btn').forEach(btn => {
             btn.addEventListener('click', (e) => {
@@ -122,7 +125,78 @@ class CMS {
         // Removed bindImagePreviewEvents function - now using URL-based image management
         
         // Latest Release cover image preview
+    }
 
+    setupPasswordToggles() {
+        const toggleButtons = document.querySelectorAll('.password-toggle-btn');
+        
+        toggleButtons.forEach(button => {
+            // Remove existing event listeners to prevent duplicates
+            button.removeEventListener('click', this.handlePasswordToggle);
+            // Add new event listener
+            button.addEventListener('click', this.handlePasswordToggle.bind(this));
+        });
+    }
+
+    handlePasswordToggle(e) {
+        e.preventDefault();
+        const button = e.currentTarget;
+        const targetId = button.getAttribute('data-target');
+        const passwordInput = document.getElementById(targetId);
+        const icon = button.querySelector('.toggle-icon');
+        
+        if (!passwordInput) {
+            console.error('Password input not found:', targetId);
+            return;
+        }
+        
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            button.classList.add('show-password');
+            icon.className = 'fas fa-eye-slash toggle-icon';
+            button.setAttribute('title', 'Hide password');
+        } else {
+            passwordInput.type = 'password';
+            button.classList.remove('show-password');
+            icon.className = 'fas fa-eye toggle-icon';
+            button.setAttribute('title', 'Show password');
+        }
+    }
+
+    setupPasswordToggles() {
+        const toggleButtons = document.querySelectorAll('.password-toggle-btn');
+        
+        toggleButtons.forEach(button => {
+            // Remove existing event listeners to prevent duplicates
+            button.removeEventListener('click', this.handlePasswordToggle);
+            // Add new event listener
+            button.addEventListener('click', this.handlePasswordToggle.bind(this));
+        });
+    }
+
+    handlePasswordToggle(e) {
+        e.preventDefault();
+        const button = e.currentTarget;
+        const targetId = button.getAttribute('data-target');
+        const passwordInput = document.getElementById(targetId);
+        const icon = button.querySelector('.toggle-icon');
+        
+        if (!passwordInput) {
+            console.error('Password input not found:', targetId);
+            return;
+        }
+        
+        if (passwordInput.type === 'password') {
+            passwordInput.type = 'text';
+            button.classList.add('show-password');
+            icon.className = 'fas fa-eye-slash toggle-icon';
+            button.setAttribute('title', 'Hide password');
+        } else {
+            passwordInput.type = 'password';
+            button.classList.remove('show-password');
+            icon.className = 'fas fa-eye toggle-icon';
+            button.setAttribute('title', 'Show password');
+        }
     }
 
     // Removed bindImagePreviewEvents function - now using URL-based image management

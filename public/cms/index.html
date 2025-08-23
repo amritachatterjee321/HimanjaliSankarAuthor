@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Himanjali - Content Management System</title>
     <link rel="stylesheet" href="styles/cms.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
 </head>
 <body>
     <!-- Login Screen -->
@@ -21,7 +22,12 @@
                 </div>
                 <div class="form-group">
                     <label for="password">Password</label>
-                    <input type="password" id="password" name="password" required>
+                    <div class="password-field-wrapper">
+                        <input type="password" id="password" name="password" class="password-input form-input" required>
+                        <button type="button" class="password-toggle-btn" data-target="password" title="Toggle password visibility">
+                            <i class="fas fa-eye toggle-icon"></i>
+                        </button>
+                    </div>
                 </div>
                 <button type="submit" class="btn btn-primary">Login</button>
             </form>
@@ -244,11 +250,21 @@
                     </div>
                     <div class="form-group">
                         <label for="cms-password">Admin Password</label>
-                        <input type="password" id="cms-password" name="password" required placeholder="Enter admin password">
+                        <div class="password-field-wrapper">
+                            <input type="password" id="cms-password" name="password" class="password-input form-input" required placeholder="Enter admin password">
+                            <button type="button" class="password-toggle-btn" data-target="cms-password" title="Toggle password visibility">
+                                <i class="fas fa-eye toggle-icon"></i>
+                            </button>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label for="cms-confirm-password">Confirm Password</label>
-                        <input type="password" id="cms-confirm-password" name="confirmPassword" required placeholder="Confirm admin password">
+                        <div class="password-field-wrapper">
+                            <input type="password" id="cms-confirm-password" name="confirmPassword" class="password-input form-input" required placeholder="Confirm admin password">
+                            <button type="button" class="password-toggle-btn" data-target="cms-confirm-password" title="Toggle password visibility">
+                                <i class="fas fa-eye toggle-icon"></i>
+                            </button>
+                        </div>
                     </div>
                     <div class="form-group">
                         <label for="admin-email">Admin Email</label>
