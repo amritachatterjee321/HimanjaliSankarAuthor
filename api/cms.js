@@ -983,7 +983,7 @@ async function handleHomepageConfig(req, res) {
       
       if (configData) {
         console.log('✅ Found homepage config in database:', configData);
-        res.json({ config: configData });
+        res.json({ homepageConfig: configData });
       } else {
         console.log('⚠️ No homepage config found in database');
         res.status(404).json({ 
