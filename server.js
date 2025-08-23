@@ -260,18 +260,18 @@ startServer();
 export default app;
 
 // Image optimization middleware
-const sharp = require('sharp');
-const path = require('path');
+import sharp from 'sharp';
+import { existsSync } from 'fs';
 
 // Serve optimized images
 app.get('/uploads/:filename', async (req, res) => {
   try {
     const filename = req.params.filename;
-    const filePath = path.join(__dirname, 'public', 'uploads', filename);
+    const filePath = join(__dirname, 'public', 'uploads', filename);
     const { width, height, quality, format } = req.query;
     
     // Check if file exists
-    if (!require('fs').existsSync(filePath)) {
+    if (!existsSync(filePath)) {
       return res.status(404).send('Image not found');
     }
     

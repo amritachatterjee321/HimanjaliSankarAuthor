@@ -1036,11 +1036,44 @@
     margin: 0 !important;
   }
 
+  /* Force carousel book covers to be uniform size - highest priority */
+  .books-carousel-container .book-card .book-cover,
   .books-carousel-container .book-cover {
     background: transparent !important;
     box-shadow: none !important;
     padding: 0 !important;
     margin: 0 !important;
+    width: 180px !important;
+    height: 270px !important;
+    flex-shrink: 0 !important;
+    display: block !important;
+    align-items: unset !important;
+    justify-content: unset !important;
+    min-height: 270px !important;
+    max-height: 270px !important;
+    object-fit: cover !important;
+    object-position: center !important;
+    position: relative !important;
+    z-index: 1 !important;
+    flex-grow: 0 !important;
+    border-radius: 8px !important;
+    overflow: hidden !important;
+    
+    .book-cover-image {
+      width: 100% !important;
+      height: 100% !important;
+      object-fit: cover !important;
+      border-radius: 8px !important;
+      display: block !important;
+      object-position: center !important;
+    }
+    
+    img {
+      width: 100% !important;
+      height: 100% !important;
+      object-fit: cover !important;
+      object-position: center !important;
+    }
   }
   
   /* Hide mobile grid on desktop - use more specific selector */
