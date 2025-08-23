@@ -384,6 +384,27 @@ router.put('/social', async (req, res) => {
   }
 });
 
+// Contact Info API
+router.get('/contact', authenticateToken, async (req, res) => {
+  try {
+    const contact = await cmsService.getContact();
+    res.json({ contact });
+  } catch (error) {
+    console.error('Error reading contact info:', error);
+    res.status(500).json({ error: 'Failed to load contact info' });
+  }
+});
+
+router.put('/contact', authenticateToken, async (req, res) => {
+  try {
+    const contact = await cmsService.updateContact(req.body);
+    res.json({ contact });
+  } catch (error) {
+    console.error('Error updating contact info:', error);
+    res.status(500).json({ error: 'Failed to update contact info' });
+  }
+});
+
 
 
 // Homepage Configuration API

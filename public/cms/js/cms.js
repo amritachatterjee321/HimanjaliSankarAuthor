@@ -20,7 +20,6 @@ class CMS {
     async init() {
         console.log('🚀 CMS initializing...');
         this.bindEvents();
-        await this.loadSettings();
         console.log('🔐 Starting authentication check...');
         this.checkAuth();
     }
@@ -216,6 +215,7 @@ class CMS {
                 this.isAuthenticated = true;
                 this.currentUser = data.user;
                 this.showDashboard();
+                await this.loadSettings();
                 this.loadData();
             } else {
                 console.log('🔐 Token verification failed, removing token');
@@ -258,6 +258,7 @@ class CMS {
                 this.currentUser = data.user;
                 console.log('🔐 Showing dashboard after successful login');
                 this.showDashboard();
+                await this.loadSettings();
                 this.loadData();
             } else {
                 const errorData = await response.json();

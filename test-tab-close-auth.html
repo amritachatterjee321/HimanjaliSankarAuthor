@@ -82,6 +82,8 @@
             <li>Reopen this page in a new tab</li>
             <li>Notice you need to login again - the token was cleared!</li>
         </ol>
+        <h3>CMS Authentication Issue:</h3>
+        <p>The CMS was trying to load settings before authentication, causing 401 errors. This has been fixed by moving <code>loadSettings()</code> to run after successful login.</p>
     </div>
     
     <div>
