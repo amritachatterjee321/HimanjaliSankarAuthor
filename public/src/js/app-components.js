@@ -1,6 +1,6 @@
 import CONFIG from './config.js';
 import ApiService from './api.js';
-import Utils from './utils.js';
+import Utils, { ImageOptimizer } from './utils.js';
 import { EventEmitter, NotificationSystem, FormValidator } from './services.js';
 import { Component, Header } from './components.js';
 import { LatestBook } from './book-components.js';

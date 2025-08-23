@@ -1,6 +1,6 @@
 import CONFIG from './config.js';
 import ApiService from './api.js';
-import Utils from './utils.js';
+import Utils, { ImageOptimizer } from './utils.js';
 import { EventEmitter, NotificationSystem } from './services.js';
 import PerformanceMonitor from './performance-monitor.js';
 import { Header } from './components.js';

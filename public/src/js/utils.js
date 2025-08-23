@@ -379,3 +379,4 @@ class ImageOptimizer {
 }
 
 export default Utils;
+export { ImageOptimizer };
