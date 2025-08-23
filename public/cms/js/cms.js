@@ -34,7 +34,7 @@ class CMS {
 
         // Clear tokens button
         document.getElementById('clear-tokens-btn').addEventListener('click', () => {
-            localStorage.removeItem('cms_token');
+            sessionStorage.removeItem('cms_token');
             this.showNotification('Tokens cleared, please refresh the page', 'info');
             setTimeout(() => {
                 window.location.reload();
@@ -55,6 +55,9 @@ class CMS {
         document.getElementById('logout-btn').addEventListener('click', () => {
             this.logout();
         });
+
+        // Tab/Window close events to clear token
+        this.setupTabCloseHandlers();
 
         // Book management
         document.getElementById('add-book-btn').addEventListener('click', () => {
@@ -163,49 +166,31 @@ class CMS {
         }
     }
 
-    setupPasswordToggles() {
-        const toggleButtons = document.querySelectorAll('.password-toggle-btn');
-        
-        toggleButtons.forEach(button => {
-            // Remove existing event listeners to prevent duplicates
-            button.removeEventListener('click', this.handlePasswordToggle);
-            // Add new event listener
-            button.addEventListener('click', this.handlePasswordToggle.bind(this));
-        });
-    }
-
-    handlePasswordToggle(e) {
-        e.preventDefault();
-        const button = e.currentTarget;
-        const targetId = button.getAttribute('data-target');
-        const passwordInput = document.getElementById(targetId);
-        const icon = button.querySelector('.toggle-icon');
-        
-        if (!passwordInput) {
-            console.error('Password input not found:', targetId);
-            return;
-        }
-        
-        if (passwordInput.type === 'password') {
-            passwordInput.type = 'text';
-            button.classList.add('show-password');
-            icon.className = 'fas fa-eye-slash toggle-icon';
-            button.setAttribute('title', 'Hide password');
-        } else {
-            passwordInput.type = 'password';
-            button.classList.remove('show-password');
-            icon.className = 'fas fa-eye toggle-icon';
-            button.setAttribute('title', 'Show password');
-        }
-    }
-
     // Removed bindImagePreviewEvents function - now using URL-based image management
+
+    setupTabCloseHandlers() {
+        // Clear token only when tab/window is actually closed
+        const clearTokenOnClose = () => {
+            console.log('🔐 Tab/window closing, clearing authentication token');
+            sessionStorage.removeItem('cms_token');
+            this.isAuthenticated = false;
+        };
+
+        // Handle beforeunload event (when tab/window is about to close)
+        window.addEventListener('beforeunload', clearTokenOnClose);
+
+        // Handle unload event (when page is being unloaded)
+        window.addEventListener('unload', clearTokenOnClose);
+
+        // Note: Removed pagehide, visibilitychange, and blur events
+        // to avoid clearing token when switching tabs or losing focus
+    }
 
     async checkAuth() {
         console.log('🔐 Checking authentication...');
         
-        const token = localStorage.getItem('cms_token');
-        console.log('🔐 Token in localStorage:', token ? 'Present' : 'Not present');
+        const token = sessionStorage.getItem('cms_token');
+        console.log('🔐 Token in sessionStorage:', token ? 'Present' : 'Not present');
         
         if (!token) {
             console.log('🔐 No token found, showing login screen');
@@ -234,12 +219,12 @@ class CMS {
                 this.loadData();
             } else {
                 console.log('🔐 Token verification failed, removing token');
-                localStorage.removeItem('cms_token');
+                sessionStorage.removeItem('cms_token');
                 this.showLogin();
             }
         } catch (error) {
             console.error('🔐 Auth check failed:', error);
-            localStorage.removeItem('cms_token');
+            sessionStorage.removeItem('cms_token');
             this.showLogin();
         }
     }
@@ -267,8 +252,8 @@ class CMS {
                 const data = await response.json();
                 console.log('🔐 Login successful, storing token');
                 console.log('🔐 Token received:', data.token ? 'Present' : 'Missing');
-                localStorage.setItem('cms_token', data.token);
-                console.log('🔐 Token stored in localStorage');
+                sessionStorage.setItem('cms_token', data.token);
+                console.log('🔐 Token stored in sessionStorage');
                 this.isAuthenticated = true;
                 this.currentUser = data.user;
                 console.log('🔐 Showing dashboard after successful login');
@@ -286,7 +271,7 @@ class CMS {
     }
 
     logout() {
-        localStorage.removeItem('cms_token');
+        sessionStorage.removeItem('cms_token');
         this.isAuthenticated = false;
         this.showLogin();
         this.showNotification('Logged out successfully', 'info');
@@ -1266,7 +1251,7 @@ class CMS {
     }
 
     async apiRequest(endpoint, method = 'GET', data = null, isFile = false) {
-        const token = localStorage.getItem('cms_token');
+        const token = sessionStorage.getItem('cms_token');
         console.log('🔍 API Request - Endpoint:', endpoint);
         console.log('🔍 API Request - Method:', method);
         console.log('🔍 API Request - Token present:', token ? 'Yes' : 'No');
