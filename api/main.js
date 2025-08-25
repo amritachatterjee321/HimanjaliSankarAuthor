@@ -86,7 +86,7 @@ async function handleBooks(req, res) {
       const booksCollection = db.collection('books');
       console.log('📚 Books collection accessed');
 
-      const { id, category, latest } = req.query;
+      const { id, category, latest, 'second-featured': secondFeatured } = req.query;
 
       if (id) {
         try {
@@ -175,6 +175,120 @@ async function handleBooks(req, res) {
           res.status(200).json(transformedLatest);
         } else {
           res.status(404).json({ message: 'No books found' });
+        }
+      } else if (secondFeatured) {
+        // Handle second featured book request
+        try {
+          console.log('🔄 Attempting to fetch second featured book from CMS homepage configuration...');
+          const homepageConfigCollection = db.collection('homepageConfig');
+          const homepageConfig = await homepageConfigCollection.findOne({});
+          
+          if (homepageConfig && homepageConfig.secondFeaturedBook) {
+            console.log('✅ Found homepage config with second featured book:', homepageConfig.secondFeaturedBook);
+            
+            // Get the second featured book from the books collection
+            let secondFeaturedBook = null;
+            try {
+              if (ObjectId.isValid(homepageConfig.secondFeaturedBook)) {
+                secondFeaturedBook = await booksCollection.findOne({ 
+                  _id: new ObjectId(homepageConfig.secondFeaturedBook)
+                });
+              } else {
+                // Try to find by string ID if ObjectId is invalid
+                secondFeaturedBook = await booksCollection.findOne({ 
+                  id: homepageConfig.secondFeaturedBook
+                });
+              }
+            } catch (error) {
+              console.error('❌ Error finding second featured book:', error.message);
+              // Try alternative search
+              secondFeaturedBook = await booksCollection.findOne({ 
+                $or: [
+                  { id: homepageConfig.secondFeaturedBook },
+                  { title: homepageConfig.secondFeaturedBook }
+                ]
+              });
+            }
+            
+            if (secondFeaturedBook) {
+              console.log('✅ Using CMS homepage config for second featured book:', secondFeaturedBook.title);
+              const transformedSecondFeatured = {
+                id: secondFeaturedBook._id?.toString() || secondFeaturedBook.id,
+                title: secondFeaturedBook.title,
+                subtitle: "Featured Release",
+                description: secondFeaturedBook.description,
+                shortDescription: secondFeaturedBook.shortDescription || secondFeaturedBook.description?.substring(0, 200),
+                year: secondFeaturedBook.year,
+                genre: secondFeaturedBook.genre,
+                category: secondFeaturedBook.category,
+                amazonLink: secondFeaturedBook.amazonLink,
+                awards: secondFeaturedBook.awards || [],
+                reviews: secondFeaturedBook.reviews || [],
+                coverImage: secondFeaturedBook.coverImage,
+                coverClass: secondFeaturedBook.coverClass,
+                secondFeaturedReleaseText: homepageConfig.secondFeaturedReleaseText || "FEATURED RELEASE"
+              };
+              return res.status(200).json(transformedSecondFeatured);
+            } else {
+              console.log('❌ Second featured book from CMS config not found in books collection');
+            }
+          } else {
+            console.log('❌ No second featured book configured in CMS homepage config');
+          }
+        } catch (error) {
+          console.error('❌ Error accessing CMS homepage configuration:', error.message);
+          console.log('🔄 Falling back to books collection');
+        }
+        
+        // Fallback to getting the second book by year
+        const books = await booksCollection
+          .find({})
+          .sort({ year: -1 })
+          .limit(2)
+          .toArray();
+        
+        if (books.length > 1) {
+          const secondBook = books[1];
+          const transformedSecondFeatured = {
+            id: secondBook._id?.toString() || secondBook.id,
+            title: secondBook.title,
+            subtitle: "Featured Release",
+            description: secondBook.description,
+            shortDescription: secondBook.shortDescription || secondBook.description?.substring(0, 200),
+            year: secondBook.year,
+            genre: secondBook.genre,
+            category: secondBook.category,
+            amazonLink: secondBook.amazonLink,
+            awards: secondBook.awards || [],
+            reviews: secondBook.reviews || [],
+            coverImage: secondBook.coverImage,
+            coverClass: secondBook.coverClass,
+            secondFeaturedReleaseText: "FEATURED RELEASE"
+          };
+          return res.status(200).json(transformedSecondFeatured);
+        } else {
+          // Fallback to static data
+          const fallbackSecondFeatured = {
+            id: "second-featured",
+            title: "Whispers of Yesterday",
+            subtitle: "Featured Release",
+            description: "A captivating story of love, loss, and the power of memories.",
+            shortDescription: "A captivating story of love, loss, and the power of memories.",
+            year: 2023,
+            genre: "Fiction",
+            category: "adults",
+            amazonLink: "https://amazon.com/whispers-yesterday",
+            awards: ["Literary Excellence Award"],
+            reviews: [
+              {
+                text: "A beautifully crafted narrative that resonates deeply",
+                source: "Literary Review",
+                rating: 5
+              }
+            ],
+            secondFeaturedReleaseText: "FEATURED RELEASE"
+          };
+          return res.status(200).json(fallbackSecondFeatured);
         }
       } else if (category) {
         const categoryBooks = await booksCollection
