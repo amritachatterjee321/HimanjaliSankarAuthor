@@ -339,12 +339,16 @@ class CMSService {
       
       const result = config || {
         featuredBook: null,
-        latestReleaseText: 'LATEST RELEASE'
+        secondFeaturedBook: null,
+        latestReleaseText: 'LATEST RELEASE',
+        secondFeaturedReleaseText: 'FEATURED RELEASE'
       };
       
       console.log('🔍 Returning homepage config:', {
         featuredBook: result.featuredBook,
-        latestReleaseText: result.latestReleaseText
+        secondFeaturedBook: result.secondFeaturedBook,
+        latestReleaseText: result.latestReleaseText,
+        secondFeaturedReleaseText: result.secondFeaturedReleaseText
       });
       
       return result;

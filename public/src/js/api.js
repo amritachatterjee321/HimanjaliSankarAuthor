@@ -45,6 +45,10 @@ class ApiService {
     return this.request('/api/books/latest');
   }
 
+  async getSecondFeaturedBook() {
+    return this.request('/api/books/second-featured');
+  }
+
   async getBooksByCategory(category) {
     return this.request(`/api/books/category/${category}`);
   }

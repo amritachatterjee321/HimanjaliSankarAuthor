@@ -165,7 +165,7 @@ router.get('/', async (req, res) => {
   }
 });
 
-// GET /api/books/latest - Get latest/featured book
+// GET /api/books/latest - Get latest book
 router.get('/latest', async (req, res) => {
   // Set headers to prevent caching
   res.set({
@@ -182,6 +182,8 @@ router.get('/latest', async (req, res) => {
       const homepageConfig = await homepageConfigCollection.findOne({});
       
       if (homepageConfig && homepageConfig.featuredBook) {
+        console.log('✅ Found homepage config with featured book:', homepageConfig.featuredBook);
+        
         // Get the featured book from the books collection
         const booksCollection = database.getBooksCollection();
         const featuredBook = await booksCollection.findOne({ 
@@ -249,26 +251,169 @@ router.get('/latest', async (req, res) => {
             };
           } else {
             return {
-              text: review || "Review text",
+              text: review,
               source: "Literary Review",
               rating: 5
             };
           }
-        }) : [
+        }) : [],
+        latestReleaseText: "LATEST RELEASE"
+      };
+      return res.json(transformedLatest);
+    } else {
+      // Fallback to static data
+      const fallbackLatest = {
+        id: "latest",
+        title: "Echoes of Tomorrow",
+        subtitle: "Latest Release",
+        description: "A compelling exploration of memory, time, and the choices that define us.",
+        shortDescription: "A compelling exploration of memory, time, and the choices that define us.",
+        publicationYear: "2024",
+        publisher: "Literary Press",
+        amazonLink: "https://amazon.com/echoes-tomorrow",
+        pages: "324",
+        isbn: "978-1234567890",
+        awards: ["Rising Voice Literary Award Finalist"],
+        reviews: [
           {
-            text: "A masterful debut that captures the complexity of human relationships.",
-            source: "Publishers Weekly",
+            text: "A masterful exploration of human consciousness",
+            source: "Literary Review",
             rating: 5
           }
-        ]
+        ],
+        latestReleaseText: "LATEST RELEASE"
       };
-      res.json(transformedLatest);
-    } else {
-      res.json(null);
+      return res.json(fallbackLatest);
     }
   } catch (error) {
-    console.error('Error reading latest book:', error);
-    res.status(500).json({ error: 'Failed to load latest book' });
+    console.error('Error fetching latest book:', error);
+    res.status(500).json({ error: 'Failed to fetch latest book' });
+  }
+});
+
+// GET /api/books/second-featured - Get second featured book
+router.get('/second-featured', async (req, res) => {
+  // Set headers to prevent caching
+  res.set({
+    'Cache-Control': 'no-cache, no-store, must-revalidate',
+    'Pragma': 'no-cache',
+    'Expires': '0'
+  });
+  
+  try {
+    // First try to get second featured book from CMS homepage configuration
+    try {
+      console.log('🔄 Attempting to fetch second featured book from CMS homepage configuration...');
+      const homepageConfigCollection = database.getHomepageConfigCollection();
+      const homepageConfig = await homepageConfigCollection.findOne({});
+      
+      if (homepageConfig && homepageConfig.secondFeaturedBook) {
+        console.log('✅ Found homepage config with second featured book:', homepageConfig.secondFeaturedBook);
+        
+        // Get the second featured book from the books collection
+        const booksCollection = database.getBooksCollection();
+        const secondFeaturedBook = await booksCollection.findOne({ 
+          $or: [
+            { _id: new ObjectId(homepageConfig.secondFeaturedBook) },
+            { id: homepageConfig.secondFeaturedBook }
+          ]
+        });
+        
+        if (secondFeaturedBook) {
+          console.log('✅ Using CMS homepage config for second featured book:', secondFeaturedBook.title);
+          const transformedSecondFeatured = {
+            id: secondFeaturedBook._id?.toString() || secondFeaturedBook.id,
+            title: secondFeaturedBook.title,
+            subtitle: "Featured Release",
+            description: secondFeaturedBook.description,
+            shortDescription: secondFeaturedBook.shortDescription || secondFeaturedBook.description?.substring(0, 200),
+            year: secondFeaturedBook.year,
+            genre: secondFeaturedBook.genre,
+            category: secondFeaturedBook.category,
+            amazonLink: secondFeaturedBook.amazonLink,
+            awards: secondFeaturedBook.awards || [],
+            reviews: secondFeaturedBook.reviews || [],
+            coverImage: secondFeaturedBook.coverImage,
+            coverClass: secondFeaturedBook.coverClass,
+            secondFeaturedReleaseText: homepageConfig.secondFeaturedReleaseText || "FEATURED RELEASE"
+          };
+          return res.json(transformedSecondFeatured);
+        } else {
+          console.log('❌ Second featured book from CMS config not found in books collection');
+        }
+      } else {
+        console.log('❌ No second featured book configured in CMS homepage config');
+      }
+    } catch (error) {
+      console.error('❌ Error accessing CMS homepage configuration:', error.message);
+      console.log('🔄 Falling back to books collection');
+    }
+    
+    // Fallback to file-based data
+    console.log('📖 Using fallback file data for second featured book');
+    const cmsBooks = await readJsonFile(BOOKS_FILE) || [];
+    
+    if (cmsBooks.length > 1) {
+      const secondFeaturedBook = cmsBooks[1];
+      const transformedSecondFeatured = {
+        id: secondFeaturedBook.id,
+        title: secondFeaturedBook.title,
+        subtitle: "Featured Release",
+        description: secondFeaturedBook.description,
+        shortDescription: secondFeaturedBook.shortDescription,
+        publicationYear: secondFeaturedBook.year?.toString() || "2023",
+        publisher: "Literary Press",
+        amazonLink: secondFeaturedBook.amazonLink,
+        pages: "298",
+        isbn: "978-1234567891",
+        awards: secondFeaturedBook.awards || ["Literary Excellence Award"],
+        reviews: secondFeaturedBook.reviews && Array.isArray(secondFeaturedBook.reviews) && secondFeaturedBook.reviews.length > 0 ? secondFeaturedBook.reviews.map(review => {
+          if (typeof review === 'string' && review.includes(' - ')) {
+            const parts = review.split(' - ');
+            return {
+              text: parts[0] || review,
+              source: parts[1] || "Literary Review",
+              rating: 5
+            };
+          } else {
+            return {
+              text: review,
+              source: "Literary Review",
+              rating: 5
+            };
+          }
+        }) : [],
+        secondFeaturedReleaseText: "FEATURED RELEASE"
+      };
+      return res.json(transformedSecondFeatured);
+    } else {
+      // Fallback to static data
+      const fallbackSecondFeatured = {
+        id: "second-featured",
+        title: "Whispers of Yesterday",
+        subtitle: "Featured Release",
+        description: "A captivating story of love, loss, and the power of memories.",
+        shortDescription: "A captivating story of love, loss, and the power of memories.",
+        publicationYear: "2023",
+        publisher: "Literary Press",
+        amazonLink: "https://amazon.com/whispers-yesterday",
+        pages: "298",
+        isbn: "978-1234567891",
+        awards: ["Literary Excellence Award"],
+        reviews: [
+          {
+            text: "A beautifully crafted narrative that resonates deeply",
+            source: "Literary Review",
+            rating: 5
+          }
+        ],
+        secondFeaturedReleaseText: "FEATURED RELEASE"
+      };
+      return res.json(fallbackSecondFeatured);
+    }
+  } catch (error) {
+    console.error('Error fetching second featured book:', error);
+    res.status(500).json({ error: 'Failed to fetch second featured book' });
   }
 });
 

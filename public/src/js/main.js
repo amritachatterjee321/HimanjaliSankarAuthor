@@ -4,7 +4,7 @@ import Utils, { ImageOptimizer } from './utils.js';
 import { EventEmitter, NotificationSystem } from './services.js';
 import PerformanceMonitor from './performance-monitor.js';
 import { Header } from './components.js';
-import { LatestBook } from './book-components.js';
+import { LatestBook, SecondFeaturedBook } from './book-components.js';
 import { BooksGrid, Footer, LoadingManager } from './app-components.js';
 
 // Main Application Class
@@ -78,6 +78,7 @@ class App {
     if (this.isHomepage()) {
       console.log('🏠 Homepage detected - creating homepage components');
       this.components.set('latestBook', new LatestBook(main, this.eventBus, this.apiService));
+      this.components.set('secondFeaturedBook', new SecondFeaturedBook(main, this.eventBus, this.apiService));
       this.components.set('booksGrid', new BooksGrid(main, this.eventBus, this.apiService));
     } else {
       console.log('📄 Non-homepage detected - skipping homepage components');

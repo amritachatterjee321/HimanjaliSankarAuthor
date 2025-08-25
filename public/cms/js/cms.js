@@ -9,7 +9,9 @@ class CMS {
         this.settings = {};
         this.homepageConfig = {
             featuredBook: null,
-            latestReleaseText: 'LATEST RELEASE'
+            secondFeaturedBook: null,
+            latestReleaseText: 'LATEST RELEASE',
+            secondFeaturedReleaseText: 'FEATURED RELEASE'
         };
         
         this.init().catch(error => {
@@ -1347,7 +1349,9 @@ class CMS {
             
             this.homepageConfig = response.homepageConfig || {
                 featuredBook: null,
-                latestReleaseText: 'LATEST RELEASE'
+                secondFeaturedBook: null,
+                latestReleaseText: 'LATEST RELEASE',
+                secondFeaturedReleaseText: 'FEATURED RELEASE'
             };
             console.log('🏠 Loaded homepage config:', this.homepageConfig);
             console.log('🏠 Books available for rendering:', this.books.length);
@@ -1358,7 +1362,9 @@ class CMS {
             // Use default config if API fails
             this.homepageConfig = {
                 featuredBook: null,
-                latestReleaseText: 'LATEST RELEASE'
+                secondFeaturedBook: null,
+                latestReleaseText: 'LATEST RELEASE',
+                secondFeaturedReleaseText: 'FEATURED RELEASE'
             };
             this.renderHomepageConfig();
         }
@@ -1367,7 +1373,10 @@ class CMS {
     renderHomepageConfig() {
         this.renderFeaturedBookSelect();
         this.renderFeaturedBookPreview();
+        this.renderSecondFeaturedBookSelect();
+        this.renderSecondFeaturedBookPreview(); // Added this line
         this.populateLatestReleaseText();
+        this.populateSecondFeaturedReleaseText(); // Added this line
         this.bindHomepageEvents();
     }
 
@@ -1395,6 +1404,35 @@ class CMS {
             if (this.homepageConfig.featuredBook === bookIdString) {
                 option.selected = true;
                 console.log('🏠 Selected book:', book.title, 'with ID:', bookIdString);
+            }
+            select.appendChild(option);
+        });
+    }
+
+    renderSecondFeaturedBookSelect() {
+        const select = document.getElementById('second-featured-book-select');
+        if (!select) {
+            console.log('🏠 Second featured book select element not found');
+            return;
+        }
+
+        console.log('🏠 Rendering second featured book select with', this.books.length, 'books');
+        console.log('🏠 Second featured book ID:', this.homepageConfig.secondFeaturedBook);
+
+        // Clear existing options
+        select.innerHTML = '<option value="">Select a book...</option>';
+
+        // Add book options
+        this.books.forEach(book => {
+            const option = document.createElement('option');
+            const bookId = book._id || book.id;
+            // Convert to string for consistent comparison
+            const bookIdString = bookId?.toString() || bookId;
+            option.value = bookIdString;
+            option.textContent = book.title;
+            if (this.homepageConfig.secondFeaturedBook === bookIdString) {
+                option.selected = true;
+                console.log('🏠 Selected second featured book:', book.title, 'with ID:', bookIdString);
             }
             select.appendChild(option);
         });
@@ -1433,10 +1471,50 @@ class CMS {
         }
     }
 
+    renderSecondFeaturedBookPreview() {
+        const preview = document.getElementById('second-featured-book-preview');
+        if (!preview) return;
+
+        if (this.homepageConfig.secondFeaturedBook) {
+            const secondFeaturedBook = this.books.find(book => {
+                const bookId = book._id || book.id;
+                const bookIdString = bookId?.toString() || bookId;
+                return bookIdString === this.homepageConfig.secondFeaturedBook;
+            });
+
+            if (secondFeaturedBook) {
+                preview.innerHTML = `
+                    <div class="book-info">
+                        <div class="book-title">${secondFeaturedBook.title}</div>
+                        <div class="book-meta">
+                            <strong>Year:</strong> ${secondFeaturedBook.year} | 
+                            <strong>Category:</strong> ${secondFeaturedBook.category}
+                        </div>
+                        ${secondFeaturedBook.shortDescription ? `<div class="book-short-desc">${secondFeaturedBook.shortDescription}</div>` : ''}
+                    </div>
+                `;
+                preview.classList.add('has-book');
+            } else {
+                preview.innerHTML = '<p>Selected book not found</p>';
+                preview.classList.remove('has-book');
+            }
+        } else {
+            preview.innerHTML = '<p>No second featured book selected</p>';
+            preview.classList.remove('has-book');
+        }
+    }
+
     populateLatestReleaseText() {
         const latestReleaseInput = document.getElementById('latest-release-text');
         if (latestReleaseInput) {
             latestReleaseInput.value = this.homepageConfig.latestReleaseText || 'LATEST RELEASE';
+        }
+    }
+
+    populateSecondFeaturedReleaseText() {
+        const secondFeaturedReleaseInput = document.getElementById('second-featured-release-text');
+        if (secondFeaturedReleaseInput) {
+            secondFeaturedReleaseInput.value = this.homepageConfig.secondFeaturedReleaseText || 'FEATURED RELEASE';
         }
     }
 
@@ -1454,11 +1532,28 @@ class CMS {
             });
         }
 
+        // Second featured book selection
+        const secondFeaturedSelect = document.getElementById('second-featured-book-select');
+        if (secondFeaturedSelect) {
+            secondFeaturedSelect.addEventListener('change', (e) => {
+                this.homepageConfig.secondFeaturedBook = e.target.value;
+                this.renderSecondFeaturedBookPreview();
+            });
+        }
+
         // Latest release text input
         const latestReleaseInput = document.getElementById('latest-release-text');
         if (latestReleaseInput) {
             latestReleaseInput.addEventListener('input', (e) => {
                 this.homepageConfig.latestReleaseText = e.target.value;
+            });
+        }
+
+        // Second featured release text input
+        const secondFeaturedReleaseInput = document.getElementById('second-featured-release-text');
+        if (secondFeaturedReleaseInput) {
+            secondFeaturedReleaseInput.addEventListener('input', (e) => {
+                this.homepageConfig.secondFeaturedReleaseText = e.target.value;
             });
         }
     }
