@@ -186,12 +186,30 @@ router.get('/latest', async (req, res) => {
         
         // Get the featured book from the books collection
         const booksCollection = database.getBooksCollection();
-        const featuredBook = await booksCollection.findOne({ 
-          $or: [
-            { _id: new ObjectId(homepageConfig.featuredBook) },
-            { id: homepageConfig.featuredBook }
-          ]
-        });
+        
+        // Validate ObjectId format before using it
+        let featuredBook = null;
+        try {
+          if (ObjectId.isValid(homepageConfig.featuredBook)) {
+            featuredBook = await booksCollection.findOne({ 
+              _id: new ObjectId(homepageConfig.featuredBook)
+            });
+          } else {
+            // Try to find by string ID if ObjectId is invalid
+            featuredBook = await booksCollection.findOne({ 
+              id: homepageConfig.featuredBook
+            });
+          }
+        } catch (error) {
+          console.error('❌ Error finding featured book:', error.message);
+          // Try alternative search
+          featuredBook = await booksCollection.findOne({ 
+            $or: [
+              { id: homepageConfig.featuredBook },
+              { title: homepageConfig.featuredBook }
+            ]
+          });
+        }
         
         if (featuredBook) {
           console.log('✅ Using CMS homepage config for featured book:', featuredBook.title);
@@ -312,12 +330,30 @@ router.get('/second-featured', async (req, res) => {
         
         // Get the second featured book from the books collection
         const booksCollection = database.getBooksCollection();
-        const secondFeaturedBook = await booksCollection.findOne({ 
-          $or: [
-            { _id: new ObjectId(homepageConfig.secondFeaturedBook) },
-            { id: homepageConfig.secondFeaturedBook }
-          ]
-        });
+        
+        // Validate ObjectId format before using it
+        let secondFeaturedBook = null;
+        try {
+          if (ObjectId.isValid(homepageConfig.secondFeaturedBook)) {
+            secondFeaturedBook = await booksCollection.findOne({ 
+              _id: new ObjectId(homepageConfig.secondFeaturedBook)
+            });
+          } else {
+            // Try to find by string ID if ObjectId is invalid
+            secondFeaturedBook = await booksCollection.findOne({ 
+              id: homepageConfig.secondFeaturedBook
+            });
+          }
+        } catch (error) {
+          console.error('❌ Error finding second featured book:', error.message);
+          // Try alternative search
+          secondFeaturedBook = await booksCollection.findOne({ 
+            $or: [
+              { id: homepageConfig.secondFeaturedBook },
+              { title: homepageConfig.secondFeaturedBook }
+            ]
+          });
+        }
         
         if (secondFeaturedBook) {
           console.log('✅ Using CMS homepage config for second featured book:', secondFeaturedBook.title);
