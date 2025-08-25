@@ -11,6 +11,11 @@
     <meta name="googlebot" content="index, follow">
     <meta name="google" content="notranslate">
     
+    <!-- Performance Optimizations -->
+    <link rel="dns-prefetch" href="//fonts.googleapis.com">
+    <link rel="dns-prefetch" href="//fonts.gstatic.com">
+    <link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
+    
     <!-- Open Graph / Facebook -->
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://himanjalisankar.com/">
@@ -41,32 +46,98 @@
     <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16.png">
     <link rel="manifest" href="/site.webmanifest">
 
-    <!-- Fonts -->
+    <!-- Fonts with display=swap for better performance - optimized weights -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&family=Montserrat:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Lora:wght@400;500;600&family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
     
-    <!-- Font Awesome -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Font Awesome with preload -->
+    <link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"></noscript>
     
-    <!-- CSS -->
-    <link rel="stylesheet" href="/src/styles/main.css">
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/himanjalisankar.png">
     
-    <!-- Preload critical images -->
-    <link rel="preload" as="image" href="/himanjalisankar.png">
-    <link rel="preload" as="image" href="/favicon.ico">
+    <!-- Critical resource preloads -->
+    <link rel="preload" href="/src/styles/main.css" as="style" onload="this.onload=null;this.rel='stylesheet'">
+    <noscript><link rel="stylesheet" href="/src/styles/main.css"></noscript>
     
-    <!-- Preload critical CSS -->
-    <link rel="preload" href="/src/styles/main.css" as="style">
+    <!-- Preload critical JavaScript -->
+    <link rel="preload" href="/src/js/main.js" as="script">
     
-    <!-- Preload critical fonts -->
-    <link rel="preload" href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&family=Montserrat:wght@300;400;600;700&display=swap" as="style">
+    <!-- Preload critical images with high priority -->
+    <link rel="preload" href="/himanjalisankar.png" as="image" fetchpriority="high">
     
-    <!-- DNS prefetch for external domains -->
-    <link rel="dns-prefetch" href="//fonts.googleapis.com">
-    <link rel="dns-prefetch" href="//fonts.gstatic.com">
-    <link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
-    <link rel="dns-prefetch" href="//www.googletagmanager.com">
+    <!-- Preload hero book cover images -->
+    <link rel="preload" href="/uploads/optimized/coverImage-1754499536304-173385349-small.webp" as="image" fetchpriority="high">
+    <link rel="preload" href="/uploads/optimized/coverImage-1754499827069-158948113-small.webp" as="image" fetchpriority="high">
+    
+    <!-- Critical CSS for above-the-fold content -->
+    <style>
+      /* Critical CSS for initial render - optimized for FCP */
+      * { margin: 0; padding: 0; box-sizing: border-box; }
+      body { margin: 0; padding: 0; font-family: 'Lora', serif; line-height: 1.7; color: #333; background-color: #fafafa; overflow-x: hidden; }
+      #app { min-height: 100vh; }
+      
+      /* Loading states - critical for initial render */
+      .app-loading { display: flex; flex-direction: column; justify-content: center; align-items: center; min-height: 100vh; color: #666; }
+      .loading-spinner { width: 40px; height: 40px; border: 4px solid #e0e0e0; border-top: 4px solid #9b6b9e; border-radius: 50%; animation: spin 1s linear infinite; margin-bottom: 20px; }
+      @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+      
+      /* Header - above the fold */
+      .header { background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); position: fixed; top: 0; left: 0; right: 0; z-index: 1000; box-shadow: 0 2px 10px rgba(0,0,0,0.1); transition: all .3s ease; }
+      .header-content { max-width: 1200px; margin: 0 auto; padding: 20px; display: flex; justify-content: space-between; align-items: center; position: relative; }
+      .logo { font-family: 'Lora', serif; font-size: 2.2em; font-weight: 500; color: #2c3e50; text-decoration: none; letter-spacing: 2px; transition: all .3s ease; z-index: 1001; }
+      .logo:hover { color: #9b6b9e; }
+      
+      /* Navigation - critical for above the fold */
+      .nav-menu { display: flex; list-style: none; gap: 40px; align-items: center; margin: 0; padding: 0; }
+      .nav-link { font-family: 'Montserrat', sans-serif; text-decoration: none; color: #555; font-size: 13px; text-transform: uppercase; letter-spacing: 1.5px; font-weight: 600; transition: all .3s ease; position: relative; padding: 5px 0; }
+      .nav-link:hover, .nav-link.active { color: #9b6b9e; }
+      .nav-link::after { content: ''; position: absolute; bottom: 0; left: 50%; width: 0; height: 2px; background: #9b6b9e; transition: all .3s ease; transform: translateX(-50%); }
+      .nav-link:hover::after, .nav-link.active::after { width: 100%; }
+      
+      /* Main content offset */
+      .main-content { margin-top: 100px; }
+      
+      /* Latest book section - above the fold */
+      .latest-book-section { background: #fff; padding: 80px 20px; min-height: 70vh; display: flex; align-items: center; }
+      .latest-book-container { max-width: 1200px; margin: 0 auto; display: grid; grid-template-columns: 1fr 1fr; grid-auto-rows: auto; gap: 40px; align-items: start; }
+      
+      /* Critical image optimizations for LCP and CLS */
+      .book-cover-large { width: 100%; max-width: 400px; height: 600px; border-radius: 8px; box-shadow: 0 15px 40px rgba(0,0,0,.2); transition: all .3s ease; display: flex; flex-direction: column; justify-content: center; align-items: center; color: #fff; text-align: center; padding: 40px; position: relative; overflow: hidden; }
+      .book-cover-large.has-cover-image { padding: 0; }
+      .book-cover-large.has-cover-image img { width: 100%; height: 100%; object-fit: cover; border-radius: 8px; display: block; }
+      .book-cover-large.has-cover-image img[fetchpriority="high"] { will-change: transform; }
+      
+      /* CLS Prevention - Reserve space for images */
+      img { max-width: 100%; height: auto; display: block; }
+      .book-cover-large img { width: 100%; height: 600px; object-fit: cover; }
+      .book-cover img { width: 150px; height: 225px; object-fit: cover; }
+      
+      /* Prevent layout shifts during font loading */
+      body { font-display: swap; }
+      .logo { font-display: swap; }
+      
+      /* Reserve space for dynamic content */
+      .latest-book-content { min-height: 400px; }
+      .book-description { min-height: 80px; }
+      
+      /* Mobile optimizations */
+      @media(max-width: 768px) {
+        .header-content { padding: 15px 20px; }
+        .logo { font-size: 1.8em; }
+        .nav-menu { display: none; }
+        .main-content { margin-top: 140px; }
+        .latest-book-section { padding: 60px 20px; min-height: 60vh; }
+        .latest-book-container { display: grid; grid-template-columns: 1fr; gap: 50px; text-align: center; }
+      }
+      @media(max-width: 480px) {
+        .logo { font-size: 1.6em; }
+        .main-content { margin-top: 120px; padding-top: 20px; }
+        .latest-book-section { padding: 40px 15px; min-height: 50vh; }
+      }
+    </style>
     
     <!-- Structured Data -->
     <script type="application/ld+json">
@@ -142,16 +213,19 @@
     <!-- Notification Container -->
     <div id="notification-container"></div>
 
-    <!-- JavaScript -->
-    <script type="module" src="/src/js/main.js"></script>
+    <!-- JavaScript - deferred for better FCP -->
+    <script type="module" src="/src/js/main.js" defer></script>
     
-    <!-- Google Analytics -->
+    <!-- Google Analytics - deferred -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
     <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
-        gtag('config', 'G-XXXXXXXXXX');
+        // Defer analytics initialization
+        window.addEventListener('load', function() {
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+            gtag('config', 'G-XXXXXXXXXX');
+        });
     </script>
 </body>
 </html>

@@ -35,10 +35,14 @@ class App {
       // Mount components
       await this.mountComponents();
 
-      // Simulate loading time
-      await this.loadingManager.simulateLoading();
+      // Show loading screen only in development mode
+      if (import.meta.env.DEV) {
+        await this.loadingManager.simulateLoading(300); // Even shorter delay for dev
+      } else {
+        this.loadingManager.hide(); // No delay in production
+      }
 
-      // Initialize image optimization
+      // Initialize image optimization immediately for critical images
       ImageOptimizer.init();
 
       // Bind global events
@@ -46,6 +50,9 @@ class App {
 
       // Handle initial route
       this.handleRouteChange(this.currentRoute);
+
+      // Defer non-critical initialization
+      this.deferNonCriticalTasks();
 
     } catch (error) {
       console.error('Error initializing app:', error);
@@ -150,20 +157,7 @@ class App {
       window.scrollTo({ top: 0, behavior: 'auto' });
     });
 
-    // Performance monitoring
-    if ('performance' in window) {
-      window.addEventListener('load', () => {
-        const loadTime = performance.timing.loadEventEnd - performance.timing.navigationStart;
-        console.log(`📊 Page loaded in ${loadTime}ms`);
-        
-        // Send analytics event (if configured)
-        if (typeof gtag === 'function') {
-          gtag('event', 'page_load_time', {
-            custom_parameter: loadTime
-          });
-        }
-      });
-    }
+    // Performance monitoring is handled by PerformanceMonitor class
 
     // Add CSS for slideOut animation
     const style = document.createElement('style');
@@ -180,6 +174,52 @@ class App {
       }
     `;
     document.head.appendChild(style);
+  }
+
+  deferNonCriticalTasks() {
+    // Use requestIdleCallback to defer non-critical tasks
+    if ('requestIdleCallback' in window) {
+      requestIdleCallback(() => {
+        this.initNonCriticalFeatures();
+      });
+    } else {
+      // Fallback for browsers without requestIdleCallback
+      setTimeout(() => {
+        this.initNonCriticalFeatures();
+      }, 100);
+    }
+  }
+
+  initNonCriticalFeatures() {
+    // Initialize performance monitoring
+    if (window.performanceMonitor) {
+      window.performanceMonitor.logReport();
+    }
+
+    // Initialize service worker (if available)
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/sw.js')
+        .then(registration => {
+          console.log('SW registered:', registration);
+        })
+        .catch(error => {
+          console.log('SW registration failed:', error);
+        });
+    }
+
+    // Preload additional resources
+    this.preloadAdditionalResources();
+  }
+
+  preloadAdditionalResources() {
+    // Preload additional pages that users are likely to visit
+    const additionalPages = ['/books.html', '/about.html', '/contact.html'];
+    additionalPages.forEach(page => {
+      const link = document.createElement('link');
+      link.rel = 'prefetch';
+      link.href = page;
+      document.head.appendChild(link);
+    });
   }
 
   // Public API methods

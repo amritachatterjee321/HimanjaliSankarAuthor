@@ -88,6 +88,11 @@ class ImageOptimizer {
   }
 
   static initLazyLoading() {
+    // Optimize all existing images first
+    document.querySelectorAll('img').forEach(img => {
+      this.optimizeImage(img);
+    });
+
     // Use Intersection Observer for lazy loading
     if ('IntersectionObserver' in window) {
       const imageObserver = new IntersectionObserver((entries, observer) => {
@@ -99,7 +104,7 @@ class ImageOptimizer {
           }
         });
       }, {
-        rootMargin: '50px 0px', // Start loading 50px before image comes into view
+        rootMargin: '100px 0px', // Start loading 100px before image comes into view
         threshold: 0.01
       });
 
@@ -111,6 +116,36 @@ class ImageOptimizer {
       // Fallback for older browsers
       this.loadAllImages();
     }
+  }
+
+  static optimizeImage(img) {
+    // Skip if already optimized
+    if (img.classList.contains('optimized')) return;
+
+    // Add native lazy loading for better performance
+    if (!img.loading) {
+      img.loading = 'lazy';
+    }
+
+    // Add decoding="async" for better performance
+    if (!img.decoding) {
+      img.decoding = 'async';
+    }
+
+    // Add fetchpriority for above-the-fold images
+    if (img.classList.contains('hero-image') || img.classList.contains('above-fold')) {
+      img.fetchPriority = 'high';
+    } else {
+      img.fetchPriority = 'low';
+    }
+
+    // Add error handling
+    img.addEventListener('error', () => {
+      img.classList.add('image-error');
+      console.warn('Failed to load image:', img.src);
+    });
+
+    img.classList.add('optimized');
   }
 
   static initProgressiveLoading() {
@@ -205,16 +240,27 @@ class ImageOptimizer {
       return `${url}?w=${width}&h=${height}&fit=crop&q=${quality}`;
     }
 
-    // For local images served from /uploads/, add optimization parameters
+    // For local images served from /uploads/, use optimized versions
     if (url.includes('/uploads/')) {
-      const urlObj = new URL(url, window.location.origin);
-      urlObj.searchParams.set('width', width);
-      urlObj.searchParams.set('height', height);
-      urlObj.searchParams.set('quality', quality);
-      if (format !== 'auto') {
-        urlObj.searchParams.set('format', format);
+      // Check if optimized version exists
+      const optimizedUrl = url.replace('/uploads/', '/uploads/optimized/');
+      
+      // Determine the best size based on width
+      let sizeSuffix = '';
+      if (width <= 150) sizeSuffix = '-thumbnail';
+      else if (width <= 300) sizeSuffix = '-small';
+      else if (width <= 600) sizeSuffix = '-medium';
+      else if (width <= 1200) sizeSuffix = '-large';
+      
+      // Convert to WebP if supported
+      if (this.supportsWebP()) {
+        const webpUrl = optimizedUrl.replace(/\.(jpg|jpeg|png)$/i, `${sizeSuffix}.webp`);
+        return webpUrl;
+      } else {
+        // Fallback to original format with size suffix
+        const sizedUrl = optimizedUrl.replace(/\.(jpg|jpeg|png)$/i, `${sizeSuffix}.$1`);
+        return sizedUrl;
       }
-      return urlObj.toString();
     }
 
     // For other local images, return as is
@@ -247,6 +293,24 @@ class ImageOptimizer {
       img.loading = 'lazy';
     } else {
       img.src = imageData.url;
+      // High priority for above-the-fold images
+      img.fetchPriority = 'high';
+      img.decoding = 'async';
+    }
+    
+    // CLS Prevention - Set explicit dimensions
+    if (options.width && options.height) {
+      img.width = options.width;
+      img.height = options.height;
+    } else {
+      // Default dimensions for book covers
+      if (element.classList.contains('book-cover-large')) {
+        img.width = 400;
+        img.height = 600;
+      } else if (element.classList.contains('book-cover')) {
+        img.width = 150;
+        img.height = 225;
+      }
     }
 
     if (progressive && imageData.lowResUrl) {

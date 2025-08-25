@@ -26,7 +26,8 @@ class PerformanceMonitor {
 
   monitorPageLoad() {
     window.addEventListener('load', () => {
-      const loadTime = performance.now();
+      // Use more accurate timing measurement
+      const loadTime = performance.timing.loadEventEnd - performance.timing.navigationStart;
       this.metrics.pageLoadTime = loadTime;
       
       console.log(`📊 Page loaded in ${loadTime.toFixed(2)}ms`);
@@ -99,8 +100,27 @@ class PerformanceMonitor {
   }
 
   monitorCoreWebVitals() {
-    // Monitor Largest Contentful Paint (LCP)
+    // Monitor First Contentful Paint (FCP)
     if ('PerformanceObserver' in window) {
+      const paintObserver = new PerformanceObserver((list) => {
+        const entries = list.getEntries();
+        entries.forEach(entry => {
+          if (entry.name === 'first-contentful-paint') {
+            console.log(`📊 FCP: ${entry.startTime.toFixed(2)}ms`);
+            
+            if (window.gtag) {
+              window.gtag('event', 'fcp', {
+                value: Math.round(entry.startTime),
+                custom_parameter: 'performance_optimization'
+              });
+            }
+          }
+        });
+      });
+      
+      paintObserver.observe({ entryTypes: ['paint'] });
+
+      // Monitor Largest Contentful Paint (LCP)
       const lcpObserver = new PerformanceObserver((list) => {
         const entries = list.getEntries();
         const lastEntry = entries[entries.length - 1];
@@ -110,7 +130,7 @@ class PerformanceMonitor {
         if (window.gtag) {
           window.gtag('event', 'lcp', {
             value: Math.round(lastEntry.startTime),
-            custom_parameter: 'image_optimization'
+            custom_parameter: 'performance_optimization'
           });
         }
       });

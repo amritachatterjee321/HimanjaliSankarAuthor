@@ -163,15 +163,17 @@ class LatestBook extends Component {
     if (this.bookData.coverImage && this.bookData.coverImage.url) {
       console.log('🖼️ Creating cover image with URL:', this.bookData.coverImage.url);
       
-      // Create image with lazy loading
+      // Create image with high priority for above-the-fold content
       const coverImg = ImageOptimizer.createResponsiveImage(bookCover, {
         url: this.bookData.coverImage.url,
         lowResUrl: this.bookData.coverImage.url
       }, {
-        lazy: true,
+        lazy: false, // Don't lazy load above-the-fold images
         progressive: true,
         sizes: '(max-width: 768px) 100vw, 400px',
-        alt: `${this.bookData.title} cover`
+        alt: `${this.bookData.title} cover`,
+        width: 400, // CLS prevention
+        height: 600  // CLS prevention
       });
       
       bookCover.appendChild(coverImg);
