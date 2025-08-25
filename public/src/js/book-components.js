@@ -350,8 +350,6 @@ class LatestBook extends Component {
   }
 }
 
-export { LatestBook };
-
 // Second Featured Book Component
 class SecondFeaturedBook extends Component {
   constructor(container, eventBus, apiService) {
@@ -688,4 +686,4 @@ class SecondFeaturedBook extends Component {
   }
 }
 
-export { SecondFeaturedBook };
+export { LatestBook, SecondFeaturedBook };
