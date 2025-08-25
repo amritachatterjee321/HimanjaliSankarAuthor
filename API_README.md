@@ -175,7 +175,7 @@ Currently, the API serves static sample data. To make it dynamic:
 
 1. **Database Integration**: Connect to MongoDB, PostgreSQL, or other databases
 2. **CMS Integration**: Connect to headless CMS like Contentful or Strapi
-3. **File Storage**: Use services like AWS S3 or Cloudinary for images
+3. **File Storage**: Use services like AWS S3 for images
 4. **Email Service**: Integrate with SendGrid or Mailgun for contact forms
 
 ## Security Considerations

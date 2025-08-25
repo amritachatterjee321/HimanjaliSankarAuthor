@@ -3,7 +3,6 @@ import ApiService from './api.js';
 import Utils, { ImageOptimizer } from './utils.js';
 import { EventEmitter, NotificationSystem, FormValidator } from './services.js';
 import { Component, Header } from './components.js';
-import CloudinaryConfig from './cloudinary-config.js';
 
 // Latest Book Component
 class LatestBook extends Component {
@@ -164,26 +163,16 @@ class LatestBook extends Component {
     if (this.bookData.coverImage && this.bookData.coverImage.url) {
       console.log('🖼️ Creating cover image with URL:', this.bookData.coverImage.url);
       
-      // Optimize the image URL for Cloudinary
-      const optimizedUrl = CloudinaryConfig.getOptimizedUrl(this.bookData.coverImage.url, 'bookCover');
-      const lowResUrl = CloudinaryConfig.getProgressiveUrl(this.bookData.coverImage.url, 'bookCover');
-      const srcSet = CloudinaryConfig.generateSrcSet(this.bookData.coverImage.url, 'bookCover');
-      
-      // Create optimized image with lazy loading
+      // Create image with lazy loading
       const coverImg = ImageOptimizer.createResponsiveImage(bookCover, {
-        url: optimizedUrl,
-        lowResUrl: lowResUrl
+        url: this.bookData.coverImage.url,
+        lowResUrl: this.bookData.coverImage.url
       }, {
         lazy: true,
         progressive: true,
         sizes: '(max-width: 768px) 100vw, 400px',
         alt: `${this.bookData.title} cover`
       });
-      
-      // Add srcset for responsive images
-      if (srcSet) {
-        coverImg.srcset = srcSet;
-      }
       
       bookCover.appendChild(coverImg);
       
@@ -500,26 +489,16 @@ class SecondFeaturedBook extends Component {
     if (this.bookData.coverImage && this.bookData.coverImage.url) {
       console.log('🖼️ Creating cover image with URL:', this.bookData.coverImage.url);
       
-      // Optimize the image URL for Cloudinary
-      const optimizedUrl = CloudinaryConfig.getOptimizedUrl(this.bookData.coverImage.url, 'bookCover');
-      const lowResUrl = CloudinaryConfig.getProgressiveUrl(this.bookData.coverImage.url, 'bookCover');
-      const srcSet = CloudinaryConfig.generateSrcSet(this.bookData.coverImage.url, 'bookCover');
-      
-      // Create optimized image with lazy loading
+      // Create image with lazy loading
       const coverImg = ImageOptimizer.createResponsiveImage(bookCover, {
-        url: optimizedUrl,
-        lowResUrl: lowResUrl
+        url: this.bookData.coverImage.url,
+        lowResUrl: this.bookData.coverImage.url
       }, {
         lazy: true,
         progressive: true,
         sizes: '(max-width: 768px) 100vw, 400px',
         alt: `${this.bookData.title} cover`
       });
-      
-      // Add srcset for responsive images
-      if (srcSet) {
-        coverImg.srcset = srcSet;
-      }
       
       bookCover.appendChild(coverImg);
       

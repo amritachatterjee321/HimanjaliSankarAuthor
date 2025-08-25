@@ -27,7 +27,7 @@ const sampleYoungAdultBook = {
     }
   ],
   coverImage: {
-    url: "https://res.cloudinary.com/dsv2sbxej/image/upload/v1755318667/sample_ya_cover.jpg",
+            url: "https://images.unsplash.com/photo-1481627834876-b7833e8f5570?w=400&h=600&fit=crop",
     altText: "Cover image for The Midnight Library"
   },
   coverClass: "young-adult-midnight-library"

@@ -198,18 +198,7 @@ class ImageOptimizer {
       return url;
     }
 
-    // For Cloudinary URLs, use their transformation API
-    if (url.includes('cloudinary.com')) {
-      const cloudinaryUrl = this.transformCloudinaryUrl(url, {
-        width,
-        height,
-        quality,
-        format,
-        crop,
-        gravity
-      });
-      return cloudinaryUrl;
-    }
+
 
     // For external image services, add optimization parameters
     if (url.includes('unsplash.com')) {
@@ -232,55 +221,7 @@ class ImageOptimizer {
     return url;
   }
 
-  static transformCloudinaryUrl(url, options = {}) {
-    const {
-      width,
-      height,
-      quality = 80,
-      format = 'auto',
-      crop = 'fill',
-      gravity = 'auto',
-      fetchFormat = 'auto'
-    } = options;
 
-    // Parse Cloudinary URL to extract components
-    const cloudinaryRegex = /https:\/\/([^.]+)\.cloudinary\.com\/([^\/]+)\/upload\/([^\/]*)\/(.+)/;
-    const match = url.match(cloudinaryRegex);
-    
-    if (!match) {
-      console.warn('Invalid Cloudinary URL format:', url);
-      return url;
-    }
-
-    const [, subdomain, cloudName, existingTransformations, publicId] = match;
-    
-    // Build transformation string
-    let transformations = [];
-    
-    // Add existing transformations if any
-    if (existingTransformations) {
-      transformations.push(existingTransformations);
-    }
-    
-    // Add new transformations
-    const newTransformations = [];
-    
-    if (width) newTransformations.push(`w_${width}`);
-    if (height) newTransformations.push(`h_${height}`);
-    if (crop) newTransformations.push(`c_${crop}`);
-    if (gravity) newTransformations.push(`g_${gravity}`);
-    if (quality) newTransformations.push(`q_${quality}`);
-    if (format !== 'auto') newTransformations.push(`f_${format}`);
-    if (fetchFormat !== 'auto') newTransformations.push(`fl_${fetchFormat}`);
-    
-    if (newTransformations.length > 0) {
-      transformations.push(newTransformations.join(','));
-    }
-    
-    // Reconstruct URL
-    const transformationString = transformations.join('/');
-    return `https://${subdomain}.cloudinary.com/${cloudName}/upload/${transformationString}/${publicId}`;
-  }
 
   static createResponsiveImage(element, imageData, options = {}) {
     const {
@@ -321,15 +262,6 @@ class ImageOptimizer {
 
   static generateLowResUrl(url, width = 50) {
     // Generate a low-resolution version for progressive loading
-    if (url.includes('cloudinary.com')) {
-      return this.transformCloudinaryUrl(url, { 
-        width, 
-        height: Math.round(width * 1.5), // Maintain aspect ratio
-        quality: 30,
-        crop: 'fill',
-        gravity: 'auto'
-      });
-    }
     return this.optimizeImageUrl(url, { width, quality: 30 });
   }
 
@@ -350,9 +282,6 @@ class ImageOptimizer {
       // For external services, add WebP format
       if (url.includes('unsplash.com')) {
         return `${url}&fm=webp`;
-      }
-      if (url.includes('cloudinary.com')) {
-        return this.transformCloudinaryUrl(url, { format: 'webp' });
       }
     }
     return url;

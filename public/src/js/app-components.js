@@ -4,7 +4,6 @@ import Utils, { ImageOptimizer } from './utils.js';
 import { EventEmitter, NotificationSystem, FormValidator } from './services.js';
 import { Component, Header } from './components.js';
 import { LatestBook } from './book-components.js';
-import CloudinaryConfig from './cloudinary-config.js';
 
 // Books Grid Component
 class BooksGrid extends Component {
@@ -258,26 +257,16 @@ class BooksGrid extends Component {
 
     // Add book cover image if available, otherwise show title
     if (book.coverImage && book.coverImage.url) {
-      // Optimize the image URL for book cards using Cloudinary
-      const optimizedUrl = CloudinaryConfig.getOptimizedUrl(book.coverImage.url, 'bookCard');
-      const lowResUrl = CloudinaryConfig.getProgressiveUrl(book.coverImage.url, 'bookCard');
-      const srcSet = CloudinaryConfig.generateSrcSet(book.coverImage.url, 'bookCard');
-      
-      // Create optimized image with lazy loading
+      // Create image with lazy loading
       const img = ImageOptimizer.createResponsiveImage(bookCover, {
-        url: optimizedUrl,
-        lowResUrl: lowResUrl
+        url: book.coverImage.url,
+        lowResUrl: book.coverImage.url
       }, {
         lazy: true,
         progressive: true,
         sizes: '(max-width: 768px) 140px, 300px',
         alt: book.title
       });
-      
-      // Add srcset for responsive images
-      if (srcSet) {
-        img.srcset = srcSet;
-      }
       
       bookCover.appendChild(img);
       bookCover.classList.add('has-cover-image');

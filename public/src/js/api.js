@@ -13,9 +13,11 @@ class ApiService {
     const config = {
       headers: {
         'Content-Type': 'application/json',
-        'Cache-Control': 'no-cache, no-store, must-revalidate',
-        'Pragma': 'no-cache',
-        'Expires': '0',
+        // Only set cache headers for dynamic data, not for static resources
+        ...(endpoint.includes('/api/') ? {
+          'Cache-Control': 'no-cache, no-store, must-revalidate',
+          'Pragma': 'no-cache'
+        } : {}),
         ...options.headers
       },
       ...options

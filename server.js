@@ -95,7 +95,11 @@ app.use(helmet({
       frameAncestors: ["'none'"]
     }
   },
-  crossOriginResourcePolicy: { policy: "cross-origin" }
+  crossOriginResourcePolicy: { policy: "cross-origin" },
+  // Disable strict cookie policies that might interfere with Google Analytics
+  referrerPolicy: { policy: "strict-origin-when-cross-origin" },
+  // Disable strict cookie policies
+  hsts: false
 }));
 
 // Rate limiting
@@ -119,6 +123,8 @@ app.use(morgan('combined'));
 // Body parsing
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
+
+
 
 // API routes - enable in both development and production
 app.use('/api/contact', contactRoutes);

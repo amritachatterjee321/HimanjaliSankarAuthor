@@ -44,11 +44,10 @@ const defaultBooksData = {
 
 // GET /api/books - Get all books
 router.get('/', async (req, res) => {
-  // Set headers to prevent caching
+  // Set headers to prevent caching for dynamic data
   res.set({
     'Cache-Control': 'no-cache, no-store, must-revalidate',
-    'Pragma': 'no-cache',
-    'Expires': '0'
+    'Pragma': 'no-cache'
   });
   
   try {
@@ -170,8 +169,7 @@ router.get('/latest', async (req, res) => {
   // Set headers to prevent caching
   res.set({
     'Cache-Control': 'no-cache, no-store, must-revalidate',
-    'Pragma': 'no-cache',
-    'Expires': '0'
+    'Pragma': 'no-cache'
   });
   
   try {
@@ -314,8 +312,7 @@ router.get('/second-featured', async (req, res) => {
   // Set headers to prevent caching
   res.set({
     'Cache-Control': 'no-cache, no-store, must-revalidate',
-    'Pragma': 'no-cache',
-    'Expires': '0'
+    'Pragma': 'no-cache'
   });
   
   try {

@@ -9,8 +9,7 @@ This guide documents the comprehensive image optimization implementation for the
 - **Native lazy loading**: Fallback for older browsers
 - **Progressive loading**: Low-res thumbnails load first, then high-res images
 
-### 2. Cloudinary Integration
-- **Automatic optimization**: Cloudinary's transformation API for on-the-fly optimization
+### 2. Image Optimization
 - **Responsive images**: Automatic sizing based on device and screen size
 - **Format optimization**: Automatic WebP/AVIF delivery with JPEG fallback
 - **Quality optimization**: Configurable compression levels per image type
@@ -18,7 +17,7 @@ This guide documents the comprehensive image optimization implementation for the
 ### 3. Modern Image Formats
 - **WebP support**: 25-35% smaller than JPEG
 - **AVIF support**: Even better compression (future-proof)
-- **Automatic format selection**: Cloudinary delivers the best format for each browser
+- **Automatic format selection**: Browser-based format selection
 - **Fallback handling**: Automatic fallback to JPEG for older browsers
 
 ### 4. Performance Monitoring
@@ -31,7 +30,6 @@ This guide documents the comprehensive image optimization implementation for the
 ```
 public/src/js/
 ├── utils.js                    # ImageOptimizer class
-├── cloudinary-config.js        # Cloudinary optimization settings
 ├── performance-monitor.js      # Performance tracking
 └── main.js                     # Initializes optimization
 
@@ -48,25 +46,10 @@ server.js                       # Server-side image optimization (for local imag
 Images are automatically optimized when loaded through the website:
 
 ```javascript
-// Book cover images (using Cloudinary)
-const optimizedUrl = CloudinaryConfig.getOptimizedUrl(imageUrl, 'bookCover');
-const lowResUrl = CloudinaryConfig.getProgressiveUrl(imageUrl, 'bookCover');
-const srcSet = CloudinaryConfig.generateSrcSet(imageUrl, 'bookCover');
-
-// Book card images (using Cloudinary)
-const optimizedUrl = CloudinaryConfig.getOptimizedUrl(imageUrl, 'bookCard');
-const lowResUrl = CloudinaryConfig.getProgressiveUrl(imageUrl, 'bookCard');
-const srcSet = CloudinaryConfig.generateSrcSet(imageUrl, 'bookCard');
-```
-
-### 2. Lazy Loading with Cloudinary
-
-Images automatically use lazy loading with Cloudinary optimization:
-
-```javascript
+// Book cover images
 const img = ImageOptimizer.createResponsiveImage(container, {
-  url: optimizedUrl,
-  lowResUrl: lowResUrl
+  url: imageUrl,
+  lowResUrl: imageUrl
 }, {
   lazy: true,
   progressive: true,
@@ -74,24 +57,45 @@ const img = ImageOptimizer.createResponsiveImage(container, {
   alt: 'Book cover'
 });
 
-// Add responsive srcset
-if (srcSet) {
-  img.srcset = srcSet;
-}
+// Book card images
+const img = ImageOptimizer.createResponsiveImage(container, {
+  url: imageUrl,
+  lowResUrl: imageUrl
+}, {
+  lazy: true,
+  progressive: true,
+  sizes: '(max-width: 768px) 140px, 300px',
+  alt: 'Book card'
+});
 ```
 
-### 3. Cloudinary Configuration
+### 2. Lazy Loading
 
-The system automatically optimizes Cloudinary images using predefined configurations:
+Images automatically use lazy loading for better performance:
 
 ```javascript
-// Available image types
-CloudinaryConfig.DEFAULT_TRANSFORMATIONS = {
-  bookCover: { width: 400, height: 600, quality: 85 },
-  bookCard: { width: 300, height: 450, quality: 80 },
-  thumbnail: { width: 150, height: 225, quality: 70 },
-  authorImage: { width: 300, height: 300, quality: 85 },
-  progressive: { width: 50, height: 75, quality: 30 }
+const img = ImageOptimizer.createResponsiveImage(container, {
+  url: imageUrl,
+  lowResUrl: imageUrl
+}, {
+  lazy: true,
+  progressive: true,
+  sizes: '(max-width: 768px) 100vw, 400px',
+  alt: 'Book cover'
+});
+```
+
+### 3. Image Configuration
+
+The system automatically optimizes images using predefined configurations:
+
+```javascript
+// Available image types and their default settings
+const imageTypes = {
+  bookCover: { width: 400, height: 600 },
+  bookCard: { width: 300, height: 450 },
+  thumbnail: { width: 150, height: 225 },
+  authorImage: { width: 300, height: 300 }
 };
 ```
 
@@ -158,22 +162,17 @@ CloudinaryConfig.RESPONSIVE_BREAKPOINTS = {
 };
 ```
 
-### Cloudinary Transformation API
+### Image Optimization Features
 
-Cloudinary automatically optimizes images using their transformation API:
+The system automatically optimizes images using modern web standards:
 
 ```
-https://res.cloudinary.com/your-cloud-name/image/upload/w_400,h_600,q_85,f_auto/your-image.jpg
+- Responsive images with srcset
+- Lazy loading for better performance
+- Progressive loading with low-res placeholders
+- WebP format support with JPEG fallback
+- Automatic sizing based on device and screen size
 ```
-
-Available transformations:
-- `w_` - width
-- `h_` - height
-- `q_` - quality
-- `c_` - crop mode
-- `g_` - gravity
-- `f_` - format
-- `fl_` - fetch format
 
 ## 📈 Monitoring
 
