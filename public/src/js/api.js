@@ -5,19 +5,13 @@ class ApiService {
   }
 
   async request(endpoint, options = {}) {
-    // Add cache-busting parameter to prevent browser caching
-    const cacheBuster = `_t=${Date.now()}`;
-    const separator = endpoint.includes('?') ? '&' : '?';
-    const url = `${this.baseUrl}${endpoint}${separator}${cacheBuster}`;
+    // Freshness is controlled by the API's Cache-Control headers; a per-request
+    // query string or no-cache header would bypass the edge cache
+    const url = `${this.baseUrl}${endpoint}`;
     
     const config = {
       headers: {
         'Content-Type': 'application/json',
-        // Only set cache headers for dynamic data, not for static resources
-        ...(endpoint.includes('/api/') ? {
-          'Cache-Control': 'no-cache, no-store, must-revalidate',
-          'Pragma': 'no-cache'
-        } : {}),
         ...options.headers
       },
       ...options

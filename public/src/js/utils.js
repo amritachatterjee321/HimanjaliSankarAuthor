@@ -277,6 +277,13 @@ class ImageOptimizer {
       alt = 'Book cover'
     } = options;
 
+    const displayWidth = options.width || (element.classList.contains('book-cover-large') ? 400 : 300);
+    imageData = {
+      ...imageData,
+      url: imageData.url && this.cloudinaryUrl(imageData.url, displayWidth * 2),
+      lowResUrl: imageData.lowResUrl && this.cloudinaryUrl(imageData.lowResUrl, displayWidth * 2)
+    };
+
     const img = document.createElement('img');
     
     // Set alt text
@@ -322,6 +329,13 @@ class ImageOptimizer {
     img.classList.add('optimized-image');
     
     return img;
+  }
+
+  static cloudinaryUrl(url, width) {
+    // Leave URLs that already carry a Cloudinary transformation untouched
+    const match = url.match(/^(https:\/\/res\.cloudinary\.com\/[^/]+\/image\/upload\/)(?![a-z]{1,3}_[^/]*\/)(.+)$/);
+    if (!match) return url;
+    return `${match[1]}f_auto,q_auto,w_${width}/${match[2]}`;
   }
 
   static generateLowResUrl(url, width = 50) {

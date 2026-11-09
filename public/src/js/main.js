@@ -104,14 +104,22 @@ class App {
   }
 
   async mountComponents() {
-    for (const [name, component] of this.components) {
+    // Mount concurrently; placeholders keep components that share a container in creation order
+    await Promise.all([...this.components].map(async ([name, component]) => {
+      const placeholder = document.createComment(name);
+      component.container?.appendChild(placeholder);
       try {
         await component.mount();
+        if (component.element && placeholder.parentNode) {
+          placeholder.replaceWith(component.element);
+        }
         console.log(`✅ ${name} component mounted successfully`);
       } catch (error) {
         console.error(`❌ Failed to mount ${name} component:`, error);
+      } finally {
+        placeholder.remove();
       }
-    }
+    }));
   }
 
   handleRouteChange(path) {

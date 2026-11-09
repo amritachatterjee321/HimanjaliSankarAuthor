@@ -16,6 +16,11 @@ export default async function handler(req, res) {
 
   // Get the endpoint from query parameter or default to books
   const endpoint = req.query.endpoint || 'books';
+
+  // Short edge cache for public reads; stale-while-revalidate keeps CMS edits visible within ~10s
+  if (req.method === 'GET' && ['books', 'media', 'social', 'about', 'contact-info'].includes(endpoint)) {
+    res.setHeader('Cache-Control', 'public, max-age=0, s-maxage=10, stale-while-revalidate=300');
+  }
   
   console.log('🔍 API Debug Info:');
   console.log('  - Method:', req.method);
